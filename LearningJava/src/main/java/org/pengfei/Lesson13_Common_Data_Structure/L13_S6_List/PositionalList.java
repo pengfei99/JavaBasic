@@ -13,7 +13,9 @@ public interface PositionalList<E> extends Iterable{
      */
     boolean isEmpty();
 
-    boolean lastElement(Position<E> p)throws IllegalArgumentException;;
+    boolean lastElement(Position<E> p)throws IllegalArgumentException;
+
+    boolean firstElement(Position<E> p)throws IllegalArgumentException;
 
     /**
      * Returns the first Position in the list (or null, if empty).

@@ -285,9 +285,9 @@ public class L13_S7_Trees {
 /************************* 13.7.3.3 Array Based representation of a binary tree *************************/
 /* An alternative representation of a binary tree T is based on a way of numbering the positions of T. For every
  * position p of T, let f (p) be the integer defined as follows:
- * - If p is the root of T, then f (p) = 0.
- * - If p is the left child of position q, then f (p) = 2 f (q)+1.
- * - If p is the right child of position q, then f (p) = 2 f (q)+2.
+ * - If p is the root of T, then f(p) = 0.
+ * - If p is the left child of position q, then f(p) = 2*f(q)+1.
+ * - If p is the right child of position q, then f(p) = 2*f(q)+2.
  *
  * */
 

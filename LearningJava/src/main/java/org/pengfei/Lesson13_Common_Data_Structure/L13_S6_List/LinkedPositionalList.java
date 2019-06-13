@@ -3,6 +3,7 @@ package org.pengfei.Lesson13_Common_Data_Structure.L13_S6_List;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
+/*Todo, revsite this class iterator impelementation, have null return value when do loop with iterator*/
 public class LinkedPositionalList<E> implements PositionalList<E> {
     private Node<E> trailer;
     private Node<E> header;
@@ -75,11 +76,19 @@ public class LinkedPositionalList<E> implements PositionalList<E> {
         return newest;
 
     }
-    /*Add a method to avoid take trailer as the last element of the list*/
+    /** Add a method to avoid take trailer as the last element of the list*/
     public boolean lastElement(Position<E> p) throws IllegalArgumentException {
         Node node=validate(p);
         if(node.getNext()==null) return true;
         else if (node.getNext().getElement()==null) return true;
+        else return false;
+    }
+
+    /** Add a method to avoid take header as the first element of the list*/
+    public boolean firstElement(Position<E> p) throws IllegalArgumentException {
+        Node node=validate(p);
+        if(node.getPrev()==null) return true;
+        else if (node.getPrev().getElement()==null) return true;
         else return false;
     }
 

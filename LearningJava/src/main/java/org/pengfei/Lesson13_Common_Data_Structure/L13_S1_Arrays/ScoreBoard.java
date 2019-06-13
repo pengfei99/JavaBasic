@@ -1,14 +1,14 @@
 package org.pengfei.Lesson13_Common_Data_Structure.L13_S1_Arrays;
 
-public class Scoreboard {
+public class ScoreBoard {
     private int numEntries = 0;
     private GameEntry[] board;
 
-    public Scoreboard(int boardCapacity){
+    public ScoreBoard(int boardCapacity){
         board=new GameEntry[boardCapacity];
     }
 
-    /* The add method add a new gameEntry into the Scoreboard, the order of the entries are decreasing on the game score
+    /* The add method add a new gameEntry into the ScoreBoard, the order of the entries are decreasing on the game score
     * For example,
     * Index, name, score
     * 1, Mike, 1105,
@@ -48,5 +48,14 @@ public class Scoreboard {
         numEntries--;
 
         return removedGameEntry;
+    }
+
+    public void showScores(){
+        for(int i=0; i<board.length; i++){
+            GameEntry currentGE=board[i];
+            if (currentGE!=null) {System.out.println("Game name: "+currentGE.getName()+"Game score: "+currentGE.getScore());
+            }
+        }
+
     }
 }

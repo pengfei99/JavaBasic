@@ -66,12 +66,12 @@ public abstract class MyAbstractPriorityQueue<K, V> implements MyPriorityQueue<K
 
         @Override
         public K getKey() {
-            return null;
+            return this.key;
         }
 
         @Override
         public V getValue() {
-            return null;
+            return value;
         }
 
         // utilities not exposed as part of the Entry interface
@@ -79,8 +79,10 @@ public abstract class MyAbstractPriorityQueue<K, V> implements MyPriorityQueue<K
             this.key = key;
         }
 
-        protected void setValue(V value) {
+        public V setValue(V value) {
+            V old = this.value;
             this.value = value;
+            return old;
         }
     }
     /***************************End of Nested PQEntry ************************************/

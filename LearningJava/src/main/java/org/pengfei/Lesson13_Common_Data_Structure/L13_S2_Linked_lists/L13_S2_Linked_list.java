@@ -6,6 +6,11 @@ public class L13_S2_Linked_list {
     /************************************************************************************************
     *******************************************13.2 Linked List *************************************
      ************************************************************************************************/
+
+    /* The Linked list is considered as non-primitive data structure contains a collection of unordered
+     * linked elements known as nodes.
+     * */
+
     public static void main(String[] args){
 
 
