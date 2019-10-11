@@ -117,4 +117,34 @@ public class S00_Fundamentals {
     * Using inheritance, an object need only define those qualities that it unique within its class. Without the use of
     * hierarchies, each object would have to explicitly define all of its characteristics.
     * */
+
+
+/***************************************** 0.4 Create, compile, and run a simple Java program ***************************/
+
+    public static void main(String[] args){
+        /* The "public" keyword is an access modifier, which determines whether other classes can use a particular field
+         *  or invoke a particular method. There are two levels of access control:
+         * - At the top level (class)
+         * - At the member level (fields, methods)
+         *
+         * At the top level, a class may be declared with:
+         * - public: class is visible to all other classes everywhere
+         * - no modifier: is the default value, aka. package-private, class is visible only within its own package
+         *
+         * At the member level, fields/methods has four modifier(class only has two):
+         * - public: fields/methods can be accessed by code outside this class.
+         * - no modifier: fields/methods can be accessed by code inside the package.
+         * - private: fields/methods can't be accessed by code outside this class.
+         * - protected: fields/methods can be accessed by code inside the package, and by a subclass of its class in other
+         *              packages.
+         * */
+
+        /* The "static" keyword indicates that the particular member (in our case, it's the main method) belongs to a
+        * type(Class) itself, rather than to an instance of that type(Class). This means that only one instance of
+        * that static member is created which is shared across all instances of the class.
+        *
+        * The "static" keyword can be applied to variables, methods, blocks and nested class. Check S00_StaticKeyword
+        * for more details.*/
+        System.out.println("");
+    }
 }
