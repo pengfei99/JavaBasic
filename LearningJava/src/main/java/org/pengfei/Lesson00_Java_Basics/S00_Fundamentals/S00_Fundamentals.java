@@ -1,5 +1,7 @@
 package org.pengfei.Lesson00_Java_Basics.S00_Fundamentals;
 
+import org.pengfei.Lesson00_Java_Basics.S00_Fundamentals.source.GalToLit;
+
 public class S00_Fundamentals {
     /*
     * In this Lesson, we will learn the fundamentals of JAVA:
@@ -8,11 +10,7 @@ public class S00_Fundamentals {
     * - Understand the foundational principles of object­oriented programming
     * - Create, compile, and run a simple Java program
     * - Use variables
-    * - Use the if and for control statements
-    * - Create blocks of code
-    * - Understand how statements are positioned, indented, and terminated
-    * - Know the Java keywords
-    * Understand the rules for Java identifiers
+    * - Understand the rules for Java identifiers
     *
     * */
 
@@ -131,7 +129,7 @@ public class S00_Fundamentals {
          * - public: class is visible to all other classes everywhere
          * - no modifier: is the default value, aka. package-private, class is visible only within its own package
          *
-         * At the member level, fields/methods has four modifier(class only has two):
+         * At the member level, fields/methods/nested_class has four modifier(class only has two):
          * - public: fields/methods can be accessed by code outside this class.
          * - no modifier: fields/methods can be accessed by code inside the package.
          * - private: fields/methods can't be accessed by code outside this class.
@@ -145,6 +143,50 @@ public class S00_Fundamentals {
         *
         * The "static" keyword can be applied to variables, methods, blocks and nested class. Check S00_StaticKeyword
         * for more details.*/
-        System.out.println("");
+
+
+        /****************************************** 0.5 Use variables *************************************/
+
+        /*
+        * In class GalToLit, we illustrate how to create variables. As you can noticed, variables has different data
+        * types, each data types correspond a special requirements. In our example, we use double, because we want the
+        * precision, but it's less faster than int.
+        * */
+
+        double gal1=GalToLit.getGalFromLit(10);
+        double lit1=GalToLit.getLitFromGal(10);
+
+        System.out.println("gal value from 10 litres is: "+gal1);
+        System.out.println("Lit value from 10 galons is: "+lit1);
+
+        /****************************************** 0.6 Control statement and code block*************************************/
+
+       /* In the following, we show the basic java control statement and code block */
+        GalToLit.showTable();
+
+        /****************************************** 0.7 Identifiers in Java *************************************/
+
+        /*
+        * In Java an identifier is, essentially, a name given to a method, a variable, or any other user­defined item.
+        * Identifiers can be from one to several characters long. Variable names may start with any letter of the
+        * alphabet, an underscore, or a dollar sign. Next may be either a letter, a digit, a dollar sign, or an
+        * underscore. The underscore can be used to enhance the readability of a variable name, as in line_count.
+        * Uppercase and lowercase are different; that is, to Java, myvar and MyVar are separate names. Here are some
+        * examples of acceptable identifiers:
+        * - $up,_toto,Text,my_var,y2,
+        *
+        * Note, you can't start an identifier with a digit. "12x" in invalid.
+        * */
+
+        /****************************************** 0.8 The Java Class Libraries *************************************/
+
+        /* In the above program, we used the built-in Java methods. They are from System class, which is predefined by
+        * Java(JDK).  Java as a totality is a combination of the Java language itself, plus its standard classes. As
+        * you will see, the class libraries provide much of the functionality that comes with Java. Indeed, part of
+        * becoming a Java programmer is learning to use the standard Java classes.  */
+
+
     }
+
+
 }
