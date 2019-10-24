@@ -194,9 +194,161 @@ public class S04_Advance_Datatype_Operator {
      * You can also create a string by using "", for example:
      * String tmp2="hello world"
      *
-     * Note, we prefer to use String literal "", it's more effective than new String. We will see the benchmark in
-     * 
+     * Note that a quoted string is an object of type String.
+     * Note, we prefer to use String literal "", it's more effective than new String. We can check their performance
+     * by using JMH(Java Microbenchmarking harness). See A01_Microbenchmarking.
+     *
      * */
+
+    /** 4.6.2 String Operators
+     * The String class contains several methods that operate on strings. Here is the most common:
+     * - boolean equals(str) : Returns true if the invoking string contains the same character sequence as str.
+     * - char charAt(index) : Obtains the character at the specified index
+     * - int length(): Obtains the length of a string.
+     * - int compareTo(str): Returns less than zero if the invoking string is less than str, returns greater than zero
+     *                       if greater than str, and zero if the strings are equal.
+     * - int indexOf(str): Searches the invoking string for the substring specified by str. Returns the index of the
+     *                     first match or -1 on failure
+     * - int lastIndexOf(str): Searches the invoking string for the substring specified by str. Returns the index of the
+     *                         last match or -1 on failure
+     * - String substring(int startIndex, int endIndex): Returns the substring of the invoking string with the given
+     *                              startIndex(inclusive), and endIndex(exclusive,optional). If endIndex is absent, the
+     *                              substring ends at the end of the invoking string.
+     *
+     * Notice that compare two string equality, we did not use ==. Applying the == to two String references simply
+     * determines whether the two references refer to the same object. But equals will return true if two string has
+     * the same value
+     * */
+
+    /** 4.6.3 Strings are immutable
+     * The contents of a String object are immutable. That is, once created, the character
+     * sequence that makes up the string cannot be altered. This restriction allows Java to
+     * implement strings more efficiently. Even though this probably sounds like a serious
+     * drawback, it isn’t. When you need a string that is a variation on one that already exists,
+     * simply create a new string that contains the desired changes. Since unused String
+     * objects are automatically garbage collected, you don’t even need to worry about what
+     * happens to the discarded strings. It must be made clear, however, that String
+     * reference variables may, of course, change the object to which they refer. It is just that
+     * the contents of a specific String object cannot be changed after it is created.
+     *
+     * Java offers a class called StringBuffer, which creates string objects that can be modified. For example, the
+     * StringBuffer class provide setCharAt() method, which allows you to set char value within the string.
+     * StringBuilder, which is related to StringBuffer, also supports string value modification.
+     *
+     * StringBuilder is design to replace the StringBuffer. StringBuffer is synchronized, StringBuilder is not and more
+     * effective. Check StringExp.exp3(); to see example.
+     * */
+
+    /** 4.6.4 Using a String to Control a switch statement
+     * Being able to use strings in a switch statement can be very convenient and can improve the readability of
+     * some code. StringExp.exp4() for example.
+     * */
+
+    /*************************************  4.7 Type inference with local variables************************************/
+
+    /*
+    * Beginning with JDK 10, it's now possible to let the compiler infer the type of a local variable based on the
+    * type of its initializer. Local variable type inference offers a number of advantage.
+    * - Simplify variable declaration with long class name
+    * - Eliminating redundant variable type declaration
+    * It can also be helpful when a type is difficult to discern or cannot be denoted.
+    *
+    * To support local variable type inference, the context­sensitive identifier "var" was added to Java as a reserved
+    * type name. To use local variable type inference, the variable must be declared with var as the type name and it
+    * must include an initializer.
+    *
+    * Check  LocalVarTypeInferExp.exp1(); you can see the variable avg has type double which is inferred by JVM.
+    *
+    * As mentioned, var was added as a context­sensitive identifier. When it is used as the type name in the context
+    * of a local variable declaration, it tells the compiler to use type inference to determine the type of the
+    * variable being declared based on the type of the initializer. Thus, in a local variable declaration, "var" is
+    * a placeholder for the actual inferred type. However, when used in most other places, var is simply a user­defined
+    * identifier with no special meaning. For example, the following declaration is still valid:
+    * int var = 1 ;
+    *
+*  */
+
+    /** 4.7.1 Use type inference for array declaration
+     * Check LocalVarTypeInferExp.exp2(); We don't use brackets in the declaration, because the type is
+     * inferred from the type of the initializer.
+     * */
+
+    /** 4.7.2 Local Variable Type Inference with Reference Types
+     * We have seen the type inference with primitive type. It also works for user defined class.
+     * Check LocalVarTypeInferExp.exp3();
+     * */
+
+    /** 4.7.3 Using Local variable type inference in a for loop
+     * Another place that local variable type inference can used is in a for-each loop. Check LocalVarTypeInferExp.exp4();
+     * In the for-each loop, we don't need to give the type of the loop variable explicitly.
+     * */
+
+    /** 4.7.4 Some var Restrictions
+     * There are several other restrictions apply to the use of var. Only one variable can be declared at a time;
+     * a variable cannot use null as an initializer; and the variable being declared cannot be used by the
+     * initializer expression. Although you can declare an array type using var, you cannot use var with an array
+     * initializer.
+     *
+     * For example, var myArray=new int[10] is valid, var myArray = {1,2,3} is wrong.
+     *
+     * As mentioned earlier, var cannot be used as the name of a class. It also cannot be used
+     * as the name of other reference types, including an interface, enumeration, or
+     * annotation, which are described later in other section. Here are two other restrictions that
+     * relate to Java features also described later, but mentioned here in the interest of
+     * completeness. Local variable type inference cannot be used to declare the exception
+     * type caught by a catch statement. Also, neither lambda expressions nor method
+     * references can be used as initializers.
+     * */
+
+    /*************************************  4.8 The Bitwise operators ************************************/
+
+    /*
+    * The bitwise operators can be used on values of type long, int, short, char, or byte. Bitwise operations
+    * cannot be used on boolean, float, or double, or class types. They are called the bitwise operators because
+    * they are used to test, set, or shift the individual bits that make up a value.
+    *
+    * Bitwise operations are important to a wide variety of systems­level programming tasks in which status
+    * information from a device must be interrogated or constructed. The bitwise operators has the following:
+    * - & : Bitwise AND
+    * - | : Bitwise OR
+    * - ^ : Bitwise exclusive OR
+    * - >> : Shift right
+    * - >>> : Unsigned shift right
+    * - << : Shift left
+    * ~ : One's complement(unary NOT)
+    *
+    * The bitwise operators perform the same operations as Boolean logical equivalents. The difference is that the
+    * bitwise operators work on a bit-by-bit basis. The following shows the outcome of each operations:
+    * p        |     q     |   p&q      |     p|q    |       p^q    |  ~ p
+    * 0              0           0             0              0          1
+    * 1              0           0             1              1          0
+    * 0              1           0             1              1          1
+    * 1              1           1             1              0          0
+    *
+    * I do not want to spent time on this, check P215 (Java_A_beginner's Guide) for more information
+    * */
+
+    /*************************************  4.9 The ? operator ************************************/
+
+    /*
+    * One of Java's most fascinating operators is the ?. The ? operator is often used to replace if-else statements
+    * of this general form:
+    * if(condition)
+    *     statement1;
+    * else
+    *     statement2;
+    *
+    * The ? operator is called a ternary operator, because it requires three operands. The above if can be replaced
+    * by: condition?statement1:statement2;
+    * The condition must be a boolean expression, and statement1/2 can be expressions of any type other than void. The
+    * type of statement1 and statement2 must be the same (or compatible). If condition is true then statement1 is
+    * evaluated and becomes the value of the entire ? expression. Otherwise, statement2 is evaluated.
+    *
+    * For example, the following expression gets the absolute value of val.
+    * absval= (val<0?-val:val;) is the same as if(val<0) absval=-val; else absval=val;
+    * Check QuestionMarkOperatorExp.exp1(); and QuestionMarkOperatorExp.exp2(); to see an example
+    * */
+
     public static void main(String args[]){
         /** one dimensional array*/
          // OneDimArrayExp.exp1();
@@ -234,6 +386,20 @@ public class S04_Advance_Datatype_Operator {
         /*boolean found = ForEachExp.Search(12);
         System.out.println(found);*/
 
+       /** String example*/
+       // StringExp.exp1();
+       // StringExp.exp2();
+        // StringExp.exp3();
+        // StringExp.exp4();
 
+        /** Type inference example*/
+       // LocalVarTypeInferExp.exp1();
+       // LocalVarTypeInferExp.exp2();
+       // LocalVarTypeInferExp.exp3();
+       // LocalVarTypeInferExp.exp4();
+
+        /** ? operator*/
+        QuestionMarkOperatorExp.exp1();
+        QuestionMarkOperatorExp.exp2();
     }
 }
