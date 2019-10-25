@@ -1,5 +1,6 @@
 package org.pengfei.Lesson00_Java_Basics.S05_Advance_Classes_Methods;
 
+import com.google.errorprone.annotations.Var;
 import org.pengfei.Lesson00_Java_Basics.S05_Advance_Classes_Methods.source.*;
 
 public class S05_Advance_Classes_Methods {
@@ -137,12 +138,88 @@ public class S05_Advance_Classes_Methods {
     * - not static : Non-static nested class is also called inner class. It has access to all of the variables and
     *                methods of its outer class and may refer to them directly in the same way that other non-static
     *                members of the outer class do.
-    * - static : Check S00_StaticKeyword for more example on static nested class
+    * - static : Check S00_StaticKeyword for more example on static nested class. The major difference is that a nested
+    *            static class can only access the static member of the outer class. Because static member can be called
+    *            without creating the object of the class, if a static class calls non static member which does not
+    *            exist without object. It will raise errors.
     *
-    * An inner class is often used to provide a set of services that is used only by its enclosing class.
+    * An inner class is often used to provide a set of services that is used only by its enclosing class. Check
+    * the NestedClassExp, we use a inner class to group all arithmetic operation, such as min, max , avg. And it
+    * can access directly the field nums in the outer class. But when outer class wants to call inner class method,
+    * we need to create an object of the inner class in the outer class.
+    *
+    * Note that a inner class definition can also be located within a block scope(e.g. method, for-loop, etc.)
     * */
 
+    /**************************** 5.9 VarArgs: Variable-length arguments  ****************************************/
 
+    /*
+    * In some case, your methods may take no or more arguments, For example, a method that opens an database connection
+    * you need to specify the hostname, portNumber, uid, pwd, etc. But some of these arguments can be omitted.
+    *
+    * In the past, we have two ways to deal this situation:
+    * - 1. If the maximum number of arguments was small and known, then you could create overloaded versions of the
+    *      method with different number of arguments.
+    * - 2. If the maximum number of arguments was large or unknowable, then the method can take an array as arguments.
+    *
+    * These two works, but it creates many problems too. Solution 1. you need to duplicate code and write a lot of code.
+    * Solution 2, the user of the method has to create an array which contains all the arguments.
+    *
+    * Beginning with JDK 5, this need was addressed by the inclusion of a feature that simplified the creation of
+    * methods that require a variable number of arguments. This feature is called varargs, which is short for
+    * variable­length arguments. A method that takes a variable number of arguments is called a variable­arity method,
+    * or simply a varargs method. The parameter list for a varargs method is not fixed, but rather variable in length.
+    * Thus, a varargs method can take a variable number of arguments
+    *
+    * */
+
+    /** 5.9.1  Varargs basics
+     * A variable­length argument is specified by three periods (...). For example, check the  VarArgsExp.vaTest method
+     * it takes a variable number of arguments: int ... v . This syntax tells the compiler that vaTest() can be called
+     * with zero or more arguments. Furthermore, it causes v to be implicitly declared as an array of type int[ ].
+     * Thus, inside vaTest( ), v is accessed using the normal array syntax
+     *
+     * Notice two important thing:
+     * - Varargs v is an array, so it's operated on as an array. The ... indicates v is a Varargs.
+     * - When vaTest() is called with different numbers of arguments, including no arguments at all. The arguments
+     *   are automatically put in an array and passed to v. In the case of no arguments, the length of the array is zero.
+     * */
+
+    /** 5.9.2 Use Varargs with other normal parameters
+     * A method can have “normal” parameters along with a variable­length parameter. However, the variable­length
+     * parameter must be the "last parameter" declared by the method. For example, check VarArgsExp.vaTest1.
+     *
+     * Notice there are two restriction on varargs:
+     * - Must be the last parameter declared by the method
+     * - Must be only one varargs in one method
+     * */
+
+    /** 5.9.3 Overloading varargs methods
+     * You can overload a method that takes a variable-length argument. As you can't do overload by the number of
+     * varargs, you can do the overload with different types. Check VarArgsExp.vaTest(double ... v). which overload the
+     * vaTest by replacing int by double.
+     *
+     * You can also consider adding normal parameter into vaTest as another way to overload it. In this case, Java uses
+     * both the number of arguments and the type of the arguments to determine which method to call.
+     * */
+
+    /** 5.9.4 Varargs and ambiguity
+     * When we overload a method by using the different types of varargs. If the types can be cast implicitly, and when
+     * we call it with no argument, it creates an ambiguity. Check VarArgsExp.vaTest(), if we just do overload with
+     * type int and double, there is no error. But If I add the boolean overload, it does not compile at all, when I
+     * call VarArgsExp.vaTest();
+     *
+     * There is another another ambiguity. If the normal parameter and varargs have the same type, the compile can't
+     * resolve which one to call. Check the last vaTest overload method at line 44 of the class VarArgsExp. If I add
+     * this method, we can't call VarArgsExp.vaTest(1,2,3,4,5); anymore. Does this translate into a call to
+     * vaTest(int ...), with one varargs argument, or into a call to vaTest(int, int ...) with no varargs arguments?
+     * There is no way for the compiler to answer this question. Thus, the situation is ambiguous.
+     *
+     * Because of ambiguity errors like those just shown, sometimes you will need to forget about the
+     * overloading and simply use two different method names. Also, in some cases,
+     * ambiguity errors expose a conceptual flaw in your code, which you can remedy by more
+     * carefully crafting a solution.
+     * */
     public static void main(String[] args){
 
         /** Control access to class members */
@@ -171,9 +248,24 @@ public class S05_Advance_Classes_Methods {
        // MethodOverloadingExp.myPrint("Java is good");
 
         /** Recursive*/
-        RecursionExp.factIteration(5);
-        RecursionExp.factIteration(5);
+       // RecursionExp.factIteration(5);
+       // RecursionExp.factIteration(5);
 
+        /** Nested class */
+        /*int[] nums={3,4,5,1,2,3,9,10};
+        NestedClassExp nestedExp=new NestedClassExp(nums);
+        nestedExp.analyze();*/
+
+        /** Variable length argument */
+        /* when we call the method, the argument is separated by "," just like other normal method.*/
+        // with 5 args
+         VarArgsExp.vaTest(1,2,3,4,5);
+        // with 0 args, the for loop does not raise error even if the array is empty.
+        //VarArgsExp.vaTest();
+        // mixed with other parameter
+       // VarArgsExp.vaTest1("pengfei",3000,4000,5000,6000,7000,8000);
+         VarArgsExp.vaTest(10.0,2.0,3.4,4.6);
+        //VarArgsExp.vaTest();
     }
 
 }
