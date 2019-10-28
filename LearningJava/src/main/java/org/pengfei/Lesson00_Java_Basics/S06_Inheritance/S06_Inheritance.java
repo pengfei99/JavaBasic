@@ -1,8 +1,6 @@
 package org.pengfei.Lesson00_Java_Basics.S06_Inheritance;
 
-import org.pengfei.Lesson00_Java_Basics.S06_Inheritance.source.ColorTriangle;
-import org.pengfei.Lesson00_Java_Basics.S06_Inheritance.source.Triangle;
-import org.pengfei.Lesson00_Java_Basics.S06_Inheritance.source.TwoDimensionShape;
+import org.pengfei.Lesson00_Java_Basics.S06_Inheritance.source.*;
 
 public class S06_Inheritance {
     /******************************************** 6. Introduction *******************************************/
@@ -207,7 +205,105 @@ public class S06_Inheritance {
 
     /*************************************** 6.9 Using abstract classes ***************************************/
 
-    /**/
+    /*
+    * Sometimes you will want to create a superclass that defines only a generalized form that will be shared
+    * by all of its subclasses, leaving it to each subclass to fill in the details. Such a class determines
+    * the nature of the methods that the subclass must implement but does not, itself, provide an implementation.
+    * One reason is that the superclass is unable to create a meaningful implementation for a method.(See the area()
+    * method, the implementation depends on the shape). We use method overriding to implement area() method in each
+    * shape, but nothing guarantee us that the subclass will override the area() method.
+    *
+    * Using abstract class can ensure all subclass implement the abstract method, otherwise the subclass is incomplete.
+    * An abstract method contains no method body. Thus, a subclass must override it. The abstract method looks:
+    * abstract return-type method-name(parameter-list);
+    *
+    * Note that the abstract modifier can not be applied to static methods or to constructors.
+    *
+    * A class that contains one or more abstract methods must also be declared as abstract class. Since abstract
+    * class does not define a complete implementation, there can be no objects of an abstract class. Thus, creating
+    * an object of an abstract class by using new will result in a compile-time error.
+    *
+    * When a subclass inherits an abstract class, it must implement all of the abstract methods in the superclass.
+    * If it doesn't, then the subclass must also be specified as abstract class. Thus, the abstract attribute is
+    * inherited until such time as a complete implementation is achieved.
+    *
+    * Check class AbstractTwoDShape, IOARectangle and IOATriangle. Notice that the abstract class AbstractTwoDShape
+    * contains also concrete methods which subclass is free to use as is.
+    * */
+
+    /*************************************** 6.10 Using Final ***********************************************/
+
+    /*
+    * As powerful and useful as method overriding and inheritance are, sometimes you will want to prevent them.
+    * For example, you might have a class that encapsulates control of some hardware device. Further, this class
+    * might offer the user the ability to initialize the device, making use of private, proprietary information.
+    * In this case, you don’t want users of your class to be able to override the initialization method. Whatever
+    * the reason, in Java it is easy to prevent a method from being overridden or a class from being inherited by
+    * using the keyword final.
+    * */
+
+    /** 6.10.1 Final prevents overriding
+     * To prevent a method from being overridden, specify final as a modifier at the start of its declaration.
+     * Methods declared as final cannot be overridden. Check class AbstractTwoDShape, we add final to the showDim
+     * method. When we try to override it on a subclass, we have compile time error.
+     * */
+
+    /** 6.10.2 Final prevents Inheritance
+     * You can prevent a class from being inherited by preceding its declaration with final.
+     * Declaring a class as final implicitly declares all of its methods as final, too. As you
+     * might expect, it is illegal to declare a class as both abstract and final since an abstract
+     * class is incomplete by itself and relies upon its subclasses to provide complete implementations.
+     *
+     * */
+
+    /** 6.10.3 Using final with data members
+     * The final modifier can also be applied to member variables to create constants. If a field in a class is declared
+     * as final, its value cannot be changed throughout the lifetime of your program. You can give that variable an
+     * initial value.
+     *
+     * Notice that, when we declare a class parameter field as final, if it's not a constant, we must initialize it at
+     * the creation of the Object via constructor. Check class FinalExp, after we create the object, we try to do
+     * finalExp.MAX_QUEUE_SIZE=9; we have a compilation error.
+     * */
+
+    /** 6.10.4 Other important points
+     * - Final can be used with static, its even recommended for declaring constants which all instances shares
+     * - Final can be used on method parameters and local variables. Declaring a parameter final prevents it from
+     *   being changed within the method. Declaring a local variable final prevents it from being assigned a value
+     *   more than once.
+     * */
+
+    /*************************************** 6.11 The Object class ***********************************************/
+
+    /*
+    * Java defines one special class called Object that is an implicit superclass of all other classes. In other words,
+    * all other classes are subclasses of Object. This means that a reference variable of type Object can refer to an
+    * object of any other class. Also, since arrays are implemented as classes, a variable of type Object can also
+    * refer to any array.
+    *
+    * Object defines the following methods, which means that they are available in every object:
+    * - protected Object clone(): Used to create and return a copy of this object.
+    * - boolean equals(Object obj): Used to indicate whether some other object is "equal to" this one.
+    * - protected void finalize(): garbage collector calls this method on an object when it determines that there are
+    *                              no more references to the object. (Deprecated by JDK9)
+    * - Class<?> getClass(): Used to get the runtime class of this Object.
+    * - int hashCode(): Used to get a hash code value for the object.
+    * - void notify(): Used to wake up a single thread that is waiting on this object's monitor.
+    * - void notifyAll(): Used to wake up all threads that are waiting on this object's monitor.
+    * - String toString(): Used to get a string representation of the object.
+    * - void wait(): marks the current thread to wait until another thread invokes the notify() method or the
+    *                notifyAll() method for this object.
+    * - void wait(long timeout):  marks the current thread to wait until either another thread invokes the notify()
+    *                method or the notifyAll() method for this object, or a specified amount of time has elapsed.
+    * - void wait(long timeout, int nanos) - marks the current thread to wait until another thread invokes the notify()
+    *                method or the notifyAll() method for this object, or some other thread interrupts the current
+    *                thread, or a certain amount of real time has elapsed.
+    *
+    * The methods getClass( ), notify( ), notifyAll( ), and wait( ) are declared as final. Other methods can be
+    * override. For example, equals(), toString() are the two methods which are often override.
+    *
+    * */
+
 
     public static void main(String[] args){
 
@@ -252,5 +348,17 @@ public class S06_Inheritance {
         shapeRefExp=ct;
         shapeRefExp.showMessage();
 
+        /** 6.9 abstract class */
+        var triangle=new IOATriangle(8.8,6.6,"filled");
+        var rectangle=new IOARectangle(8.8,6.6);
+
+        System.out.println("Triangle area is: "+triangle.area());
+        System.out.println("Rectangle area is: "+rectangle.area());
+
+        /** 6.10 final */
+
+        FinalExp finalExp=new FinalExp(10);
+        // can't change final field value,
+        // finalExp.MAX_QUEUE_SIZE=9;
     }
 }
