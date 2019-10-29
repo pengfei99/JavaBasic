@@ -1,8 +1,6 @@
 package org.pengfei.Lesson00_Java_Basics.S07_Interfaces_Packages;
 
-import org.pengfei.Lesson00_Java_Basics.S07_Interfaces_Packages.source.BreakingBad;
-import org.pengfei.Lesson00_Java_Basics.S07_Interfaces_Packages.source.GameOfThrone;
-import org.pengfei.Lesson00_Java_Basics.S07_Interfaces_Packages.source.Series;
+import org.pengfei.Lesson00_Java_Basics.S07_Interfaces_Packages.source.*;
 
 import java.util.Arrays;
 
@@ -294,6 +292,61 @@ public class S07_Interfaces_Packages {
 
     /************************************** 7.9 Multiple Inheritance issues *************************************/
 
+    /*
+    * As explained before, Java does not support the multiple inheritance of classes (one subclass can extend from only
+    * one super class). Now an interface can include default methods, you might be wondering if an interface can provide
+    * a work around of this restriction. The answer is no. The key difference between abstract class and interface is:
+    * a class can maintain state information, but an interface cannot.
+    *
+    * Default method in interface does produce multiple inheritance problems: name conflict. For example, if we have a
+    * class called MyClass which implement two interfaces A and B. A and B both provide a default method called reset().
+    * Which version of the method reset() will be used in MyClass? Or, what if MyClass provides its own implementation
+    * of the method?
+    *
+    * Java defines a set of rules that resolve above conflicts:
+    * 1. In all cases, a class implementation takes priority over an interface default implementation.
+    * 2. If a class inherits two interfaces that both have the same default method, if the class does not override
+    *    that method, then an error will result.
+    * 3. In cases in which one interface inherits another, with both defining a common default method, the inheriting
+    *    interface's version of the method takes precedence.
+    *
+    * It's possible to refer explicitly to a default implementation by using a new form of super. Its general form is
+    * shown here: InterfaceName.super.methodName()
+    * For example, if B extends A, and B wants to refer to A's default method for reset(). it can use this statement:
+    * A.super.reset()
+    *
+    * */
+
+    /************************************** 7.10 Use static methods in an interface ********************************/
+
+    /*
+    * JDK 8 added another new feature to interface: define one or more static methods. Like static methods in a class,
+    * a static method defined by an interface can be called independently of any object. Thus, no implementation of
+    * the interface is necessary, and no instance of the interface is required in order to call a static method.
+    * Instead, a static method is called by specifying the interface name, followed by a period, followed by the
+    * method name. Here is the general form:
+    * InterfaceName.staticMethodName
+    *
+    * Check interface A. It has a static method getInterfaceId. In code fragment 7.10. we can call the static method
+    * with interface name without any class or object implementation.
+    * */
+
+    /************************************** 7.11 private interface methods ********************************/
+
+    /*
+    * Beginning with JDK 9, an interface can include a private method. A private interface method can be called only
+    * by a default method or another private method defined by the same interface. It can not be accessed outside of
+    * the interface including the sub-interface.
+    *
+    * The key benefit of a private interface method is that it lets two or more default methods use a common piece of
+    * code, thus avoiding code duplication.
+    *
+    * Check the interface AdvanceSeries, Notice that both getNextArray( ) and skipAndGetNextArray( ) use the private
+    * getArray( ) method to obtain the array to return. This prevents both methods from having to duplicate the same
+    * code sequence. Keep in mind that because getArray( ) is  private, it cannot be called by code outside Series.
+    * Thus, its use is limited to the default methods inside Series.
+    * */
+
     public static void main(String[] args){
 
         /** 7.4 Implementing interface*/
@@ -327,6 +380,15 @@ public class S07_Interfaces_Packages {
         int[] nextNEpisode = gt.getNextArray(3);
         System.out.println("Next n episode is : "+ Arrays.toString(nextNEpisode));
 
+
+        /** 7.9 Multiple Inheritance*/
+        MultipleInheritanceExp mlExp=new MultipleInheritanceExp();
+        mlExp.reset();
+        mlExp.getAReset();
+
+        /** 7.10 Static method in interface*/
+        int id = A.getInterfaceId();
+        System.out.println("Interface id is "+id );
     }
 
 }
