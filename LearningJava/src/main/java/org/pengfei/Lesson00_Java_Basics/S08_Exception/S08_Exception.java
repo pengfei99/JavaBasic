@@ -1,6 +1,7 @@
 package org.pengfei.Lesson00_Java_Basics.S08_Exception;
 
 import org.pengfei.Lesson00_Java_Basics.S08_Exception.source.ExceptionExp1;
+import org.pengfei.Lesson00_Java_Basics.S08_Exception.source.NonIntResultException;
 
 public class S08_Exception {
 
@@ -381,7 +382,34 @@ public class S08_Exception {
     /************************************** 8.13 Creating exception subclass *************************************/
 
     /*
-    * 
+    * Although Java’s built­in exceptions handle most common errors, Java’s exception handling mechanism is not
+    * limited to these errors. In fact, part of the power of Java’s approach to exceptions is its ability to handle
+    * exception types that you create. Through the use of custom exceptions, you can manage errors that relate
+    * specifically to your application. Creating an exception class is easy. Just define a subclass of Exception
+    * (which is, of course, a subclass of Throwable). Your subclasses don’t need to actually implement anything—it
+    * is their existence in the type system that allows you to use them as exceptions.
+    *
+    * The Exception class does not define any methods of its own. It does, of course, inherit those methods provided
+    * by Throwable. Thus, all exceptions, including those that you create, have the methods defined by Throwable
+    * available to them. Of course, you can override one or more of these methods in exception subclasses that you
+    * create.
+    *
+    * Check NonIntResultException class to see an example of custom exception. Notice an exception class
+    * is like any other class, it has constructor, you can override methods which exist in its super class
+    * and the access modifier works like regular class too.
+    * */
+
+    /************************************** 8.14 When should we use exception? *************************************/
+
+
+    /*
+    * Since the Java API makes extensive use of exceptions to report errors, nearly all real­world programs will
+    * make use of exception handling. This is the part of exception handling that most new Java programmers find
+    * easy. It is harder to decide when and how to use your own custom­made exceptions. In general, errors can be
+    * reported in two ways: return values and exceptions. When is one approach better than the other? Simply put,
+    * in Java, exception handling should be the norm. Certainly, returning an error code is a valid alternative in
+    * some cases, but exceptions provide a more powerful, structured way to handle errors. They are the way
+    * professional Java programmers handle errors in their code.
     * */
 
     public static void main(String[] args){
@@ -428,6 +456,20 @@ public class S08_Exception {
       // ExceptionExp1.exp10();
 
         /** 8.11 Additional feature*/
-        ExceptionExp1.exp11();
+       // ExceptionExp1.exp11();
+
+        /** 8.12 custom exception class*/
+
+        /* Notice the following example, throw exception break the loop and the catch happens outside the loop.
+        * The loop will not restart. If you don't want the exception handling break your loop, you need to
+        * handle it inside your loop. See  ExceptionExp1.exp14(); */
+       /* try {
+            ExceptionExp1.exp13();
+        } catch (NonIntResultException e) {
+            System.out.println(e);
+        }*/
+
+       ExceptionExp1.exp14();
+
     }
 }

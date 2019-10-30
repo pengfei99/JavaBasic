@@ -169,6 +169,26 @@ public class ExceptionExp1<staict> {
         }
     }
 
+
+    /** Use custom exception class*/
+    public static void exp13() throws NonIntResultException {
+        int[] nums={4,8,15,32,111,256};
+        for(int i=0;i<nums.length;i++){
+            if ((nums[i]%2) !=0) throw new NonIntResultException(nums[i],2);
+        }
+    }
+
+    /** Use custom exception class*/
+    public static void exp14(){
+        int[] nums={4,8,15,32,111,256};
+        for(int i=0;i<nums.length;i++){
+            if ((nums[i]%2) !=0) try {
+                throw new NonIntResultException(nums[i],2);
+            } catch (NonIntResultException e) {
+                System.out.println(e);
+            }
+        }
+    }
     private static void setArray(int n) {
         int nums[] = new int[5];
         nums[n] = 10;
