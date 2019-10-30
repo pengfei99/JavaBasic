@@ -9,6 +9,10 @@ public class S01_DataTypes_Operators {
     /******************************************** 1. Introduction *******************************************/
 
     /*
+    * Java Data types are divided into two groups:
+    * - Primitive data types - includes byte, short, int, long, float, double, boolean and char
+    * - Non-primitive data types - such as String, Arrays and Classes.
+    *
     * In this section, we will learn the following skills
     * - Know Java’s primitive types
     * - Use literals
