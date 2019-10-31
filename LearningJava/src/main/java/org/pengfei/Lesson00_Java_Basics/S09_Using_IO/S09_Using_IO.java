@@ -1,7 +1,10 @@
 package org.pengfei.Lesson00_Java_Basics.S09_Using_IO;
 
 import org.pengfei.Lesson00_Java_Basics.S09_Using_IO.source.ByteIOExp;
+import org.pengfei.Lesson00_Java_Basics.S09_Using_IO.source.CharacterIOExp;
 import org.pengfei.Lesson00_Java_Basics.S09_Using_IO.source.CompareFiles;
+
+import java.io.IOException;
 
 public class S09_Using_IO {
 
@@ -65,12 +68,28 @@ public class S09_Using_IO {
      * From InputStream and OutputStream are created several concrete subclasses that offer varying functionality
      * and handle the details of reading and writing to various devices, such as disk files. The byte stream classes
      * in java.io are shown in the following table:
+     * - InputStream: Abstract class that describes stream inputs. It is the super class of all XInputStream
+     *                class below
+     * - OutputStream: Abstract class that describes stream outputs. It is the super class of all XOutputStream
+     *                class below
      * - BufferedInputStream: Buffered input stream
      * - BufferedOutputStream: Buffered output stream
      * - ByteArrayInputStream: Input steam that reads from a byte array
      * - ByteArrayOutputStream: Output steam that writes to a byte array
-     * - DataInputStream: An input stream that contains methods for writing the java standard data types.
-     * - ...
+     * - DataInputStream: An input stream that contains methods for reading the java standard data types.
+     * - DataOutputStream: An output stream that contains methods for writing the java standard data types.
+     * - FileInputStream: Input stream that reads from a file
+     * - FileOutputStream: Output stream that writes to a file
+     * - FilterInputStream: Implements InputStream
+     * - FilterOutputStream: Implements OutputStream
+     * - ObjectInputStream: Input stream that reads objects
+     * - ObjectOutputStream: Output stream that writes objects
+     * - PipedInputStream: input pipe
+     * - PipedOutputStream: Output pipe
+     * - PrintStream: Output stream that contains print and println()
+     * - PushbackInputStream: Input stream that allows bytes to be returned to the stream
+     * - SequenceInputStream: Input steam that is a combination of two or more input streams that will be read
+     *                        sequentially, one after the other.
      *
      * For the complete java io package class hierarchy, go check my wiki id=employes:pengfei.liu:java:io
      * */
@@ -84,6 +103,29 @@ public class S09_Using_IO {
      *
      * From Reader and Writer are derived several concrete subclasses that handle various I/O situations. In general,
      * the character­based classes parallel the byte­based classes.
+     *
+     * The following table shows the character stream classes in java.io:
+     * - Reader: Abstract class that describes character stream input. It is the super class of all the XReader
+     *           class below
+     * - Writer: Abstract class that describes character stream output. It is the super class of all the XWriter
+     *           class below
+     * - BufferedReader: Buffered input character stream
+     * - BufferedWriter: Buffered output character stream
+     * - CharArrayReader: Input stream that reads from a character array
+     * - CharArrayWriter: Output stream that writes to a character array
+     * - FileReader: Input stream that reads from a file
+     * - FileWriter: Output stream that writes to a file
+     * - FilterReader: filtered reader
+     * - FilterWriter: filtered writer
+     * - InputStreamReader: Input stream that translates bytes to characters
+     * - OutputStreamWriter: Output stream that translates characters to bytes
+     * - LineNumberReader: Input stream that counts lines
+     * - PipedReader: Input pipe
+     * - PipedWriter: output pipe
+     * - PrintWriter: Output stream that contains print() and println()
+     * - PushbackReader: Input stream that allows characters to be returned to the input stream.
+     * - StringReader: Input steam that reads from a string
+     * - StringWriter: Output stream that writes to a string
      *
      * For the complete java io package class hierarchy, go check my wiki id=employes:pengfei.liu:java:io
      * */
@@ -386,13 +428,243 @@ public class S09_Using_IO {
     * - abstract int read(char[] cbuf, int off, int len): It reads characters into a portion of an array.
     * - int read(CharBuffer target): It attempts to read characters into the specified character buffer.
     * - boolean	ready(): It tells whether this stream is ready to be read.
-    * - void reset(): It resets the stream.
-    * - long skip(long n): It skips characters.
+    * - void reset(): It resets the input pointer to the previously set mark.
+    * - long skip(long n): It skips n characters of inputs, returning the number of characters actually skipped.
+    * - long transferTo(Writer writer)
     *
-    * The following table shows method in Writer
+    * The following table shows method in Writer:
+    * - Writer append(char c): It appends c to the end of the invoking output steam. Returns a reference to the invoking
+    *                          stream.
+    * - Writer append(CharSequence c): It appends c to the end of the invoking output steam. Returns a reference to the
+    *                         invoking. CharSequence is an interface that defines read-only operations on a sequence
+    *                         of characters.
+    * - Writer append(CharSequence csq, int start, int end): It appends a subsequence of the specified character
+    *          sequence to this writer.
+    * - abstract void close(): It closes the stream, flushing it first. Subsequent write attempts will generate an
+    *                          IOException.
+    * - abstract void flush(): It causes any output that has been buffered to be sent to its destination. That is, it
+    *                          flushes the output buffer.
+    * - void write(char[] cbuf): It writes an array of characters.
+    * - abstract void write(char[] cbuf, int off, int len): It writes a portion of an array of characters.
+    * - void write(int c): It writes a single character. Notice the parameter is an int, you don't need to cast it to char
+    * - void write(String str): It writes a string.
+    * - void write(String str, int off, int len): It writes a portion of a string.
+    *
     * */
 
-    public static void main(String[] args){
+    /** 9.12.1 Console Input Using character streams
+     * For code that will be internationalized, inputting from the console using Java’s character­based streams is a
+     * better, more convenient way to read characters from the keyboard than is using the byte streams. However,
+     * since System.in is a byte stream, you will need to wrap System.in inside some type of Reader. The best class for
+     * reading console input is BufferedReader, which supports a buffered input stream. However, you cannot construct
+     * a BufferedReader directly from System.in. Instead, you must first convert it into a character stream.
+     *
+     * The following code creates a BufferedReader that is connected to the keyboard.
+     * BufferedReader br = new BufferedReader(new InputStreamReader(System.in))
+     *
+     * We use InputStreamReader, which converts bytes to characters, which can link to System.in After this statement
+     * executes, br will be a character­based stream that is linked to the console through System.in.
+     *
+     * */
+
+    /** 9.12.2 Reading characters
+     * To read characters, we can use the read() method which are provided by BufferedReader. There are three version:
+     * - int read() throws IOException: It reads a single Unicode character. It returns –1 when an attempt is made to
+     *                                 read at the end of the stream.
+     * - int read(char data[]) throws IOException: It reads characters from the input stream and puts them into data
+     *                         until either the array is full, the end of stream is reached, or an error occurs. It
+     *                         returns the number of characters read or –1 when an attempt is made to read at the end
+     *                         of the stream.
+     * - int read(char data[], int start, int max) throws IOException : It reads input into data beginning at the
+     *                        location specified by start. Up to max characters are stored. It returns the number of
+     *                        characters read or –1 when an attempt is made to read at the end of the stream.
+     *  check CharacterIOExp.exp1();
+     * */
+
+    /** 9.12.3 Reading Strings
+     * To read a string from the keyboard, use the version of readLine( ) that is a member of the BufferedReader class.
+     * Its general form is shown here:
+     * String readLine( ) throws IOException
+     * It returns a String object that contains the characters read. It returns null if an attempt is made to read
+     * when at the end of the stream.
+     *  check CharacterIOExp.exp2();
+     * */
+
+    /** 9.12.4 Console Output using character streams
+     * For real­world programs, the preferred method of writing to the console when using Java is through a PrintWriter
+     * stream. PrintWriter is one of the character­based classes. As explained, using a character­based class for console
+     * output makes it easier to internationalize your program.
+     *
+     * PrintWriter defines several constructors. The one we will use is shown here:
+     * PrintWriter(OutputStream outputStream, boolean flushingOn)
+     * Here, outputStream is an object of type OutputStream and flushingOn controls whether Java flushes the output
+     * stream every time a println( ) method (among others) is called. If flushingOn is true, flushing automatically
+     * takes place. If false, flushing is not automatic.
+     *
+     * PrintWriter supports the print( ) and println( ) methods for all types including Object. Thus, you can use
+     * these methods in just the same way as they have been used with System.out. If an argument is not a primitive
+     * type, the PrintWriter methods will call the object’s toString( ) method and then print out the result.
+     *
+     * As System.out is an object of OutputStream, so we can use it directly to build a PrintWriter.
+     *
+     * The advantage of using PrintWriter (or character streams) is that make your real-world application easier to
+     * internationalize (support all language special characters)
+     * check CharacterIOExp.exp3();
+     * */
+
+    /************************************ 9.13 File I/O USING character streams  **********************************/
+
+    /*
+    * Although byte­oriented file handling is often the most common, it is possible to use character­based streams
+    * for this purpose. The advantage to the character streams is that they operate directly on Unicode characters.
+    * Thus, if you want to store Unicode text, the character streams are certainly your best option. In general, to
+    * perform character­based file I/O, you will use the FileReader and FileWriter classes.
+    * */
+
+    /** 9.13.1 Using fileWriter
+     * FileWriter creates a Writer that you can use to write to a file. Two commonly used constructors are shown here:
+     * FileWriter(String fileName) throws IOException
+     * FileWriter(String fileName, boolean append) throws IOException
+     * If append is true, then output is appended to the end of the file. Otherwise, the file is overwritten.
+     * Either throws an IOException on failure. FileWriter is derived from OutputStreamWriter and Writer. Thus, it
+     * has access to the methods defined by these classes.
+     *
+     * Check CharacterIOExp.exp4("/tmp/test4.txt"), notice we use try with resource to close the file automatically.
+     * If you don't close file, nothing will be written.
+     *
+     * */
+
+    /** 9.13.2 Using a fileReader
+     * The FileReader class creates a Reader that you can use to read the contents of a file. A commonly used
+     * constructor is shown here: FileReader(String fileName) throws FileNotFoundException
+     *
+     *  Check CharacterIOExp.exp5("/tmp/test4.txt"); In this example, we use a BufferedReader to wrap the FileReader.
+     *  This gives us access to the method readLine(). And remember always close the stream when you are done.
+     * */
+
+    /************************************ 9.14 NIO packages  **********************************/
+
+    /**
+     * NIO(New I/O) was added to Java by JDK 1.4. It supports a channel­based approach to I/O operations. The NIO
+     * classes are contained in java.nio and its subordinate packages, such as java.nio.channels and java.nio.charset.
+     * NIO is built on two foundational items:
+     * - buffers
+     * - channels.
+     * A buffer holds data. A channel represents an open connection to an I/O device, such as a file or a socket.
+     * In general, to use the new I/O system, you obtain a channel to an I/O device and a buffer to hold data. You
+     * then operate on the buffer, inputting or outputting data as needed.
+     *
+     * Two other entities used by NIO are:
+     * - charsets
+     * - selectors.
+     * A charset defines the way that bytes are mapped to characters. You can encode a sequence of characters into
+     * bytes using an encoder. You can decode a sequence of bytes into characters using a decoder. A selector supports
+     * key­based, non­blocking, multiplexed I/O. In other words, selectors enable you to perform I/O through multiple
+     * channels. Selectors are most applicable to socket­backed channels.
+     *
+     * Beginning with JDK 7, NIO was substantially enhanced, so much so that the term NIO.2 is often used. The
+     * improvements included three new packages:
+     * - java.nio.file
+     * - java.nio.file.attribute
+     * - java.nio.file.spi
+     * which contain several new classes, interfaces, and methods; and direct support for stream­based I/O. The
+     * additions greatly expanded the ways in which NIO can be used, especially with files.
+     *
+     * It is important to understand that NIO does not replace the I/O classes found in java.io, which are discussed
+     * in this section. Instead, the NIO classes are designed to supplement the standard I/O system, offering an
+     * alternative approach, which can be beneficial in some circumstances.
+     *
+     * We will examine NIO in a separate section.
+     * */
+
+    /************************************ 9.15 Using Java's type wrappers  **********************************/
+
+    /*
+    * As you know, Java’s println() method provides a convenient way to output various types of data to the console,
+    * including numeric values of the built­in types, such as int and double. Thus, println() automatically converts
+    * numeric values into their human­readable form. However, methods like read() do not provide a parallel
+    * functionality that reads and converts a string containing a numeric value into its internal, binary format.
+    * For example, there is no version of read() that reads a string such as "100" and then automatically converts it
+    * into its corresponding binary value that is able to be stored in an int variable. Instead, Java provides various
+    * other ways to accomplish this task. Perhaps the easiest is to use one of Java’s type wrappers.
+    *
+    * Java’s type wrappers are classes that encapsulate, or wrap, the primitive types. Type wrappers are needed
+    * because the primitive types are not objects. This limits their use to some extent. For example, a primitive
+    * type cannot be passed by reference. To address this kind of need, Java provides classes that correspond to each
+    * of the primitive types. The type wrappers are
+    * - Double: static double parseDouble(String s) throws NumberFormatException
+    * - Float: static float parseFloat(String s) throws NumberFormatException
+    * - Long: static long parseLong(String s) throws NumberFormatException
+    * - Integer: static int parseInt(String s) throws NumberFormatException
+    * - Short: static short parseShort(String s) throws NumberFormatException
+    * - Byte: static byte parseByte(String s) throws NumberFormatException
+    * - Character: None
+    * - Boolean: None
+    * These classes offer a wide array of methods that allow you to fully integrate the primitive types into Java’s
+    * object hierarchy. As a side benefit, the numeric wrappers also define methods that convert a numeric string into
+    * its corresponding binary equivalent. Several of these conversion methods are shown here. Each returns a binary
+    * value that corresponds to the string.
+    *  check CharacterIOExp.exp6();
+    * */
+
+    /** 9.15.1 Convert primitive types to String
+     * Sting Class provide a static method valueOf(). This method has the following variants, which depend on the
+     * passed parameters. This method returns the string representation of the passed argument:
+     * - valueOf(boolean b): Returns the string representation of the boolean argument.
+     * - valueOf(char c): Returns the string representation of the char argument.
+     * - valueOf(char[] data): Returns the string representation of the char array argument.
+     * - valueOf(char[] data, int offset, int count): Returns the string representation of a specific subarray of
+     *                           the char array argument.
+     * - valueOf(double d): Returns the string representation of the double argument.
+     * - valueOf(float f): Returns the string representation of the float argument.
+     * - valueOf(int i): Returns the string representation of the int argument.
+     * - valueOf(long l): Returns the string representation of the long argument.
+     * - valueOf(Object obj): Returns the string representation of the Object argument.
+     *
+     * */
+
+    /** 9.15.2 What else can the Primitive type wrapper classes do?
+     * The primitive type wrappers provide a number of methods that help integrate the primitive types into the object
+     * hierarchy. For example, various storage mechanisms provided by the Java library, including maps, lists,
+     * and sets, work only with objects. Thus, to store an int, for example, in a list, it must be wrapped in
+     * an object. Also, all type wrappers have a method called compareTo( ), which compares the value contained
+     * within the wrapper; equals( ), which tests two values for equality; and methods that return the value of
+     * the object in various forms. The topic of type wrappers is taken up again in section 11, when
+     * autoboxing is discussed.
+     * */
+
+    /** 9.15.3 Scanner class
+     * Another way to convert a numeric string into its internal, binary format is to use one of the methods defined
+     * by the Scanner class, packaged in java.util. Scanner reads formatted (that is, human­readable) input and
+     * converts it into its binary form. Scanner can be used to read input from a variety of sources,
+     * including the console and files. Therefore, you can use Scanner to read a numeric string entered at the
+     * keyboard and assign its value to a variable. Although Scanner contains far too many features to describe in
+     * detail, the following illustrates its basic usage. To use Scanner to read from the keyboard, you must first
+     * create a Scanner linked to console input. To do this, you will use the following constructor:
+     * Scanner(InputStream from)
+     * This creates a Scanner that uses the stream specified by from as a source for input. You can use this
+     * constructor to create a Scanner linked to console input, as shown here:
+     * Scanner scanner= new Scanner(System.in)
+     * This works because System.in is an object of type InputStream. After this line executes, scanner can be used to
+     * read input from the keyboard.
+     *
+     * Once you have created a Scanner, it is a simple matter to use it to read numeric input. Here is the general
+     * procedure:
+     * 1. Determine if a specific type of input is available by calling one of Scanner’s hasNextX methods, where X is
+     *    the type of data desired.
+     * 2. If input is available, read it by calling one of Scanner’s nextX methods. As the preceding indicates,
+     *    Scanner defines two sets of methods that enable you to read input. The first are the hasNext methods.
+     *    These include methods such as hasNextInt( ) and hasNextDouble( ), for example. Each of the hasNext methods
+     *    returns true if the desired data type is the next available item in the data stream, and false otherwise.
+     *    For example, calling hasNextInt( ) returns true only if the next item in the stream is the human­readable
+     *    form of an integer. If the desired data is available, you can read it by calling one of Scanner’s next
+     *    methods, such as nextInt( ) or nextDouble( ). These methods convert the human­readable form of the data
+     *    into its internal, binary representation and return the result.
+     *
+     * Check CharacterIOExp.exp7();
+     *
+     * */
+    public static void main(String[] args) throws IOException {
 
         /** 9.5.1 Reading console input*/
        // ByteIOExp.exp1();
@@ -430,5 +702,19 @@ public class S09_Using_IO {
         // We can't test it, because console class does not work in IDE.
       // ByteIOExp.exp10();
 
+        /** 9.12.2 Read character */
+       // CharacterIOExp.exp1();
+      /** 9.12.3 Read string*/
+      // CharacterIOExp.exp2();
+      /** 9.12.4 Output characters*/
+      // CharacterIOExp.exp3();
+        /** 9.13.1 output using fileWriter*/
+       // CharacterIOExp.exp4("/tmp/test4.txt");
+       // CharacterIOExp.exp5("/tmp/test4.txt");
+
+        /** 9.15 Java type's wrapper */
+       // CharacterIOExp.exp6();
+        // scanner class exmaple
+CharacterIOExp.exp7();
     }
 }
