@@ -1,8 +1,6 @@
 package org.pengfei.Lesson00_Java_Basics.S11_Autoboxing_Enum_Annotation;
 
-import org.pengfei.Lesson00_Java_Basics.S11_Autoboxing_Enum_Annotation.source.AutoboxingExp;
-import org.pengfei.Lesson00_Java_Basics.S11_Autoboxing_Enum_Annotation.source.EnumerationExp;
-import org.pengfei.Lesson00_Java_Basics.S11_Autoboxing_Enum_Annotation.source.Transport;
+import org.pengfei.Lesson00_Java_Basics.S11_Autoboxing_Enum_Annotation.source.*;
 
 public class S11_Autoboxing_Enum_Annotation {
 
@@ -237,6 +235,161 @@ public class S11_Autoboxing_Enum_Annotation {
      *
      * */
 
+    /** 11.5.2 Autoboxing and methods
+     *
+     * In addition to the simple case of assignments, autoboxing automatically occurs whenever a primitive type must
+     * be converted into an object, and auto­unboxing takes place whenever an object must be converted into a primitive
+     * type. Thus, autoboxing/unboxing might occur when an argument is passed to a method or when a value is returned
+     * by a method.
+     *
+     * Check AutoboxingExp.exp3(); to see how method return value and argument are converted via autoboxing.
+     * */
+
+    /** 11.5.3 Autoboxing in expressions
+     *
+     * In general, autoboxing and unboxing take place whenever a conversion into an object or from an object is
+     * required. This applies to expressions. Within an expression, a numeric object is automatically unboxed. The
+     * outcome of the expression is reboxed, if necessary.
+     *
+     * Check AutoboxingExp.exp4(); to see the autoboxing in expressions. As the examples in the program show, because
+     * of autoboxing/unboxing, using numeric objects in an expression is both intuitive and easy. With early versions
+     * of Java, such code would have involved casts and calls to methods such as valueOf(), intValue().
+     * */
+
+    /** 11.5.4 A word of warning
+     *
+     * Because of autoboxing and auto­unboxing, one might be tempted to use objects such as Integer or Double
+     * exclusively, abandoning primitives altogether. Note that we use primitive types for their efficiency. If we have
+     * choice, we will always use primitive types. We use the wrap Object, because many data structure does not support
+     * primitive types.
+     * */
+
+    /***************************************** 11.6 Static import ***************************************/
+
+    /*
+    * Java supports an expanded use of the import keyword. By following import with the keyword static, an import
+    * statement can be used to import the static members of a class or interface. This is called static import. When
+    * using static import, it is possible to refer to static members directly by their names, without having to
+    * qualify them with the name of their class. This simplifies and shortens the syntax required to use a static member.
+    *
+    * Check StaticImportExp.exp1(), in this method, we used two static methods(i.e. pow(), sqrt()) of Class Math. To
+    * use them, we need to call className.methodName. Static import can simplify this syntax.
+    * Check StaticImportExp.exp2(), with static import, the code is more streamline.
+    *
+    * */
+
+    /** 11.6.1 General forms of static import
+     * There are two general forms of the import static statement.
+     * 1. import static pkg.type-name.static-member-name : type-name is the name of a class or interface that contains
+     *                          the desired static member. Its full package name is specified by pkg. The name of the
+     *                          member is specified by static­member­name.
+     * 2. import static pkg.type-name.* : This form will import all static members of the class or interface. If you
+     *                         will be using many static members, then this form lets you bring them into view without
+     *                         having to specify each individually.
+     *
+     * The static import works on all Java classes and interfaces. Check StaticImportExp.exp3(), we import the
+     * out which is a static field of the class System. So we can write out.print(), instead of System.out.print()
+     * */
+
+    /** 11.6.2 Restrictions
+     * As convenient as static import can be, it is important not to abuse it. Remember, one reason that Java organizes
+     * its libraries into packages is to avoid namespace collisions. When you import static members, you are bringing
+     * those members into the current namespace. Thus, you are increasing the potential for namespace conflicts and
+     * inadvertent name hiding. If you are using a static member once or twice in the program, it’s best not to import
+     * it. Also, some static names, such as System.out, are so recognizable that you might not want to import them.
+     * Static import is designed for those situations in which you are using a static member repeatedly, such as when
+     * performing a series of mathematical computations. In essence, you should use, but not abuse, this feature.
+     * */
+
+    /** 11.6.3 Static import on custom classes
+     *
+     * We can absolutely use static import to import the static members of classes and interfaces which we create.
+     * Doing so is especially convenient when you define several static members that are used frequently throughout a
+     * large program. For example, if a class defines a number of static final constants that define various limits,
+     * then using static import to bring them into view will save you a lot of tedious typing.
+     * */
+
+
+    /***************************************** 11.7 Annotations (metadata) ***************************************/
+
+    /*
+    * Java provides a feature that enables you to embed supplemental information into a source file. This information,
+    * called an annotation, does not change the actions of a program. However, this information can be used by various
+    * tools, during both development and deployment. For example, an annotation might be processed by a source­code
+    * generator, by the compiler, or by a deployment tool. The term metadata is also used to refer to this feature,
+    * but the term annotation is the most descriptive, and more commonly used.
+    *
+    * We will not cover this topic in details in this sections. We only give you an overview so that you will be
+    * familiar the concept. Check the book "Java: The complete Reference, Eleventh Edition"
+    *
+    * An annotation is created through a mechanism based on the interface. Check MyAnnotation class as our first
+    * annotation declaration example.
+    *
+    * Note that All annotation types automatically extend the Annotation interface. Thus, Annotation is a
+    * super­interface of all annotations. It is declared within the java.lang.annotation package.
+    *
+    * Originally, annotations were used to annotate only declarations. In this usage, any type of declaration can
+    * have an annotation associated with it. For example, classes, methods, fields, parameters, and enum constants
+    * can be annotated. Even an annotation can be annotated. In such cases, the annotation precedes the rest of the
+    * declaration. Beginning with JDK 8, you can also annotate a type use, such as a cast or a method return type.
+    * */
+
+    /** 11.7.1 Use annotation to annotate class members
+     *
+     * Check AnnotationExp.exp1(); We use MyAnnotation to annotate a method exp1(). We use @MyAnnotation to start the
+     * annotation instantiation, we assign values to the annotation members(e.g description, priority). Notice that
+     * no parentheses follow description or priority in these assignments. When an annotation member is given a value,
+     * only its name is used. Thus, annotation members look like fields in this context.
+     *
+     * Annotations that don’t have parameters are called "marker annotations". These are specified without passing any
+     * arguments and without using parentheses. Their sole purpose is to mark an item with some attribute
+     * */
+
+    /** 11.7.2 Java built-in annotations
+     *
+     * Java defines many built­in annotations. Most are specialized, but nine are general purpose. Four are imported
+     * from java.lang.annotation:
+     * - @Retention : Specifies the retention policy that will associated with the annotation. The retention policy
+     *                determines how long an annotation is present during the compilation and deployment process.
+     * - @Documented : A marker annotation that tells a tool that an annotation is to be documented. It is designed
+     *                 to be used only as an annotation to an annotation declaration.
+     * - @Target : Specifies the types of items to which an annotation can be applied. It is designed to be used only
+     *             as an annotation to another annotation. It takes one argument which must be a constant or array
+     *             of constants from the ElementType enumeration, which defines various constants, such as CONSTRUCTORS,
+     *             FIELD, and METHOD. The argument determines the types of items to which the annotation can be applied.
+     *             If @Target is not specified, the annotation can be used on any members.
+     * - @Inherited : A marker annotation that causes the annotation for a superclass to be inherited by a subclass.
+     * - @Repeatable : It supports repeatable annotations, which are annotations that can be applied more than once to
+     *                 a single item. (Added in JDK8)
+     * - @Native: It is used to annotate a constant field accessed by executable (i.e., native) code. (Added in JDK8).
+     *
+     *
+     * Five are included in java.lang:
+     * - @Override : is used above methods that override methods in a superclass. If the method does not match a
+     *               method in the superclass, the compiler will give you an error. The @Override annotation is not
+     *               necessary in order to override a method in a superclass. It is a good idea to use it still, though.
+     *               In case someone changed the name of the overridden method in the superclass, your subclass method
+     *               would no longer override it. Without the @Override annotation you would not find out. With the
+     *               @Override annotation the compiler would tell you that the method in the subclass is not overriding
+     *               any method in the superclass.
+     * - @Deprecated : is used to mark a class, method or field as deprecated, meaning it should no longer be used.
+     *               If your code uses deprecated classes, methods or fields, the compiler will give you a warning.
+     * - @SafeVarargs : A marker annotation that indicates that no unsafe actions related to a varargs parameter in
+     *                  a method or constructor occur. Can be applied to method and constructors, with various
+     *                  restrictions.
+     * - @FunctionalInterface : A marker annotation that is used to annotate an interface declaration. It indicates
+     *                  that the annotated interface is a functional interface, which is an interface that contains
+     *                   one and only one abstract method. Functional interfaces are used by lambda expressions.
+     *                   Note @FunctionalInterface is purely informational. Any interface with exactly one abstract
+     *                   method is, by definition, a functional interface.
+     * - @SuppressWarnings : Makes the compiler suppress warnings for a given method. For instance, if a method calls
+     *                    a deprecated method, or makes an insecure type cast, the compiler may generate a warning.
+     *                    You can suppress these warnings by annotating the method containing the code with the
+     *                    @SuppressWarnings annotation.
+     *
+     * Check AnnotationExp.exp2(); to see an example of deprecated annotation.
+     * */
+
     public static void main(String args[]){
 
         /** 11.1.1 Enumeration fundamentals */
@@ -261,7 +414,22 @@ public class S11_Autoboxing_Enum_Annotation {
        //   AutoboxingExp.exp1();
 
         /** 11.5 autoboxing*/
-        AutoboxingExp.exp2();
+        // AutoboxingExp.exp2();
+
+        /** 11.5.2 autoboxing in methods*/
+       // AutoboxingExp.exp3();
+
+        /** 11.5.3 autoboxing in expressions*/
+        // AutoboxingExp.exp4();
+
+        /** 11.6 Static import*/
+      //  StaticImportExp.exp1();
+      //  StaticImportExp.exp2();
+      //  StaticImportExp.exp3();
+
+        /** 11.7 Annotation example */
+        AnnotationExp.exp1();
+        AnnotationExp.exp2();
     }
 
 
