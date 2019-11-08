@@ -283,6 +283,9 @@ public class S07_Interfaces_Packages {
     /** 7.8.1 Define a default method in an interface
      * We used the keyword default to define a default method. Check getMaxEpisodeNum() in class Series. As it is a
      * default method, the class which implements this interface do not need to implement it and can use it directly.
+     * Check example in code fragment 7.8. The gt object is type GameOfThrone which implements interface Series.
+     * Inside Series, we have defined a default method getNextArray. Notice Class GameOfThrone does not implement
+     * this method, and object gt can use it directly
      *
      * In this example, we see two major benefits:
      * 1. We can gracefully evolve interfaces over time without breaking existing code.
