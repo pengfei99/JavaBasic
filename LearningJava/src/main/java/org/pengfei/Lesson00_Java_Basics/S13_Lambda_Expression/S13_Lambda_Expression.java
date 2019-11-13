@@ -130,14 +130,232 @@ public class S13_Lambda_Expression {
      * Notice that the lambda expressions that implement these tests have two parameters and return a boolean
      * result. This is, of course, necessary since test() has two parameters and returns a boolean result
      *
-     * Check LambdaExpressionExp.exp3(1,4);, we use three different LE to implement the FI NumericTest
+     * Check LambdaExpressionExp.exp3(1,4);, we use three different LE to implement the FI NumericTest. Notice, the
+     * left side of LE must correspond the parameters of the FI, the right side of the LE has two possibilities:
+     * 1. Expression: the type of the expression must be the return type of the FI
+     * 2. Code block: it must return the same return type of the FI.
+     *
+     * If you don't specify the type of argument in a LE, it's type is inferred by a target type context. The target
+     * type context is constituted by variable initialization, assignment, argument passing, type casts, the ? operator,
+     * array initializers, return statements, and lambda expressions, themselves, can also serve as target type contexts.
      * */
+
+    /** 13.2.5 Declare Types in LE
+     * In cases in which you need to explicitly declare the type of a parameter, then all
+     * of the parameters in the list must have declared types. For example, this is correct:
+     * (int a, int b) -> a>b
+     *
+     * The following two is wrong:
+     * (int a, b) -> a>b
+     * (a, int b) -> a>b
+     * */
+
+    /** 13.2.5 Block in LE
+     *
+     * As we explained before, a single expression in lambda bodies are referred to as expression bodies. This single
+     * expression will be evaluated and become the lambda's value. Java also supports a block of code that contain more
+     * than one statement in LE, which is called block body.
+     *
+     * In a block body, you can declare local variables, use loops, specify if and switch, create nested blocks, and so
+     * on. The key is that you must explicitly use a return statement to return a value.
+     * Check LambdaExpressionExp.exp5();
+     * */
+
+    /** 13.2.6 Generic Functional interfaces
+     *
+     * A lambda expression, itself, cannot specify type parameters. Thus, a lambda expression cannot be generic.
+     * (Of course, because of type inference, all lambda expressions exhibit some “generic­like” qualities.) However,
+     * the functional interface associated with a lambda expression can be generic. In this case, the target type of
+     * the lambda expression is determined, in part, by the type argument or arguments specified when a functional
+     * interface reference is declared.
+     *
+     * Check LambdaExpressionExp.exp6(), We declare a generic FI GenericTest, then we implement this FI with a Integer
+     * LE and a String LE.
+     *
+     * */
+
+    /** 13.2.7 Passing a LE as an argument
+     *
+     * A lambda expression can be used in any context that provides a target type. The target contexts used by the
+     * preceding examples are assignment and initialization. Another one is when a lambda expression is passed as
+     * an argument. In fact, passing a lambda expression as an argument is a common use of lambdas. Moreover, it is a
+     * very powerful use because it gives you a way to pass executable code as an argument to a method. This greatly
+     * enhances the expressive power of Java.
+     *
+     * Check LambdaExpressionExp.exp7(); to see how we use LE as argument in a method.
+     * */
+
+    /** 13.2.8 Lambda expressions and variable capture
+     *
+     * Variables defined by the enclosing scope of a lambda expression are accessible within the lambda expression.
+     * For example, a lambda expression can use an instance variable or static variable defined by its enclosing class.
+     * A lambda expression also has access to this (both explicitly and implicitly), which refers to the invoking
+     * instance of the lambda expression’s enclosing class. Thus, a lambda expression can obtain or set the value of
+     * an instance variable or static variable and call a method defined by its enclosing class.
+     *
+     * However, when a lambda expression uses a local variable from its enclosing scope, a special situation is
+     * created that is referred to as a variable capture. In this case, a lambda expression may only use local
+     * variables that are effectively final. An effectively final variable is one whose value does not change after
+     * it is first assigned. There is no need to explicitly declare such a variable as final, although doing so would
+     * not be an error. (The this parameter of an enclosing scope is automatically effectively final, and lambda
+     * expressions do not have a this of their own.)
+     *
+     * It is important to understand that a local variable of the enclosing scope cannot be modified by the lambda
+     * expression. Doing so would remove its effectively final status, thus rendering it illegal for capture.
+     *
+     * Check LambdaExpressionExp.exp8();
+     * */
+
+    /** 13.2.9 Throw an exception from within a lambda expression
+     *
+     * A lambda expression can throw an exception. If it throws a checked exception, then that exception must be
+     * compatible with the exception(s) listed in the throws clause of the abstract method in the functional interface.
+     * Check LambdaExpressionExp.exp9(), in this LE, we use a bufferReader to read user input. The readLine method might
+     * throw an exception. As a result in the FI, the abstract method compareInput must throws the same "Exception".
+     * Without it, the program will not compile because the lambda expression will no longer be compatible with the
+     * Functional Interface.
+     * */
+
+    /** 13.2.10 Use array as parameter in a LE
+     *
+     * We can use array as parameter in a LE. However, when the type of the parameter is inferred, the parameter to the
+     * lambda expression is not specified using the normal array syntax. Rather, the parameter is specified as a simple
+     * name, such as n, not as n[]. Remember, the type of a lambda expression parameter will be inferred from the
+     * target context. Thus, if the target context requires an array, then the parameter’s type will
+     * automatically be inferred as an array.
+     *
+     * Check LambdaExpressionExp.exp10(), we did not use n[] or Double[] to define the parameter is an array in square.
+     *
+     * It's legal to declare the parameter type explicitly(e.g. in power LE). But we gain nothing by doing so.
+     *
+     * Conclusion, use type inference in LE is recommended.
+     *
+     * */
+
+
+    /************************************ 13.3 Method references ***************************************/
+
+    /*
+    * There is an important feature related to lambda expressions called the method reference. A method reference
+    * provides a way to refer to a method without executing it. It relates to lambda expressions because it, too,
+    * requires a target type context that consists of a compatible functional interface. When evaluated, a method
+    * reference also creates an instance of a functional interface. There are different types of method references.
+    * We will begin with method references to static methods.
+    * */
+
+    /** 13.3.1 Method references to static methods
+     *
+     * A method reference to a static method is created by specifying the method name preceded by its class name, using
+     * this general syntax:  ClassName::methodName
+     *
+     * Notice that the class name is separated from the method name by a double colon. The :: is a separator that was
+     * added to Java by JDK 8 expressly for this purpose. This method reference can be used anywhere in which it is
+     * compatible with its target type.
+     *
+     * Check LambdaExpressionExp.exp11(); We declare an Interface IntPredicate (FI). We then declare three static method
+     * which implements the IntPredicate's abstract method (without using keyword implements). At last, we declare a
+     * method(numTest) which use IntPredicate as parameter. In this example, when we call numTest(LambdaExpressionExp::isEven, 5)
+     * The method isEven is passed to the method numTest, and numTest will use isEven to determine 5 is even or not.
+     * This works because isEven is compatible with the IntPredicate functional interface. Thus, the expression
+     * LambdaExpressionExp::isEven evaluates to a reference to an object in which isEven() provides the implementation
+     * of test() in IntPredicate. The other two calls to numTest() work in the same way.
+     * */
+
+    /** 13.3.2 Method references to Instance methods
+     *
+     * A reference to an instance method on a specific object is created by this basic syntax: objRef::methodName
+     * As you can see, the syntax is similar to that used for a static method, except that an object reference is
+     * used instead of a class name. Thus, the method referred to by the method reference operates relative to objRef.
+     *
+     * Check LambdaExpressionExp.exp12(). Because the method is no longer static, so we need to create a class(MyIntNum) to
+     * hold the method(isFactor), and create instances myNum1 and myNum2. Pay special attention to the line:
+     * IntPredicate ip=myNum1::isFactor;
+     * Here, the method reference assigned to ip refers to an instance method isFactor() on myNum1. Thus, when test()
+     * is called through that reference, as shown here: ip.test(n)
+     *
+     * It is also possible to handle a situation in which you want to specify an instance method that can be used with
+     * any object of a given class—not just a specified object. In this case, you will create a method reference as
+     * shown here:  ClassName::instanceMethodName
+     *
+     * Here, the name of the class is used instead of a specific object, even though an instance method is specified.
+     * With this form, the first parameter of the functional interface method matches the invoking object and the
+     * second parameter matches the parameter (if any) specified by the instance method.
+     *
+     * Check LambdaExpressionExp.exp13(). You can notice the first difference is in the FI MyIntNumPredicate. The first
+     * parameter to test() is of type MyIntNum. It will be used to receive the object being operated upon. This allows
+     * the program to create a method reference to the instance method isFactor() that can be used with any MyIntNum
+     * object. Second difference is the method reference declaration, we don't use the objectRef anymore, we use the
+     * classname(i.e. MyIntNumPredicate inp=MyIntNum::isFactor;). The third difference is when we call method test().
+     * Notice, we specify the objectRef, when we call test()(i.e. inp.test(myNum1,n);)
+     *
+     * */
+
+    /** 13.3.3. Method reference to a generic method
+     *
+     * Often, because of type inference, you won’t need to explicitly specify a type argument to a generic method when
+     * obtaining its method reference, but Java does include a syntax to handle those cases in which you do.
+     *
+     * Check LambdaExpressionExp.exp14(), we declare a generic FI NumberPredicate, then we declare a generic method
+     * isEqual(we use static method for simplicity, for object method reference, just put this method in a class, then
+     * create an object of this class).
+     *
+     * Notice NumberPredicate<Integer> np=LambdaExpressionExp::isEqual; we just specify the generic type in the left
+     * part, NumberPredicate<Integer> np=LambdaExpressionExp::<Integer>isEqual; is also correct.
+     * */
+
+    /** 13.3.4 keyword Super in method reference
+     *
+     * A method reference can use the keyword super to refer to a superclass version of a method. The general forms
+     * of the syntax are :
+     * 1. super::methodName
+     * 2. typeName.super::methodName.
+     * In the second form, typeName must refer to the enclosing class or a superinterface.
+     * */
+
+    /************************************ 13.3 Constructor references ***************************************/
+
+    /*
+    * Similar to the way that you can create references to methods, you can also create references to constructors.
+    * Here is the general form of the syntax that you will use: classname::new
+    * This reference can be assigned to any functional interface reference that defines a method compatible with the
+    * constructor.
+    *
+    *
+    * */
+
     public static void main(String[] args){
         /** 13.2.3 FI example*/
        // LambdaExpressionExp.exp1();
        // LambdaExpressionExp.exp2(4.0);
 
         /** 13.2.4 Lambda expressions in Action*/
-        LambdaExpressionExp.exp3(1,4);
+        // LambdaExpressionExp.exp3(1,4);
+        // LambdaExpressionExp.exp4();
+        // LambdaExpressionExp.exp5();
+
+        /** 13.2.6 Generic Functional interfaces*/
+       //  LambdaExpressionExp.exp6();
+
+        /** 13.2.7 Passing LE as argument*/
+       // LambdaExpressionExp.exp7();
+
+        /** 13.2.8 variable capture*/
+       // LambdaExpressionExp.exp8();
+
+        /** 13.2.9 Exception in a lambda expression*/
+       // LambdaExpressionExp.exp9();
+
+        /** 13.2.10 Arrays in lambda expression*/
+       // LambdaExpressionExp.exp10();
+
+        /** 13.3.1 Static method reference*/
+        // LambdaExpressionExp.exp11();
+
+        /** 13.3.2 Object method reference*/
+        // LambdaExpressionExp.exp12();
+       // LambdaExpressionExp.exp13();
+
+        /** 13.3.3 generic method reference*/
+        LambdaExpressionExp.exp14();
     }
 }
