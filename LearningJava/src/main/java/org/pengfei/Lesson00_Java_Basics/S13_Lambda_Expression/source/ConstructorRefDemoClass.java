@@ -6,6 +6,7 @@ public class ConstructorRefDemoClass {
     ConstructorRefDemoClass(){
         this.str="";
     }
+
     ConstructorRefDemoClass(String str){
         this.str=str;
     }

@@ -312,7 +312,7 @@ public class S13_Lambda_Expression {
      * In the second form, typeName must refer to the enclosing class or a superinterface.
      * */
 
-    /************************************ 13.3 Constructor references ***************************************/
+    /************************************ 13.4 Constructor references ***************************************/
 
     /*
     * Similar to the way that you can create references to methods, you can also create references to constructors.
@@ -320,7 +320,78 @@ public class S13_Lambda_Expression {
     * This reference can be assigned to any functional interface reference that defines a method compatible with the
     * constructor.
     *
+    * Check LambdaExpressionExp.exp15(), First, we create a FI called ConstructorRefDemo, the only one abstract method
+    * func() returns a reference of type ConstructorRefDemoClass. Note, this class is the type of Object which our
+    * constructor reference wants to construct. Second, we create the class which we want to construct, in this class
+    * we implement the constructor. You can notice we have two constructors: 1. takes zero parameter, 2. takes a string
+    * parameter. Check the func() method, it takes also a String as parameter. So when we call
+    * ConstructorRefDemo crd=ConstructorRefDemoClass::new, it's the second constructor which will be referred.
+    * When we call ConstructorRefDemoClass constructorRefDemoClassObj = crd.func("Testing"); we create an instance
+    * of Class ConstructorRefDemoClass. In another word, crd(constructor reference) provide another way to call
+    * the second constructor to build object.
     *
+    * Imagine if we build another FI which has the following abstract method:
+    *  ConstructorRefDemoClass func();
+    * when we construct the constructor reference with this FI, it will call the first constructor which takes no
+    * parameter.
+    *
+    * In general, the constructor that will be used when ::new is specified is the one whose parameters match those
+    * specified by the functional interface.
+    * */
+
+    /** 13.4.1 Constructor reference with array
+     *
+     * To create a constructor reference for an array, use this construct: type[]::new
+     * Here, type specifies the class of object being created.
+     *
+     * Check LambdaExpressionExp.exp16(), check the comments carefully, it's quite different compare to simple
+     * constructor reference
+     *
+     * */
+
+    /** 13.4.2 Generics in array constructor reference
+     * The constructor reference can be generic too. Check LambdaExpressionExp.exp17(); We created a generic FI. Then
+     * we use a Thread constructor reference to create an Array of Thread. At last we create each Thread with a distinct
+     * Thread name and put them in the Array.
+     *
+     * */
+
+    /************************************ 13.5 Predefined functional interfaces ************************************/
+
+    /*
+    * In this section, we have seen how to define our own FI, and how to implement them by using LE, method reference
+    * and constructor reference.
+    *
+    * In many cases, you won’t need to define your own functional interface because the package java.util.function
+    * provides several predefined ones. Here are some examples(1st element is the interface name, 2nd is the description):
+    * - UnaryOperator<T> : Apply a unary operation to an object of type T and return the result, which is also of type
+    *                      T. Its method is called apply().
+    * - BinaryOperator<T> : Apply an operation to two objects of type T and return the result of type T. Its method is
+    *                     called apply().
+    * - Consumer<T> : Apply an operation on an object of type T. Its method is called accept().
+    * - Supplier<T> : Return an object of type T. Its method is called get().
+    * - Function<T,R> : Apply an operation to an object of type T and return the result as an object of type R. Its
+    *                  method is called apply().
+    * - Predicate<T> : Determine if an object of type T fulfills some constraint. Returns a boolean value that indicates
+    *                  the outcome. Its method is called test(T val).
+    *
+    * Check LambdaExpressionExp.exp18(), we use lambda expression and static method reference to implement the FI
+    * Predicate.
+    * */
+
+    /************************************ 13.6 LE application example  ************************************/
+
+    /*
+    * One example is the stream package java.util.stream. This package defines several stream interfaces, the most
+    * general of which is Stream. As it relates to java.util.stream, a stream is a conduit for data. Thus, a stream
+    * represents a sequence of objects. Furthermore, a stream supports many types of operations that let you create a
+    * pipeline that performs a series of actions on the data. Often, these actions are represented by lambda
+    * expressions. For example, using the stream API, you can construct sequences of actions that resemble, in concept,
+    * the type of database queries for which you might use SQL. Furthermore, in many cases, such actions can be
+    * performed in parallel, thus providing a high level of efficiency, especially when large data sets are involved.
+    * Put simply, the stream API provides a powerful means of handling data in an efficient, yet easy to use way.
+    * One last point: although the streams supported by the new stream API have some similarities with the I/O streams
+    * described in Section 9, they are not the same.
     * */
 
     public static void main(String[] args){
@@ -356,6 +427,14 @@ public class S13_Lambda_Expression {
        // LambdaExpressionExp.exp13();
 
         /** 13.3.3 generic method reference*/
-        LambdaExpressionExp.exp14();
+       // LambdaExpressionExp.exp14();
+
+        /** 13.4 Constructor reference*/
+         // LambdaExpressionExp.exp15();
+       // LambdaExpressionExp.exp16();
+       // LambdaExpressionExp.exp17();
+
+        /** 13.5 Predefined FI*/
+        LambdaExpressionExp.exp18();
     }
 }

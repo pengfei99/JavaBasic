@@ -1,9 +1,12 @@
 package org.pengfei.Lesson00_Java_Basics.S13_Lambda_Expression.source;
 
+import org.pengfei.Lesson00_Java_Basics.S12_Generics.source.GenericConstructorDemo;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Arrays;
+import java.util.function.Predicate;
 
 import static java.lang.Math.*;
 
@@ -275,8 +278,78 @@ public class LambdaExpressionExp {
     }
 
     public static void exp15(){
-        /* Create a reference to the ConstructorRefDemoClass constructor. Because 
+        /* Create a reference to the ConstructorRefDemoClass constructor. Because func() in MyFunc takes an argument,
+        * new refers to the parameterized constructor in ConstructorRefDemoClass not the default
         * */
         ConstructorRefDemo crd=ConstructorRefDemoClass::new;
+        // create an object of ConstructorRefDemoClass by using the constructor reference
+        // remember the crd(constructor reference) is an instance of FI ConstructorRefDemo
+
+        ConstructorRefDemoClass constructorRefDemoClassObj = crd.func("Testing");
+
+        // Use the created object of ConstructorRefDemoClass
+        System.out.println("str in my object is "+ constructorRefDemoClassObj.getStr());
+
+    }
+
+
+    public static void exp16(){
+        // create an constructor reference which constructs an array of the target class object
+        ArrayConstructorRef acr=ConstructorRefDemoClass[]::new;
+
+        //the following creates an array of ConstructorRefDemoClass objects, the array length is 3.
+        //Notice the argument of the FI is no longer taken as the argument of the constructor.
+        //It's taken as the length of the array.
+        ConstructorRefDemoClass objList[]= acr.func(3);
+
+        //Print array content before value initialization. returns null pointer exception.
+        //It means, acr.func only create a reference of array of ConstructorRefDemoClass. It contains
+        // zero element.
+        /*for(var obj:objList){
+            System.out.println(obj.getStr());
+        }*/
+        // As the array contains zero element. we need to create the object and gives each object an initial value.
+        for(int i=0;i<objList.length;i++){
+            objList[i]= new ConstructorRefDemoClass("Number "+i+" element");
+        }
+
+        for(var obj:objList){
+            System.out.println(obj.getStr());
+        }
+    }
+
+    public static void exp17(){
+        //Create an constructor reference to an array of Thread
+        GenericConstructorRef<Thread> genericConstructorRef=Thread[]::new;
+
+        //Create an reference of array of threads.
+        Thread[] threads=genericConstructorRef.func(5);
+
+        for(int i=0;i<threads.length;i++){
+            threads[i]=new Thread(new MyThread("Thread #"+i));
+            threads[i].start();
+           /* try {
+                threads[i].join();
+            } catch (InterruptedException e) {
+                System.out.println("Thread interrupted: "+e);
+            }*/
+        }
+
+
+    }
+
+    public static void exp18(){
+        // Use LE to implement the predefined FI Predicate
+        Predicate<Integer> isEven=(n)->(n%2)==0;
+
+        // Use static method reference to implement the FI Predicate
+        Predicate<Integer> isPositive=LambdaExpressionExp::isPositive;
+
+        int n=4,m=-5;
+
+        System.out.println(n+" is Even is: "+isEven.test(n));
+
+        System.out.println(m+" is Positive is: "+isPositive.test(m));
+
     }
 }
