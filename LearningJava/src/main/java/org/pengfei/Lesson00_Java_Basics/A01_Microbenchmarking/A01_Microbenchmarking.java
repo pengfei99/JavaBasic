@@ -103,7 +103,9 @@ public class A01_Microbenchmarking {
     * - HOURS
     * - DAYS
     * */
+
     /******************************* 1.6 Benchmark State ******************************************/
+
     /*
     * Sometimes you way want to initialize some variables that your benchmark code needs, but which you do not want to
     * be part of the code your benchmark measures. Such variables are called "state" variables. State variables are

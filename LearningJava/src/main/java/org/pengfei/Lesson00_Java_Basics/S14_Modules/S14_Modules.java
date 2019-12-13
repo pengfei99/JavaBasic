@@ -171,4 +171,69 @@ public class S14_Modules {
      * You can find all above files and dirs in the module_example.zip file in source
      * */
 
+ /** 14.1.1.2 A closer look at the module Example
+ *
+  * We have seen the two main foundational features of the module system in the previous example:
+  * - Provide packages as dependencies which can be used by other modules (exports packageName). As a module can contain
+  *     more than one package, so we need to be specific when exporting. In a exported package, all public and protected
+  *     types(including their public and protected members) are accessible. In a non-exported package, all types are
+  *     only accessible to that module. For example, in a module, a public class are accessible by its package and other
+  *     packages inside the module, but it's not accessible by other modules.
+  *
+  * - Consume packages as dependencies which are provided by other modules (requires moduleName). The requires keyword
+  *       specifies the name of a module as the dependency of the current module. This means that the required module
+  *       must be present in order for the current module to compile. In the language of modules, the current module
+  *       is said to read the module specified in the requires statement. In general, the requires statement gives
+  *       you a way to ensure that your program has access to the modules that it needs.
+  *
+  * The two features depends each other, if either is missing, the compilation will fail.
+  *
+  * Note, the requires and exports statements must occur only within a module statement(in module-info.java file).
+ * */
+
+ /** 14.1.2  The platform modules
+  *
+  * Beginning with JDK 9, the Java API packages have been incorporated into modules. The Java official API incorporated
+  * modules are referred as "platform modules", and their names all begin with the prefix java. Here are some examples:
+  * - java.base
+  * - java.desktop
+  * - java.xml
+  *
+  * By modularizing the API, it becomes possible to deploy an application with only the packages that it requires,
+  * rather than the entire Java Runtime Environment(JRE).
+  *
+  * The fundamental packages of Java such as
+  * - java.lang
+  * - java.io
+  * - java.util
+  * - etc.
+  * are included in java.base module, and java.base is automatically accessible to all modules. And, all other modules
+  * automatically require java.base(no need to do requires java.base statement in a module declaration, but it's
+  * not wrong to explicitly specify java.base, it's just not necessary). It's like java.lang is automatically available
+  * to all programs without the use of an import statement.
+  *
+  * In our previous example, java.base module contains java.lang package, and java.lang contains System class. That's
+  * why MyModAppDemo can use System.out.println() without an explicit requires and import. The same applies to Math.
+  *
+  * Beginning with JDK 9, the documentation for the Java API tells you the name of the module in which a package is
+  * contained. If the package is not in java.base module, then you need to include the desired module with requires
+  * statement in module-info.java file.
+  * */
+
+    /************************************ 14.2 Legacy code and the unnamed module ***********************************/
+
+    /************************************ 14.3 Exporting to a specific module ***********************************/
+
+    /*
+    * The basic form of the exports statement makes a package accessible to any and all other modules. It may be
+    * required to make a package accessible to only a specific set of modules, not all other modules.
+    *
+    * The general form is
+    * exports packageName to moduleName1, moduleName2, ...
+    *
+    * The exports statement, the to clause specifies a list of one or more modules that have access to the exported
+    * package.
+    * */
+
+
 }

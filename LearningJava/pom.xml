@@ -45,6 +45,16 @@
       <version>${jmh.version}</version>
     </dependency>
 
+
+    <!-- https://mvnrepository.com/artifact/org.apache.shiro/shiro-core -->
+    <dependency>
+      <groupId>org.apache.shiro.tools</groupId>
+      <artifactId>shiro-tools-hasher</artifactId>
+      <classifier>cli</classifier>
+      <version>1.4.1</version>
+    </dependency>
+
+
   </dependencies>
 
   <build>
