@@ -42,7 +42,7 @@ public class S00_StaticKeyword {
    * Check the Car in the source package,  you can notice how objects share and increments the static field.
    * */
 
-/***************************************** Key points to Remember of static fields ***************************************/
+/***************************************** 1.1 Key points to Remember of static fields ***************************************/
 
 /** When we need static fields:
  * - The value of variable is independent of objects
@@ -66,14 +66,14 @@ public class S00_StaticKeyword {
 *
 * */
 
-/************************************** Key points to Remember of static fields ************************************/
+/************************************** 2.1 Key points to Remember of static methods ************************************/
 
 /** When we use static methods:
  * - To access/manipulate static variables and other static methods that don't depend upon objects
  * - static methods are widely used in utility and helper classes (e.g. Collection.sort() is a typical example)
  * */
 
-/** Static fields key points:
+/** Static methods key points:
  * - static methods in Java are resolved at compile time. Since method overriding is part of Runtime Polymorphism,
  *   so static methods can't be OVERRIDDEN.
  * - abstract methods can't be static
@@ -98,14 +98,14 @@ public class S00_StaticKeyword {
 * Check the Car class, we use a static block to initialize the engine List
 * */
 
-/************************************** Key points to Remember of static blocks ************************************/
+/************************************** 3.1 Key points to Remember of static blocks ************************************/
 
 /** When we use static blocks:
  * - If initialization of static variables requires some additional logic except the assignment
  * - If the initialization of static variables is error-prone and requires exception handling
  * */
 
-/** Static fields key points:
+/** Static blocks key points:
  * - A class can have multiple static blocks
  * - static fields and static blocks are resolved and executed in the same order as they are present in the class
  * */

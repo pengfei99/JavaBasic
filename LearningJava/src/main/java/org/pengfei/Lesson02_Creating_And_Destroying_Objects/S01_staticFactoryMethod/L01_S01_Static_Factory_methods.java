@@ -1,4 +1,4 @@
-package org.pengfei.Lesson01_Creating_And_Destroying_Objects.S01_staticFactoryMethod;
+package org.pengfei.Lesson02_Creating_And_Destroying_Objects.S01_staticFactoryMethod;
 
 /**
  * Hello world!
