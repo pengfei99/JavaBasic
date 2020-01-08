@@ -1,0 +1,48 @@
+1. Why does Java strictly specify the range and behavior of its primitive types?
+Java strictly specifies the range and behavior of its primitive types to ensure portability across platforms.
+
+2. What is Java’s character type, and how does it differ from the character type used by some other programming languages?
+Java’s character type is char. Java characters are Unicode rather than ASCII, which is used by some other computer languages.
+
+3. A boolean value can have any value you like because any non­zero value is true. True or False?
+False. A boolean value must be either true or false.
+
+4. Given three words "one two three", use a single string in a println( ) statement that print them in three lines.
+
+5. What is wrong with this fragment?
+for (int i=0; i<10;i++){
+            int sum;
+            sum=sum+i;
+     }
+System.out.println("Sum is: "+sum);
+
+There are three fundamental flaws in the fragment:
+First, sum is created each time the block defined by the for loop is entered and destroyed on exit. Thus, it will
+not hold its value between iterations. Attempting to use sum to hold a running sum of the iterations is pointless.
+
+Second, sum will not be known outside of the block in which it is declared. Thus, the reference to it in the println()
+statement is invalid.
+
+Third, sum is never initiated with an value, so sum=sum+i is invalid too.
+
+6. Explain the difference between the prefix and postfix forms of the increment operator.
+When the increment operator precedes its operand, Java will perform the increment prior to obtaining the operand’s
+value for use by the rest of the expression. If the operator follows its operand, then Java will obtain the operand’s
+value before incrementing. For example  int x=10; int y1=x++; int y2=++x;, we will have x=12,y1=10,y2=12
+
+7. Show how a short­circuit AND can be used to prevent a divide­by­zero error.
+
+
+8. In an expression(e.g. a+b, a-b), what type are byte and short promoted/converted to?
+In an expression, byte and short are promoted to int
+
+9. In general, when is a cast needed?
+A cast is needed when converting between incompatible types or when a narrowing conversion is occurring
+
+10. Write a program that finds all of the prime numbers between 2 and 100.
+
+11. Does the use of redundant parentheses affect program performance?
+No.
+
+12. Does a block define a scope?
+Yes

@@ -280,7 +280,7 @@ public class S01_DataTypes_Operators {
  * of the left side. But not all types are compatible, and thus, not all type conversions are implicitly allowed. For
  * example, boolean and int are not compatible.
  *
- * When one type of data is assigned to another type of variable, an automatic type conve1.3.6 Order of operationrsion will take place if
+ * When one type of data is assigned to another type of variable, an automatic type conversion will take place if
  * - The two types are compatible
  * - The destination type is larger than the source type.
  *

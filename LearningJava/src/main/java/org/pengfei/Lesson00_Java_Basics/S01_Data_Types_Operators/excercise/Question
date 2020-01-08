@@ -1,0 +1,29 @@
+1. Why does Java strictly specify the range and behavior of its primitive types?
+
+2. What is Java’s character type, and how does it differ from the character type used by some other programming
+   languages?
+
+3. A boolean value can have any value you like because any non­zero value is true. True or False?
+
+4. Given three words "one two three", use a single string in a println( ) statement that print them in three lines.
+
+5. What is wrong with this fragment?
+for (int i=0; i<10;i++){
+            int sum;
+            sum=sum+i;
+     }
+System.out.println("Sum is: "+sum);
+
+6. Explain the difference between the prefix and postfix forms of the increment operator.
+
+7. Show how a short­circuit AND can be used to prevent a divide­by­zero error.
+
+8. In an expression(e.g. a+b, a-b), what type are byte and short promoted/converted to?
+
+9. In general, when is a cast needed?
+
+10. Write a program that finds all of the prime numbers between 2 and 100.
+
+11. Does the use of redundant parentheses affect program performance?
+
+12. Does a block define a scope?
