@@ -1,6 +1,7 @@
 package org.pengfei.Lesson01_Java_Standard_API.S01_String_Handling;
 
 import org.pengfei.Lesson01_Java_Standard_API.S01_String_Handling.source.StringConstructor;
+import org.pengfei.Lesson01_Java_Standard_API.S01_String_Handling.source.StringOperation;
 
 public class S01_String_Handling {
 
@@ -67,11 +68,71 @@ public class S01_String_Handling {
 
     /**************************************** 03 The Basic String operations *****************************************/
 
+    /** 3.1 String length
+     * The length of a string is the number of characters that it contains. To obtain this value, call the length()
+     * method: int length(). Note space ' ' is also counted as a character.
+     * Check StringOperation.exp1();
+     *
+     * */
+
+    /** 3.2 String literals
+     * For each	string literal in your program,	Java automatically constructs a	String object. Thus, you can use a
+     * string literal to initialize	a String object. You can also use string literals to replace any String object.
+     * For example, System.out.println("abc".length()); will print 3.
+     *
+     * */
+
+    /** 3.3 String concatenation
+     * In general, Java does not allow operators to be applied to String objects. But "+" is the exception, we use it
+     * to concatenate String objects. Check StringOperation.exp2();
+     *
+     * We can also concatenate strings with other types of data. check  StringOperation.exp3(); for examples.
+     *
+     * */
+
+    /** 3.4 String conversion and toString()
+     * One way to convert data into its string representation is by calling one the overloaded versions of the string
+     * conversion method valueOf() defined by String class. valueOf() is overloaded for all the primitive types and for
+     * type Object.
+     *
+     * For primitive types, valueOf() returns a string that contains the human-readable form of the value.
+     * For objects, valueOf() calls the toString() method on the object.
+     *
+     * Every class implements toString(), because it is defined by Object. However, the default implementation is
+     * seldom sufficient. For most important classes that you create, you will want to override toString().
+     * Check StringOperation.exp4(); you can notice an object's toString() method is automatically invoked when the
+     * object is used in a concatenation or in a println() call.
+     * */
+
+    /** 3.5 Character Extraction
+     *
+     * The String class	provides a number of ways in which characters can be extracted from a String object.
+     *
+     * char charAt(int offset): It extract a single character from a String. Here the offset is the index of the
+     *          character that you want to obtain, and it starts with 0.
+     * void getChars(int sourceStart, int sourceEnd, char target[], int targetStart): It extract multiple chars. Here
+     *       sourceStart/End specifies the char location in source string. target will hold the returned char array.
+     *       targetStart specifies the start position of the copy.
+     * byte[] getBytes(): It's an alternative to getChars(), which stores the characters in an array of bytes(8 bit
+     *        ASCII code). It uses the default character-to-byte conversions provided by the java api. It's often used
+     *        to export a string value into an environment that does not support 16-bit Unicode characters.
+     * toCharArray()
+     *
+     *
+     * */
+
  public static void main(String args[]){
 
      /** 02 The String constructors*/
      // StringConstructor.exp01();
-     //StringConstructor.exp02();
-     StringConstructor.exp03();
+     // StringConstructor.exp02();
+     // StringConstructor.exp03();
+
+     /** 03 String operation*/
+     // StringOperation.exp1();
+    // StringOperation.exp2();
+    // StringOperation.exp3();
+    // StringOperation.exp4();
+     StringOperation.exp5();
  }
 }

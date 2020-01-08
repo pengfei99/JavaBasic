@@ -105,6 +105,11 @@ public class S00_Fundamentals {
     * For example, we have a printer interface which has a print method. When I want to print something, I only need to
     * call the print method of the printer interface. The compiler will select the specification of each printer
     * instance (e.g. laser printer, ink-jet printer, etc.).
+    *
+    * In java, polymorphism is implemented with "method overloading" and "method overriding". When various methods
+    * with the same name are present in a single class, method overloading takes place. The various methods, though
+    * identical in name, are differentiated by the number, order, and types of their parameters. When a child class
+    * overrides the method of its parent, method overriding occurs.
     * */
 
     /* Inheritance
