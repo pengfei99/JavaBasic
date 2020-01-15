@@ -1,5 +1,7 @@
 package org.pengfei.Lesson01_Java_Standard_API.S02_Exploring_Java_lang.source;
 
+import org.pengfei.Lesson00_Java_Basics.S07_Interfaces_Packages.source.B;
+
 public class PrimitiveTypeWrapper {
 
     public static void exp1(){
@@ -63,4 +65,36 @@ public class PrimitiveTypeWrapper {
             if(Character.isLowerCase(a[i])) System.out.println(a[i]+ " is lowercase");
         }
     }
+
+    public static void exp5(){
+        char ch1 = Character.forDigit(9, 10);
+        char ch2 = Character.forDigit(10, 16);
+
+
+        System.out.println("Character.forDigit(9, 10) has value: "+ch1);
+        System.out.println("Character.forDigit(10, 16) has value: "+ch2);
+
+    }
+
+    public static void exp6(){
+        Boolean b1=Boolean.valueOf(false);
+        Boolean b2=Boolean.valueOf("True");
+
+        //static field of class Boolean
+        Class<Boolean> b3 = Boolean.TYPE;
+        Boolean b4 = Boolean.TRUE;
+        Boolean b5=Boolean.FALSE;
+
+        System.out.println("b1 has value: "+b1);
+        System.out.println("b2 has value: "+b2);
+        System.out.println("b3 has value: "+b3);
+        System.out.println("b4 has value: "+b4);
+        System.out.println("b5 has value: "+b5);
+
+        System.out.println("b2.compareTo(b1): "+b2.compareTo(b1));
+        System.out.println("b1.compareTo(b2): "+b1.compareTo(b2));
+        System.out.println("b2.compareTo(b4): "+b2.compareTo(b4));
+    }
+
+
 }
