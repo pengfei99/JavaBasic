@@ -1,6 +1,7 @@
 package org.pengfei.Lesson01_Java_Standard_API.S02_Exploring_Java_lang;
 
 import org.pengfei.Lesson01_Java_Standard_API.S02_Exploring_Java_lang.source.*;
+import org.pengfei.Lesson01_Java_Standard_API.S02_Exploring_Java_lang.source.thread.ThreadGroupExp;
 
 public class S02_Exploring_Java_lang {
     /********************************************* 01 Introduction **************************************************/
@@ -413,6 +414,267 @@ public class S02_Exploring_Java_lang {
     * these	methods	useful when	using reflection.
     * */
 
+    /** 9.1 Class loader
+     *
+     * The abstract	class ClassLoader defines how classes are loaded. Your application can create subclasses that
+     * extend ClassLoader, implementing its methods. Doing so allows you to load classes in	some way other than the
+     * way they	are normally loaded by the Java	run-time system. However, this is not something that you will normally
+     * need to do.
+     * */
+
+    /***************************************** 10 Math *******************************************/
+
+    /*
+    * The Math class contains all the floating-point functions that are used for geometry and trigonometry, as well
+    * as several general-purpose methods. Math defines two double constants: E (~2.72) and PI(~3.14).
+    *
+    * */
+
+    /** 10.1 Trigonometric Functions
+     * The following methods are the basic :
+     * - static double sin(double arg): Returns the sine of the angle specified by arg in radians.
+     * - static double cos(double arg): Returns the cosine of the angle specified by arg in radians.
+     * - static double tan(double arg): Returns the tangent of the angle specified by arg in radians.
+     * - static double asin(double arg): Returns the angle whose sine is specified by arg.
+     * ...
+     * P804
+     * */
+
+    /** 10.2 Exponential Functions
+     * - static double cbrt(double arg): Returns the cube root of arg.
+     * - static double exp(double arg): Returns e to the arg.
+     * - static double expm1(double arg): Returns e to the arg-1.
+     * - static double log(double arg): Returns the natural logarithm of arg.
+     * ...
+     * */
+
+    /** 10.3 Rounding functions
+     * - static int abs(int arg): Returns the absolute value of arg.
+     * - static double ceil(double arg): Returns the smallest whole number greater than or equal to arg.
+     * - static double floor(double arg): Returns the largest whole number less than or equal to arg.
+     * ...
+     * */
+
+    /** 10.4 Miscellaneous Math Methods
+     *
+     * Notice that several of the methods use the suffix Exact. They throw an ArithmeticException if overflow occurs.
+     * Thus, these methods give you an easy way to watch various operations for overflow.
+     * - static int addExact(int arg1, int arg2): Returns arg1+arg2. Throws an ArithmeticException if overflow occurs.
+     * - static int int decrementExact(int arg): Returns arg-1. Throws an ArithmeticException if overflow occurs.
+     * - static double toDegrees(double angle): Converts radians to degrees. The angle passed to angle must be
+     *                         specified in radians. The result in degrees is returned.
+     * - static double toRadians(double angle): Converts degrees to radians. The angle passed to angle must be
+     *                         specified in degrees. The result in radians is returned.
+     * */
+
+    /** 10.5 StrictMath
+     *
+     * The StrictMath class defines	a complete set of mathematical methods that parallel those in Math. The difference
+     * is that the StrictMath version is guaranteed to generate precisely identical results	across all Java
+     * implementations,	whereas the	methods	in Math are given more latitude in order to improve performance.
+     * */
+
+    /*************************************** 11 Thread, ThreadGroup, and Runnable ************************************/
+
+    /*
+    * The Runnable interface and the Thread and ThreadGroup classes support multithreaded programming.*/
+
+    /** 11.1 The Runnable interface
+     *
+     * The Runnable interface must be implemented by any class that will initiate a separate thread of execution.
+     * Runnable only defines one abstract method, called run(), which is the entry point to the thread.*/
+
+    /** 11.2 Thread
+     *
+     * Thread creates a new thread of execution. It implements Runnable and defines a number of constructors:
+     * - Thread()
+     * - Thread(Runnable threadOb)
+     * - Thread(Runnable threadOb, String threadName)
+     * - Thread(String threadName)
+     * - Thread(ThreadGroup groupOb, Runnable threadOb)
+     * - Thread(ThreadGroup groupOb, Runnable threadOb, String threadName)
+     * - Thread(ThreadGroup groupOb, String threadName)
+     *
+     * here, threadOb is an instance of a class that implements the Runnable interface and defines where execution
+     * will begin. groupOb specifies the thread group to which the new thread will belong. When no thread group
+     * is specified, by default the new thread belongs to the same group as the parent thread. If the name fo thread
+     * is not specified, JVM will create one.
+     *
+     * Thread defines several constants and methods:
+     * - MAX_PRIORITY
+     * - MIN_PRIORITY
+     * - NORM_PRIORITY
+     *
+     * The full method list in table 18-18(p813)
+     * */
+
+    /** 11.3 ThreadGroup
+     * ThreadGroup creates a group of threads. It defines these two constructors:
+     * - ThreadGroup(String groupName)
+     * - ThreadGroup(ThreadGroup parentOb, String groupName)
+     *
+     * Here, groupName specifies the name of the thread group. parentOb specifies the parent of the thread group.
+     *
+     * Thread groups offer a convenient way to manage groups of threads as a unit. This is particularly valuable in
+     * situations in which you want to suspend and resume a number of related threads. For example, imagine a program
+     * has three type of threads such as printing, display on screen and save to disk. If printing is aborted, you will
+     * want an easy way to stop all threads related to printing.
+     *
+     * Some useful method:
+     * - void list(): displays information about the group
+     * - int activeCount(): returns the approximate number of active threads in the invoking group including threads
+     *                    in subgroups.
+     * - int enumerate(Thread tArray[], boolean all): Puts all active threads of the invoking thread group into the
+     *           tArray thread array. all is optional, if true, then threads in all subgroups are also collected.
+     *
+     * - int enumerate(ThreadGroup tgArray[], boolean all): Puts the active subgroups of the invoking thread group
+     *            into the tgArray ThreadGroup array. If all is true, all active subgroups of the subgroups(and so on)
+     *             are also puts into tgArray.
+     *
+     * Check ThreadGroupExp.exp1(); we suspend all threads in group A for four seconds. After resuming, T1 and T2
+     * continue to run. The output confirms T3,T4 finish first, followed by T1 and T2. The method we use is list(),
+     * activeCount(), enumerate().
+     * */
+
+    /** 11.4 ThreadLocal and InheritableThreadLocal
+     * - ThreadLocal: Used to create thread local variables. Each thread wil have its own copy of a thread local variable
+     *           ThreadLocal is another way to achieve thread-safety apart from writing immutable classes. Thread local
+     *           can be considered as a scope of access like session scope or request scope. In thread local, you can
+     *           set any object and this object will be local and global to the specific thread which is accessing
+     *           this object. Check ThreadLocalExample.
+     * - InheritableThreadLocal: It creates thread local variables that may be inherited.
+     * */
+
+    /*************************************** 12 Package   ************************************/
+
+    /*
+    * Package encapsulates information about a package.
+    * - static Package[] getPackage(): Returns all packages about which the invoking program is currently aware
+    * - String getName(): Returns the name of the invoking package
+    * Check PackageExp.exp1();
+    *  */
+
+    /*************************************** 13 Module   ************************************/
+    /*
+    * Added by JDK9, the module class encapsulates a module. Using a module instance you can add various rights to
+    * a module, determine access rights, or obtain information about a Module
+    *
+    * For example:
+    * - addExports(): exports a package to a specified module
+    * - addOpens(): opens a package to a specific module.
+    * - addReads(): reads another module
+    * - addUses(): add a service requirement.
+    * - canRead(): check if a module can access another module.
+    * - canUse(): Check if a module uses another.
+    *
+    * More useful methods:
+    * - getName(): returns the name of invoking module. Returns null if called from within a unnamed module
+    * - getPackage(): returns a set of packages of the invoking module.
+    * - getDescriptor(): returns a ModuleDescriptor object which describes the information of a module
+    * - isExported():  check if a package is exported
+    * - isOpen(): check if a package is opened.
+    *
+    *  check ModuleExp.exp1();
+    *
+    * */
+
+    /** 13.1 ModuleLayer and ModuleLayer.Controller
+     * todo
+     * */
+
+    /*************************************** 14 Throwable   ************************************/
+
+    /*
+    * The Throwable class supports Java's exception-handling system and is the class from which all exception classes
+    * are derived.
+    * */
+
+    /*************************************** 15 Security Manager   ************************************/
+
+    /* SecurityManager supports Java's security system. A reference to the current SecurityManager can be obtained
+    * by calling getSecurityManager() defined by the System class.*/
+
+    /** 15.1 RuntimePermission
+     * todo
+     * */
+
+    /*************************************** 16 StackTraceElement  ************************************/
+
+    /*
+    * The StackTraceElement class describes a single stack frame, which is an individual element of a stack trace
+    * when an exception occurs. Each stack frame represents an execution point, which includes things such as the
+    * name of the class, method, file and source code line numbers. Beginning with JDK 9, module information is also
+    * included.
+    *
+    * Normally we get an array of StackTraceElement by calling the getStackTrace() method of the Throwable and Thread
+    * classes.
+    * */
+
+    /** 16.1 StackWalker and StackWalker.StackFrame
+     *
+     * In Java 8, the Throwable::getStackTrace and Thread::getStackTrace returns an array of StackTraceElements.
+     * Without a lot of manual code, there was no way to discard the unwanted frames and keep only the ones we are
+     * interested in.
+     *
+     * In addition to this, the Thread::getStackTrace may return a partial stack trace. This is because the
+     * specification allows the VM implementation to omit some stack frames for the sake of performance.
+     *
+     * In Java 9, using the walk() method of the StackWalker, we can traverse a few frames that we are interested in
+     * or the complete stack trace.
+     *
+     * Of course, the new functionality is thread-safe; this allows multiple threads to share a single StackWalker
+     * instance for accessing their respective stacks.
+     * */
+
+    /*************************************** 17 CharSequence Interface  ************************************/
+
+    /*
+    * The CharSequence interface defines methods that grant	read-only access to	a sequence of characters.
+    * This interface is	implemented	by String, StringBuffer, and StringBuilder,	among others.
+    *
+    * It contains the following methods:
+    * - char charAt(int index):
+    * - static int compare(CharSequence a, CharSequence b):
+    * - default IntStream chars(): Returns a stream (IntStream) to the characters in the invoking object.
+    * - default IntStream codePoints(): Returns a stream (IntStream) to the code points in the invoking object.
+    * - int length():
+    * - CharSequence subSequence(int sIndex, int eIndex):
+    * - String toString():
+    * */
+
+    /*************************************** 18 Comparable Interface  ************************************/
+
+    /*
+    * Objects of classes that implement Comparable interface can be ordered. They are implements the method
+    * int compareTo(T obj). It returns 0 if two object equal, negative if the invoking object has a lower value.
+    *
+    * All the primitive wrapper object such as Byte, Character, Double, Float, Long, Short, Integer, and String, Enum
+    * in java.lang package already implements the Comparable interface.
+    * */
+
+    /*************************************** 19 Appendable Interface  ************************************/
+
+    /*
+    * An object of a class that implements Appendable can have a character or character sequences appended to it.
+    * Appendable defines these three methods:
+    * - Appendable append(char ch) throws IOException:
+    * - Appendable append(CharSequence chars) throws IOException:
+    * - Appendable append(CharSequence chars, int sIndex, int eIndex) throws IOException: from sIndex to eIndex-1
+    * */
+
+    /*************************************** 20 Iterable Interface  ************************************/
+
+    /*
+    * Iterable must be implemented by any class whose objects will be used by the for-each version of the for loop.
+    * Iterable is a generic interface which has only one abstract method
+    * - iterator<T> iterator(): It returns a iterator to the elements contained in the invoking object.
+    * and two default methods:
+    * - default void forEach(Consumer<? super T> action): It will iterate the elements and apply code specified by
+    *         action.
+    * - default Spliterator<T> spliterator(): It returns a Spliterator ot the sequence being iterated.*/
+
+    
+
     public static void main(String[] args){
  /** Primitive type wrapper */
 
@@ -452,6 +714,18 @@ public class S02_Exploring_Java_lang {
    // ObjectExp.exp1();
 
         // class
-        ClassExp.exp1();
+       // ClassExp.exp1();
+
+        //Math
+       // MathExp.exp1();
+
+        // Thread
+        //ThreadGroupExp.exp1();
+
+        //Package
+       //  PackageExp.exp1();
+
+        // module
+        ModuleExp.exp1();
 }
  }
