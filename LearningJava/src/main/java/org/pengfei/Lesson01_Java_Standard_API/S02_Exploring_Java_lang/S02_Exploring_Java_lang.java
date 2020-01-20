@@ -316,7 +316,7 @@ public class S02_Exploring_Java_lang {
 
 /** 7.1 Using currentTimeMillis() method to time program execution time
  * To time a section of your program, store the value return by currentTimeMillis() before beginning the program section
- * Just after the end of the program, call it again to get ending time. You can get the program elapsed time by using
+ * Just after the end of the program, call it again to Appendableget ending time. You can get the program elapsed time by using
  * endTime-startTime. Check SystemExp.exp1(); We can also use method nanoTime() to do the same. But
  * not all OS support nanoTime()
  * */
@@ -673,8 +673,120 @@ public class S02_Exploring_Java_lang {
     *         action.
     * - default Spliterator<T> spliterator(): It returns a Spliterator ot the sequence being iterated.*/
 
-    
+    /*************************************** 21 Readable Interface  ************************************/
 
+    /* The Readable interface indicates that an object can be used as a source for characters. It defines one
+    * method:
+    * - int read(CharBuffer buf) throws IOException: It reads characters into buf and returns the number of characters
+    *        read or -1 if an EOF is encountered.*/
+
+    /*************************************** 22 AutoCloseable Interface  ************************************/
+
+   /* AutoCloseable interface provides support for the try-with-resource statement, which implements what is called
+   * "automatic resource management(ARM)". The try-with-resources statement automates the process of releasing a
+   * resource(such as a stream) when it is no longer needed. See L00-section 9-9.7 (ByteIOExp.exp5()). Only objects of
+   * classes that implement AutoCloseable can be used with try-with-resources. The AutoCloseable Interface defines
+   * only one method:
+   * - void close() throws Exception: It closes the invoking object, releasing any resources that it may hold. It
+   *            is automatically called at the end of a try-with-resources statement, thus eliminating the need to
+   *            explicitly invoke close().
+   * All I/O classes that open a stream implement this interface.
+   * */
+
+    /******************************* 23 Thread.UncaughtExceptionHandler Interface  ******************************/
+
+    /*
+    * The static Thread.UncaughtExceptionHandler interface is implemented by classes that want to handle uncaught
+    * exceptions. It is implemented by ThreadGroup. The interface defines one method:
+    * - void uncaughtException(Thread thrd, Throwable exc): Thrd is the target thread that generated the exception
+    *            and exc is a reference to the exception.*/
+
+    /*************************************** 24 Java.lang subpackages  ************************************/
+    /*
+    * Java defines several subpackages of java.lang. Except as otherwise noted, these packages are in the java.base	module.
+    * - java.lang.annotation
+    * - java.lang.instrument
+    * - java.lang.invoke
+    * - java.lang.management
+    * - java.lang.module
+    * - java.lang.ref
+    * - java.lang.reflect
+    * Each is briefly described	here.*/
+
+    /** 24.1 java.lang.annotation
+     * It supports the java's annotation system. It has:
+     * - Annotation (interface)
+     * - ElementType (enum)
+     * - RetentionPolicy (enum)
+     * - Several predefined annotation (check Lesson00_S11)
+     * */
+
+    /** 24.2 java.lang.instrument
+     * java.lang.instrument	defines	features that can be used to add instrumentation to various	aspects	of program
+     * execution. It defines the Instrumentation and ClassFileTransformer interfaces, and the ClassDefinition class.
+     * This	package is in the java.instrument module.
+     *
+     * For example using Java instrumentation, we can access a class that is loaded by the Java classloader from the
+     * JVM and modify its bytecode by inserting our custom code, all these done at runtime. Don’t worry about security,
+     * these are governed by the same security context applicable for Java classes and respective classLoaders.
+     * (https://javapapers.com/core-java/java-instrumentation/)
+     * */
+
+    /** 24.3 java.lang.invoke
+     * java.lang.invoke	supports dynamic language features.	It includes	classes	such as CallSite, MethodHandle,
+     * andMethodType. (https://www.javaworld.com/article/2860079/invokedynamic-101.html)
+     * */
+
+    /** 24.4 java.lang.management
+     *
+     * The Monitoring and Management APIs are packaged under java.lang.management. They provide the programming
+     * interface for managing and monitoring JVM and underlying operating system dynamically at runtime. The APIs
+     * provide the functionality to monitor and manage JVM, both at the remote and local levels, as well as the
+     * application that can monitor them. One can access dynamic information about:
+     * - Loaded classes
+     * - The running threads, such as their state, contention statistics, and stack trace
+     * - The status of the memory consumed by the running application
+     * - The statistical information of garbage collection
+     * - Deadlock detection
+     * - Underlying operating system
+     *
+     * The logging information can be retrieved through the PlatformLoggingMXBean interface declared in the
+     * java.lang.management package, under the java.management module, as per Java 9 recommendation. Prior to version 9,
+     * and until Java 8, logging information was retrieved by the LoggingMXBean interface declared in the
+     * java.util.logging package. The methods declared in LoggingMXBean are deprecated now.
+     *
+     * The API also provides necessary interface to access JConsole as a plug-in from an existing application.
+     * (https://www.developer.com/java/data/exploring-the-java-monitoring-apis-and-java-management-apis.html)
+     * */
+
+    /** 24.5 java.lang.module
+     * The java.lang.module	package	supports modules. It includes classes such as:
+     * - ModuleDescriptor
+     * - ModuleReference
+     * - interfaces	ModuleFinder, ModuleReader.
+     * */
+
+    /** 24.6 java.lang.ref
+     * You learned earlier that	the	garbage	collection facilities in Java automatically
+     * determine when no references	exist to an	object.	The	object is then assumed to
+     * be no longer	needed and its memory is reclaimed.	The	classes	in the java.lang.ref package provide more flexible
+     * control over	the	garbage	collection process.
+     * */
+
+    /** 24.7 java.lang.reflect
+     * Reflection is an API which is used to examine or modify the behavior of methods, classes, interfaces at runtime.
+     *
+     * - The required classes for reflection are provided under java.lang.reflect package.
+     * - Reflection gives us information about the class to which an object belongs and also the methods of that class
+     *   which can be executed by using the object.
+     * - Through reflection we can invoke methods at runtime irrespective of the access specifier used with them.
+     *
+     * (https://www.geeksforgeeks.org/reflection-in-java/)
+     * */
+
+    /**************************************************************************************************************
+     * ************************************** Code examples *****************************************************
+     * **********************************************************************************************************/
     public static void main(String[] args){
  /** Primitive type wrapper */
 
