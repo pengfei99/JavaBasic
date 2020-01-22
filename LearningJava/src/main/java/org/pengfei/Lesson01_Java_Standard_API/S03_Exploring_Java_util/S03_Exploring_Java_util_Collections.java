@@ -1,6 +1,7 @@
 package org.pengfei.Lesson01_Java_Standard_API.S03_Exploring_Java_util;
 
 import org.pengfei.Lesson01_Java_Standard_API.S03_Exploring_Java_util.source.CollectionClassesExp;
+import org.pengfei.Lesson01_Java_Standard_API.S03_Exploring_Java_util.source.MapClassesExp;
 
 public class S03_Exploring_Java_util_Collections {
 
@@ -492,8 +493,306 @@ public class S03_Exploring_Java_util_Collections {
  *
  * */
 
+    /************************************ 04 Accessing a Collection via an Iterator ***********************************/
+
+    /*
+    * The easiest way to cycle through the element in a collection is to employ an iterator, which implements
+    * either the Iterator or ListIterator interface. Iterator enables you to cycle through a collection, obtaining
+    * or removing elements. ListIterator extends Iterator to allow bidirectional traversal of a list, and the
+    * modification of elements
+    *
+    * The Iterator interface defines following methods:
+    * - default void forEachRemaining(Consumer<? super E> action): The instruction specified by action is executed
+    *              on each unprocessed element in the collection.
+    * - boolean hasNext(): Returns true if there are more elements.
+    * - E next(): returns next element, throws NoSuchElementException if there is not a next element.
+    * - default void remove(): Removes the current element. Throws IllegalStateException if an attempt is
+    *          made to call remove() that is not preceded by a call to next(). The default version throws an
+    *          UnsupportedOperationException.
+    *
+    * The ListIterator interface defines the following methods:
+    * - void add(E obj): Inserts obj into the list in front of the element that will be returned by the next().
+    * - default void forEachRemaining(Consumer<? super E> action): The instruction specified by action is executed
+    *              on each unprocessed element in the collection.
+    * - boolean hasNext(): Returns true if there is a next element.
+    * - boolean hasPrevious(): Returns true if there is a previous elements.
+    * - E next(): returns next element, throws NoSuchElementException if there is not a next element.
+    * - E previous(): returns the previous element, throws NoSuchElementException if there is not a previous element.
+    * - int nextIndex(): Returns the index of the next element, if there is no next element, return the size of the list.
+    * - int previousIndex(): Returns the index of the previous element, if there is no previous element, return -1.
+    * - void remove(): Removes the current element. Throws IllegalStateException if an attempt is
+    *          made to call remove() that is not preceded by a call to next() or previous().
+    * - void set(E obj): Assigns obj to the current element position. This is the element position last returned by
+    *           a call to either next() or previous().
+    * */
+
+     /** 4.1 Using an Iterator
+      * To use iterator, you must obtain one from the collection first. All predefined Collection class provide
+      * an implementation of the iterator() method that returns an iterator to the start of the collection. By
+      * using this iterator object, you can access each element in the collection, one element at a time.
+      *
+      * For collections that implements List interface, you can also obtain an ListIterator object by calling
+      * listIterator() method.
+      *
+      * Check CollectionClassesExp.exp10(); for code example
+      * */
+
+     /** 4.2 For-Each (Alternative to Iterator)
+      * If you won't be modifying the content of a collection or obtaining elements in reverse order, then the
+      * for-each version of the for loop is often a more convenient way to cycling through a collection.
+      * And it works for all classes that implements the Iterable interface. As all classes in collection implements
+      * this interface, so it works for all predefined collection class.
+      *
+      *
+      * */
+
+     /** 4.3 Spliterators
+      *
+      * JDK 8 added spliterator that implements the Spliterator interface. It cycles a collection like a iterator, but the
+      * techniques required to use it differ. The most important aspect of it is its ability to provide support
+      * for parallel iteration of portions of the sequence. Thus, Spliterator supports parallel programming. See Lessons
+      * on concurrency and parallel programing.
+      *
+      * The Spliterator interface defines the following method:
+      * - int characteristics(): Returns the characteristics of the invoking spliterator, encoded into an integer.
+      * - long estimateSize(): Estimates the number of elements left to iterate and returns the result. Returns
+      *              Long.MAX_VALUE if the count cannot be obtained for any reason.
+      * - default void forEachRemaining(Consumer< ? super T> action): Applies action to each unprocessed element
+      *                       in the data source.
+      * - default Comparator< ? super T> getComparator(): Returns the comparator used by the invoking spliterator or
+      *                    null if natural ordering is used. If the sequence is unordered, IllegalStateException is
+      *                    thrown.
+      * - default long getExactSizeIfKnown(): If the invoking spliterator is sized, returns the number of elements
+      *                     left to iterate. returns -1 otherwise.
+      * - default boolean hasCharacteristics(int val): Returns true if the invoking spliterator has the characteristics
+      *                   passed in val. Returns false otherwise.
+      * - boolean tryAdvance(Consumer< ? super T> action): Executes action on the next element in the iteration. Returns
+      *                  true if there is a next element. Return false if no elements remain.
+      * - Spliterator<T> trySplit(): If possible, splits the invoking spliterator, returning a reference to a new
+      *                  spliterator for the partition. Otherwise, returns null. Thus, if successful, the original
+      *                  spliterator iterates over one portion of the sequence and the returned spliterator iterates
+      *                  over the other portion.
+      *
+      * Using spliterator for basic iteration tasks is quite easy: simply call tryAdvance() until it returns false.
+      * If you will be applying the same action to each element in the sequence, forEachRemaining() offers a streamlined
+      * option. Here, consumer is a functional interface that applies an action to an object. It's a generic interface
+      * declared in java.util.function(Check the section on java.util.function.). The easiest way to implement Consumer
+      * is by use of a lambda expression.
+      *
+      * Check  CollectionClassesExp.exp12(); for code example, you don't see the real power of spliterator in this
+      * example, because no parallel processing in it.
+      *
+      * Often you won't need to access a spliterator's characteristics, but in some cases, they can aid in
+      * creating efficient, resilient code.
+      *
+      * There are several nested subinterfaces of Spliterator designed for use with the primitive types double, int,
+      * and	long. These	are	called Spliterator.OfDouble, Spliterator.OfInt,	and	Spliterator.OfLong. There is also a
+      * generalized	version	called Spliterator.OfPrimitive(), which	offers additional flexibility and serves as a
+      * superinterface of the aforementioned ones.
+      * */
+
+    /********************************* 05 Storing user defined class in a Collection *********************************/
+
+    /*
+     * In a collection, we can store any type of objects(not only the built in type such as Integer, etc.).
+     * Check CollectionClassesExp.exp13();
+     * */
+
+    /********************************* 06 The RandomAccess Interface *********************************/
+
+    /* The RandomAccess interface contains no members. However by implementing this interface, a collection indicates
+    * that it supports efficient random access to its element. You can use instanceof to determine if
+    * a class implements an interface or not(Check). RandomAccess is implemented by ArrayList but not LinkedList.
+    * Although LinkedList supports allow random access to its elements, but its not efficient. You can notice that
+    * when operating with large collections.
+    *
+    * A map is an object that stores associations between keys and values. Given a key, you can find its value.
+    * Both keys and values are objects. The key must be unique, but the values may be duplicated. Some maps
+    * can accept a null key and null value, other cannot.
+    *
+    * Note maps do not implement the Iterable interface, so the for-each does not works on maps, and you can't obtain
+    * an iterator either. However, we can obtain a collection-view of a map, which does allow the use of for-each and
+    * iterator.
+    * */
+
+    /** 6.1 The Map Interfaces
+     * In java, we have four interfaces to define the nature and character of maps, they are:
+     * - Map: Maps unique keys to values
+     * - Map.Entry: Describes an element (a key/value pair) in a map. This is an inner class of Map
+     * - SortedMap: Extends Map so that the keys are maintained in ascending order.
+     * - NavigableMap: Extends SortedMap to handle the retrieval of entries based on closest-match searches.
+     */
+
+     /** 6.1.1 The Map interface
+     * The Map interface contains the following methods:
+     * - void clear(): Removes all key/value pairs from the invoking map.
+     * - default V compute(K k, BiFunction< ? super K, ? super V, ? extends V> func): Calls func to construct a new
+     *               value. If func returns non-null, the new key/value pair is added to the map, any preexisting
+     *               pairing is removed, and the new value is returned. If func returns null, any preexisting pairing
+     *               is removed, and null is returned.
+     * - default V computeIfAbsent(K k, Function< ? super K, ? extends V> func): Returns the value associated with the
+     *              key k. Otherwise, the value is constructed through a call to func and the pairing is entered into
+     *             the map and the constructed value is returned. If no value can be constructed, null is returned.
+     * - default V computeIfPresent(K k, Function< ? super K, ? extends V> func): If k is in the map, a new value
+     *              is constructed through a call to func and the new value replaces the old value. In this case,
+     *              new value is returned. If func returns null, the existing key and value are removed from the map
+     *              and null is returned.
+     * --- Object put(Object key, Object value): This method is used to insert an entry in this map.
+     * --- void putAll(Map map): This method is used to insert the specified map in this map.
+     * - Object remove(Object key): This method is used to delete an entry for the specified key.
+     * --- Object get(Object key):This method is used to return the value for the specified key.
+     * - boolean containsKey(Object k): Returns true if map contains key k.
+     * - boolean containsValue(Object v): Returns true if map contains value v.
+     * --- Set keySet(): This method is used to return the Set view containing all the keys.
+     * --- Collection<V> values(): Returns a collection containing the values in the map.
+     * - Set entrySet(): Returns a Set that contains all entries(has type May.Entry) of the invoking map. Thus this
+     *              method provides a set-view(Collection) of the invoking map.
+     * - static <K,V> Map<K,V> copyOf(Map< ? extends K, ? extends V> from): Returns a map that contains the same
+     *              key/value pairs in Map from. The returned map is unmodifiable. Null keys or values are not allowed.
+     * - static <K,V> Map.Entry<K,V> entry(K k, V v): Returns an unmodifiable map entry comprised of the specified key
+     *              and value. A null key or value is not allowed.
+     * - default void forEach(BiConsumer< ? super K, ? super V> action): Executes action on each element in the
+     *             invoking map. A ConcurrentModificationException will be thrown if an element is removed during the
+     *             process.
+     * - default V merge(K k, V v, BiFunction< ? super V, ? super V, ? extends V> func): If k is not in the map, the
+     *            pairing k,v is added, and v is returned. If k exists in the map, func returns a new value by using
+     *            old and new v as argument for func, this value is returned by merge() method, and the key k is
+     *            updated based on the func returned value. If func returns null, the existing key/value pair are
+     *            removed and null is returned.
+     *
+     * Full methods list in table 19-11(P886)
+     *
+     * Beginning with JDK9, Map includes the of() factory method to create new Map based on list of key/value pairs. It
+     * has the following overloads version:
+     * - static<K,V> Map<K,V> of(K k1, V v1):
+     * - static<K,V> Map<K,V> of(K k1, V v1, K k2, V v2):
+     * - ...
+     * - static<K,V> Map<K,V> of(K k1, V v1, ..., K k10, V v10):
+     * Note, for all above version, null keys and/or values are not allowed. The Map implementation is unspecified.
+     *
+     * */
+
+     /** 6.1.2 The SortedMap Interface
+      * The SortedMap interface extends Map. It ensures that the entries are maintained in ascending order based on the
+      * keys comparator. It defines the following method:
+      * - Comparator< ? super K> comparator(): Returns the invoking sorted map's comparator. If natural ordering is
+      *             used, return null.
+      * - K firstKey(): Returns the first key in the invoking map
+      * - SortedMap<K,V> headMap(K end): Returns a sorted map for those map entries with keys that are less than end.
+      * - K lastKey(): Returns the last key in the invoking map
+      * - SortedMap<K,V> subMap(K start, K end): Returns a sorted map for those map entries with keys that are greater than
+      *                    or equal to start and less than end.
+      * - SortedMap<K,V> tailMap(K start): Returns a sorted map for those map entries with keys that are greater than
+      *                  start.
+      * */
+
+     /** 6.1.3 The NavigableMap Interface
+      * The NavigableMap interface extends SortedMap and supports the retrial of entries based on the closest match
+      * to a given key or keys. It defines the following methods:
+      * - Map.Entry<K,V> cellingEntry(K obj): Searches the map for the smallest key k such that k>= obj. If k is found,
+      *                   its entry is returned, otherwise null is returned.
+      * - K ceilingKey(K obj): Searches the map for the smallest key k such that k>= obj. If k is found,
+      *                    then return k, otherwise null is returned.
+      * - NavigableSet<K> descendingKeySet(): Returns a NavigableSet that contains the keys in the invoking map in
+      *                     reverse order. The resulting set is backed by the map.
+      * - NavigableMap<K,V> descendingMap(): Returns a NavigableMap that is the reverse of the invoking map. The
+      *                    resulting set is backed by the map
+      * -  Map.Entry<K,V> firstEntry(K obj): Returns the first entry of the map, which has the least key
+      * -
+      * -
+      * -
+      * The full method list in table 19-13 (P891)
+      *
+      * */
+
+     /** 6.1.4 The Map.Entry Interface
+      * The	Map.Entry interface	enables you to work with a map entry. It defines the following methods:
+      * - boolean equals(Object obj): Returns true if obj is a Map.Entry whose key and value are equal to the invoking
+      *                     object.
+      * - K getKey(): Returns the key for this entry
+      * - V getValue(): Returns the value for this entry
+      * - int hashCode(): Returns the hash code of this entry.
+      * - V setValue(V v): Sets the value of this map entry to v. A ClassCastException is thrown if v is not the
+      *          correct type. An IllegalArgumentException is thrown if there is a problem with v. A NullPointerException
+      *          is thrown if v is null. An UnsupportedOperationException is thrown if the map cannot be changed.
+      * */
 
 
+     /** 6.2 The Map Classes
+      * Several map implementation classes are provided:
+      * - AbstractMap: Implements most of the Map interface
+      * - EnumMap: Extends AbstractMap for use with enum keys
+      * - HashMap: Extends AbstractMap and uses hash table to store data.
+      * - TreeMap: Extends AbstractMap and uses a tree to store data.
+      * - WeakHashMap: Extends AbstractMap and uses a hash table with weak keys to store data.
+      * - LinkedHashMap: Extends HashMap to allow insertion-order iterations.
+      * - IdentityHashMap: Extends AbstractMap and uses reference equality when comparing documents.
+      * Notice, AbstractMap is the superClass for all map implementations. WeakHashMap implements a map that uses
+      * "weak keys" which allows an element	in a map to	be garbage-collected when its key is otherwise unused.
+      * */
+
+     /** 6.2.1 HashMap class
+      * The HashMap class extends AbstractMap and implements Map interface. It uses a hash table to store the map.
+      * This allows the execution time of get() and put() to remain constant even for large sets. It provides the
+      * following constructors:
+      * - HashMap(): It builds an empty map with default capacity 16 and default fillRatio 0.75
+      * - HashMap(Map< ? extends K, ? extends V> m): It builds a map which contains the element of m.
+      * - HashMap(int capacity): Set the capacity
+      * - HashMap(int capacity, float fillRatio): Set the capacity and fillRatio
+      *
+      *  Check MapClassesExp.exp1();
+      * */
+
+      /** 6.2.2 TreeMap Class
+       *
+       * The TreeMap class extends AbstractMap and implements NavigableMap interface. It stores entries in a tree
+       * structure. Thus it provides an efficient means of storing key/value and allows rapid retrieval. Unlike
+       * hashMap, a treeMap guarantees that its entries will be stored in ascending key order. It provides four
+       * constructors:
+       * - TreeMap(): It builds an empty tree map. Entries will be sorted by using natural order of its keys.
+       * - TreeMap(Comparator < ? super K> comp): It builds an empty tree map. Entries will be sorted by using the
+       *             comp Comparator.
+       * - TreeMap(Map< ? extends K, ? extends V> m): It builds a tree with the entries of m, it uses natural order.
+       * - TreeMap(SortedMap<K, ? extends V> sm): It builds a tree with the entries of sm, it uses the same order
+       *                  as sm.
+       *
+       * TreeMap does not add methods, it only implements all methods of NavigableMap interface and AbstractMap class.
+       * */
+
+      /** 6.2.3 LinkedHashMap
+       *
+       * LinkedHashMap class is Hashtable and Linked list implementation of the Map interface, with predictable
+       * iteration order. It inherits HashMap class and implements the Map interface.
+       *
+       * Points to remember
+       * - Java LinkedHashMap contains values based on the key.
+       * - Java LinkedHashMap contains unique elements.
+       * - Java LinkedHashMap may have one null key and multiple null values.
+       * - Java LinkedHashMap is non synchronized.
+       * - Java LinkedHashMap maintains insertion order.
+       * - The initial default capacity of Java HashMap class is 16 with a load factor of 0.75.
+       * */
+
+      /** 6.2.3 The IdentityHashMap
+       *
+       * IdentityHashMap implements Map, Serializable and Clonable interfaces and extends AbstractMap class.
+       * This class is not a general-purpose Map implementation. While this class implements the Map interface,
+       * it intentionally violates Map’s general contract, which mandates the use of the equals method when comparing
+       * objects.
+       *
+       * This class is used when the user requires the objects to be compared via reference.
+       * */
+
+      /** 6.2.4 The EnumMap Class
+       * EnumMap is specialized implementation of Map interface for enumeration types. It extends AbstractMap and
+       * implements Map Interface in Java. Few important features of EnumMap are as follows:
+       * - EnumMap class is a member of the Java Collections Framework & is not synchronized.
+       * - EnumMap is ordered collection and they are maintained in the natural order of their keys
+       *   (natural order of keys means the order on which enum constant are declared inside enum type )
+       * - It’s a high performance map implementation, much faster than HashMap.
+       * - All keys of each EnumMap instance must be keys of a single enum type.
+       * - EnumMap doesn’t allow null key and throw NullPointerException, at same time null values are permitted.
+       * */
     /***********************************************************************************************************
      * ******************************************* Code example ***********************************************
      * **********************************************************************************************************/
@@ -521,6 +820,27 @@ public static void main(String[] args){
    //  CollectionClassesExp.exp8();
 
     //EnumSet
-    CollectionClassesExp.exp9();
+    //CollectionClassesExp.exp9();
+
+    // using iteration
+   // CollectionClassesExp.exp10();
+
+    // for each
+   // CollectionClassesExp.exp11();
+
+    //spliterator
+   // CollectionClassesExp.exp12();
+
+    // store user defined class
+  //  CollectionClassesExp.exp13();
+
+    //instanceof
+  //  CollectionClassesExp.exp14();
+
+    //hashMap
+  //  MapClassesExp.exp1();
+
+    // TreeMap
+  //  MapClassesExp.exp2();
 }
 }

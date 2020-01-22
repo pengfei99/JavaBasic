@@ -74,11 +74,11 @@ public class CollectionClassesExp {
         for (int i : a2) {
             sum += i;
         }
-        System.out.println("Sum is : "+sum);
+        System.out.println("Sum is : " + sum);
     }
 
-    public static void exp3(){
-        LinkedList<String> l1=new LinkedList<>();
+    public static void exp3() {
+        LinkedList<String> l1 = new LinkedList<>();
         l1.add("F");
         l1.add("B");
         l1.add("D");
@@ -87,76 +87,76 @@ public class CollectionClassesExp {
         l1.add("Z");
         l1.add("A");
 
-        System.out.println("Initial Content of l1: "+l1);
+        System.out.println("Initial Content of l1: " + l1);
         // even it's implemented with a linked list data structure, it still supports the index
-        int i=1;
-        l1.add(i,"A2");
+        int i = 1;
+        l1.add(i, "A2");
 
-        System.out.println("After add(1,A2), content of l1: "+l1);
+        System.out.println("After add(1,A2), content of l1: " + l1);
 
         //notice like array list, after remove, index changes, and elements behind are shifted.
         l1.remove("F");
         l1.remove(i);
 
-        System.out.println("After remove, content of l1: "+l1);
+        System.out.println("After remove, content of l1: " + l1);
 
         //use the method of Deque interface
 
-        System.out.println("The first element of the list: "+l1.peekFirst());
+        System.out.println("The first element of the list: " + l1.peekFirst());
 
         //note peekFirst() and peek() return the same thing
         l1.addFirst("F");
-        System.out.println("The first element of the list after addFirst(F): "+l1.peek());
+        System.out.println("The first element of the list after addFirst(F): " + l1.peek());
 
 
         /*toArray works also for the linked list*/
-        LinkedList<Integer> l2=new LinkedList<>();
+        LinkedList<Integer> l2 = new LinkedList<>();
         l2.add(1);
         l2.add(1);
         l2.add(1);
         l2.add(1);
-        System.out.println("Initial content of l2 : "+l2);
+        System.out.println("Initial content of l2 : " + l2);
 
-        Integer a2[]=new Integer[l2.size()];
-        a2=l2.toArray(a2);
-        int sum=0;
-        for(Integer j: a2) sum+=i;
-        System.out.println("Sum of l2: "+sum);
+        Integer a2[] = new Integer[l2.size()];
+        a2 = l2.toArray(a2);
+        int sum = 0;
+        for (Integer j : a2) sum += i;
+        System.out.println("Sum of l2: " + sum);
     }
 
-    public static void exp4(){
-        HashSet<String> hs=new HashSet<>();
+    public static void exp4() {
+        HashSet<String> hs = new HashSet<>();
         hs.add("A");
         hs.add("B");
         hs.add("C");
         hs.add("D");
 
-        System.out.println("Initial content of hs: "+hs);
+        System.out.println("Initial content of hs: " + hs);
         // try to add duplicate
         boolean flag = hs.add("A");
-        System.out.println("Adding duplicate element A : "+flag);
+        System.out.println("Adding duplicate element A : " + flag);
 
         // The returned copy Set is immutable, so we can't cast it to HashSet
-        Set<String> copy=  Set.copyOf(hs);
-        System.out.println("Content of the copy of hs: "+hs);
+        Set<String> copy = Set.copyOf(hs);
+        System.out.println("Content of the copy of hs: " + hs);
 
 
     }
 
-    public static void exp5(){
-        LinkedHashSet<String> lhs=new LinkedHashSet<>();
+    public static void exp5() {
+        LinkedHashSet<String> lhs = new LinkedHashSet<>();
         lhs.add("First");
         lhs.add("Second");
         lhs.add("Third");
         lhs.add("Fourth");
         lhs.add("Fifth");
 
-        System.out.println("Initial content of lhs: "+lhs);
+        System.out.println("Initial content of lhs: " + lhs);
         // try to add duplicate
     }
 
-    public static void exp6(){
-        TreeSet<Integer> ts=new TreeSet<>();
+    public static void exp6() {
+        TreeSet<Integer> ts = new TreeSet<>();
 
         ts.add(10);
         ts.add(3);
@@ -164,13 +164,13 @@ public class CollectionClassesExp {
         ts.add(1);
         ts.add(5);
 
-        System.out.println("Initial content of the tree: "+ts);
+        System.out.println("Initial content of the tree: " + ts);
 
         // get a sub set between 2(not include) and 5(include)
-        System.out.println("Subset between 2 and 5 of the tree: "+ts.subSet(2,false,5,true));
+        System.out.println("Subset between 2 and 5 of the tree: " + ts.subSet(2, false, 5, true));
     }
 
-    public static void exp7(){
+    public static void exp7() {
         // Creating empty priority queue
         PriorityQueue<String> pQueue = new PriorityQueue<String>();
 
@@ -193,7 +193,7 @@ public class CollectionClassesExp {
         // Removing the top priority element (or head) and
         // printing the modified pQueue using poll()
         String removedObj = pQueue.poll();
-        System.out.println("After removing an element "+removedObj + " with poll function:");
+        System.out.println("After removing an element " + removedObj + " with poll function:");
         Iterator<String> itr2 = pQueue.iterator();
         while (itr2.hasNext())
             System.out.println(itr2.next());
@@ -218,7 +218,7 @@ public class CollectionClassesExp {
             System.out.println("Value: " + arr[i].toString());
     }
 
-    public static void exp8(){
+    public static void exp8() {
         // Intializing an deque
         Deque<Integer> de_que = new ArrayDeque<Integer>(10);
 
@@ -228,8 +228,7 @@ public class CollectionClassesExp {
         de_que.add(30);
         de_que.add(40);
         de_que.add(50);
-        for (Integer element : de_que)
-        {
+        for (Integer element : de_que) {
             System.out.println("Element : " + element);
         }
 
@@ -250,16 +249,14 @@ public class CollectionClassesExp {
 
         // Iterator() :
         System.out.println("Elements of deque using Iterator :");
-        for(Iterator itr = de_que.iterator(); itr.hasNext();)
-        {
+        for (Iterator itr = de_que.iterator(); itr.hasNext(); ) {
             System.out.println(itr.next());
         }
 
         // descendingIterator() : to reverse the deque order
         System.out.println("Elements of deque in reverse order :");
-        for(Iterator dItr = de_que.descendingIterator();
-            dItr.hasNext();)
-        {
+        for (Iterator dItr = de_que.descendingIterator();
+             dItr.hasNext(); ) {
             System.out.println(dItr.next());
         }
 
@@ -280,7 +277,7 @@ public class CollectionClassesExp {
         System.out.println("\nArray Size : " + arr.length);
 
         System.out.print("Array elements : ");
-        for(int i=0; i<arr.length ; i++)
+        for (int i = 0; i < arr.length; i++)
             System.out.print(" " + arr[i]);
 
         // peek() method : to get head
@@ -297,23 +294,129 @@ public class CollectionClassesExp {
         // remove() method : to get head
         System.out.println("Head element remove : " + de_que.remove());
 
-        System.out.println("The final array is: "+de_que);
+        System.out.println("The final array is: " + de_que);
     }
 
-    public static void exp9(){
+    public static void exp9() {
 
-                // Creating a set
-                EnumSet<Color> set1, set2, set3, set4;
+        // Creating a set
+        EnumSet<Color> set1, set2, set3, set4;
 
-                // Adding elements
-                set1 = EnumSet.of(Color.Black, Color.Blue, Color.White,Color.Yellow);
-                set2 = EnumSet.complementOf(set1);
-                set3 = EnumSet.allOf(Color.class);
-                set4 = EnumSet.range(Color.Yellow, Color.Blue);
-                System.out.println("Set 1: " + set1);
-                System.out.println("Set 2: " + set2);
-                System.out.println("Set 3: " + set3);
-                System.out.println("Set 4: " + set4);
-            }
+        // Adding elements
+        set1 = EnumSet.of(Color.Black, Color.Blue, Color.White, Color.Yellow);
+        set2 = EnumSet.complementOf(set1);
+        set3 = EnumSet.allOf(Color.class);
+        set4 = EnumSet.range(Color.Yellow, Color.Blue);
+        System.out.println("Set 1: " + set1);
+        System.out.println("Set 2: " + set2);
+        System.out.println("Set 3: " + set3);
+        System.out.println("Set 4: " + set4);
+    }
 
+    public static void exp10() {
+        ArrayList<String> a1 = new ArrayList<>();
+
+        // add some elements, without index, it adds the element at the tail of the list
+        a1.add("A");
+        a1.add("B");
+        a1.add("C");
+        a1.add("D");
+        a1.add("E");
+        a1.add("F");
+
+        System.out.println("Initial content of a1: " + a1);
+
+        //get iterator
+        Iterator<String> it = a1.iterator();
+        while(it.hasNext()){
+            String element=it.next();
+            System.out.println("element : "+element);
+            if(element.equals("F")) it.remove();
+        }
+
+        System.out.println("Current content of a1 after first iteration: " + a1);
+
+        //get listIterator, note it has a constructor which you can specify the start point of the iterator with an index.
+        ListIterator<String> lit = a1.listIterator();
+        while (lit.hasNext()){
+            String e=lit.next();
+            lit.set(e+"+");
+        }
+        System.out.println("Current content of a1 after second iteration: " + a1);
+
+        //now lit is pointing at the end of the list, we can cycle back by using previous
+        while (lit.hasPrevious()){
+            String e=lit.previous();
+            lit.set(e+"+");
+        }
+        System.out.println("Current content of a1 after third iteration: " + a1);
+    }
+
+    public static void exp11(){
+        ArrayList<Integer> a1 = new ArrayList<>();
+        // autoboxing convert primitive int to object Integer
+        a1.add(1);
+        a1.add(2);
+        a1.add(3);
+        a1.add(4);
+        a1.add(5);
+        System.out.println("Content of a1: "+a1);
+        int sum=0;
+
+        // auto unboxing
+        for(int i:a1){
+            System.out.println("element: "+i);
+            sum+=i;
+        }
+        System.out.println("Sum of values: "+sum);
+    }
+
+    public static void exp12(){
+        ArrayList<Double> a1=new ArrayList<>();
+        a1.add(1.0);
+        a1.add(2.0);
+        a1.add(3.0);
+        a1.add(4.0);
+        a1.add(5.0);
+        System.out.println("Content of a1: "+a1);
+
+        System.out.println("use tryAdvance to display contents of a1 ");
+        // get a spliterator
+        Spliterator<Double> split = a1.spliterator();
+        // use tryAdvance to display contents
+        while(split.tryAdvance(n-> System.out.println(n)));
+
+        System.out.println("display the characteristics of a spliterator: "+split.characteristics());
+
+        // the old iterator points to the end of the list, need to get a new instance which points the start
+        split=a1.spliterator();
+        // create a new list which contains square roots
+        ArrayList<Double> a2=new ArrayList<>();
+        while (split.tryAdvance(n->a2.add(Math.sqrt(n))));
+
+        System.out.println("use orEachRemaining to display contents of a2: ");
+        // use forEachRemaining to display contents of a2
+        split=a2.spliterator();
+        split.forEachRemaining(n->System.out.println(n));
+
+    }
+
+    public static void exp13(){
+        ArrayList<Person> a1=new ArrayList<>();
+        a1.add(new Person("toto",12));
+        a1.add(new Person("titi",23));
+        a1.add(new Person("tata",34));
+        a1.add(new Person("foo",54));
+
+        Spliterator<Person> split = a1.spliterator();
+        while (split.tryAdvance(n->System.out.println("Element: "+n.toString())));
+    }
+
+    public static void exp14(){
+        ArrayList<Person> a1=new ArrayList<>();
+        LinkedList<String> l1=new LinkedList<>();
+        System.out.println( "a1 instanceof RandomAccess is: "+ (a1 instanceof RandomAccess));
+        System.out.println( "l1 instanceof RandomAccess is: "+ (l1 instanceof RandomAccess));
+    }
+    
 }
