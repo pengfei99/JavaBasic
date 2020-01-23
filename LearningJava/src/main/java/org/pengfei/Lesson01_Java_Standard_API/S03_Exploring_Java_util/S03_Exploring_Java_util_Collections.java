@@ -1,7 +1,11 @@
 package org.pengfei.Lesson01_Java_Standard_API.S03_Exploring_Java_util;
 
 import org.pengfei.Lesson01_Java_Standard_API.S03_Exploring_Java_util.source.CollectionClassesExp;
+import org.pengfei.Lesson01_Java_Standard_API.S03_Exploring_Java_util.source.CollectionsAlgoExp;
 import org.pengfei.Lesson01_Java_Standard_API.S03_Exploring_Java_util.source.MapClassesExp;
+import org.pengfei.Lesson01_Java_Standard_API.S03_Exploring_Java_util.source.comparator.ComparatorClassExp;
+
+import java.util.Comparator;
 
 public class S03_Exploring_Java_util_Collections {
 
@@ -757,6 +761,8 @@ public class S03_Exploring_Java_util_Collections {
        *                  as sm.
        *
        * TreeMap does not add methods, it only implements all methods of NavigableMap interface and AbstractMap class.
+       *
+       * Check MapClassesExp.exp2();
        * */
 
       /** 6.2.3 LinkedHashMap
@@ -780,19 +786,244 @@ public class S03_Exploring_Java_util_Collections {
        * it intentionally violates Map’s general contract, which mandates the use of the equals method when comparing
        * objects.
        *
-       * This class is used when the user requires the objects to be compared via reference.
+       * IdentityHashMap vs HashMap
+       * - IdentityHashMap uses equality operator “==” for comparing keys and values while HashMap uses equals
+       *   method for comparing keys and values inside Map. In another word, it compares if the references point to the
+       *   same object, not comparing the value of two object.
+       * - Since IdentityHashMap does not use equals() its comparatively faster than HashMap for object with
+       *    expensive equals().
+       * - IdentityHashMap does not require keys to be immutable as it is not relied on equals().
+       *
+       * Check MapClassesExp.exp3();
        * */
 
       /** 6.2.4 The EnumMap Class
        * EnumMap is specialized implementation of Map interface for enumeration types. It extends AbstractMap and
-       * implements Map Interface in Java. Few important features of EnumMap are as follows:
+       * implements Map Interface in Java. It provides the following constructors:
+       * - EnumMap(Class<K> kType): It builds an empty enum map which uses kType(enum type) as key.
+       * - EnumMap(Map<K, ? extends V> m): It builds an enum map which contains the elements of m. The key in m must
+       *                  be enum type.
+       * - EnumMap(EnumMap<K, ? extends V> em): It builds an enum map which contains the elements of em.
+       *
+       * Few important features of EnumMap are as follows:
        * - EnumMap class is a member of the Java Collections Framework & is not synchronized.
        * - EnumMap is ordered collection and they are maintained in the natural order of their keys
        *   (natural order of keys means the order on which enum constant are declared inside enum type )
        * - It’s a high performance map implementation, much faster than HashMap.
        * - All keys of each EnumMap instance must be keys of a single enum type.
        * - EnumMap doesn’t allow null key and throw NullPointerException, at same time null values are permitted.
+       *
+       * check MapClassesExp.exp4();
        * */
+
+    /******************************************** 07 Comparators ********************************************/
+
+    /* Both TreeSet and TreeMap store elements in sorted order. However, it is the comparator that defines precisely
+    * what is the sort order. By default, these classes store their elements by using "natural ordering". For example
+    * with Integer, 1<2<3<...; with String, A<B... . If you want to change this order, you need to specify your own
+    * comparator. To do so, we need to implement the Comparator interface.
+    *
+    *
+    * */
+
+    /** 7.1 Comparator interface
+     *
+     * Prior to JDK8, it defines two methods:
+     * - int compare(T obj1, T obj2): It returns 0 if equal, returns positive if obj1>obj2, otherwise returns negative.
+     *                 It throws a ClassCastException if the types are not compatible. By implementing this method, we
+     *                 can change the sort order. For example, if we implement compare(1,2) to return positive, then
+     *                 we reverse the natural order.
+     * - boolean equals(object obj): It returns true if obj equals to the invoking object. Otherwise, it returns false.
+     *                 Overriding equals() is not necessary, and most simple comparators will not do so.
+     *
+     * Start with JDK8, Java add many new functionality to Comparator interface by using default and static interface
+     * methods:
+     * - static<T extends Comparable< ? super T>> Comparator<T> naturalOrder(): It returns a comparator that uses
+     *                   natural ordering.
+     * - default Comparator<T> reversed(): It returns the reverse comparator.
+     * - static<T extends Comparable< ? super T>> Comparator<T> reverseOrder(): It returns a comparator that reverses
+     *                   natual ordering.
+     * - static <T> Comparator<T> nullsFirst(Comparator< ? super T> comp): It returns a comparator which can put null
+     *                  on the head of the collection. If comp is passed null, then all non-null values are viewed
+     *                  as equivalent.
+     * - static <T> Comparator<T> nullsLast(Comparator< ? super T> comp): It returns a comparator which can put null
+     *                  on the tail of the collection. If comp is passed null, then all non-null values are viewed
+     *                  as equivalent.
+     * - default Comparator<T> thenComparing(Comparator< ? super T> thenByComp): It returns a comparator that performs
+     *                a second comparison defined by thenByComp, when first comparison returns equal. Thus, it can be
+     *                used to create a "compare by X then compare by Y" sequence. For example, when comparing cities,
+     *                the first comparison might compare names, with the second comparison comparing states.
+     *                (Therefore, Springfield, Illinois, would come before Springfield,	Missouri, assuming normal,
+     *                alphabetical order.)
+     * The thenComparing method provides many overload version, and specialized methods for primitive types.
+     *
+     * */
+
+    /** 7.2 Using a Comparator
+     * Check ComparatorClassExp.exp1(); We use an custom string comparator in a TreeSet to reverse the natual ordering.
+     * Check ComparatorClassExp.exp2(); We can reverse the comparator order by calling reversed() method
+     * ComparatorClassExp.exp3(); We can use lambda express to avoid creating comparator classes.
+     * ComparatorClassExp.exp4(); We create a comparator of object Person which compare first age, then name
+     * ComparatorClassExp.exp5(); We use thenComparing method to chaining two comparator together.
+     * */
+
+    /******************************************** 08 The Collection Algorithms ****************************************/
+
+    /*
+    * The Collection Framework defines several algorithms that can be applied to collection and map predefine classes.
+    * These algorithms are defined as static methods within the Collections class, which consists exclusively of static
+    * methods that operate on or return collections. It contains polymorphic algorithms that operate on collections,
+    * "wrappers", which return a new collection backed by a specified collection, and a few other odds and ends.
+    *
+    * The methods of this class all throw a NullPointerException if the collections or class objects provided to them
+    * are null. The methods are :
+    * - static <T> boolean	addAll(Collection<? super T> c, T... elements): Adds all of the specified elements to
+    *               the specified collection.
+    * - static <T> Queue<T>	asLifoQueue(Deque<T> deque): Returns a view of a Deque as a Last-in-first-out (Lifo) Queue.
+    * - static <T> int binarySearch(List<? extends Comparable<? super T>> list, T key): Searches the specified list for
+    *                  the specified key using the binary search algorithm.
+    * - static <T> int binarySearch(List<? extends T> list, T key, Comparator<? super T> c): Searches the specified list
+    *                   which is ordered according to c for the specified object using the binary search algorithm.
+    * - static <E> Collection<E> checkedCollection(Collection<E> c, Class<E> type): Returns a runtime type-safe view of
+    *                  the specified collection. It throws ClassCastException, if you try to insert incompatible element.
+    * - static <E> List<E> checkedList(List<E> list, Class<E> type): Returns a runtime type-safe view of
+    *                  the specified list. It throws ClassCastException, if you try to insert incompatible element.
+    * - static <K,V> Map<K,V> checkedMap(Map<K,V> m, Class<K> keyType, Class<V> valueType): Returns a runtime type-safe
+    *                   view of the specified Map. It throws ClassCastException, if you try to insert incompatible element.
+    * - static <E> Set<E> checkedSet(Set<E> s, Class<E> type): Returns a runtime type-safe view of
+    *                  the specified Set. It throws ClassCastException, if you try to insert incompatible element.
+    * - static <K,V> SortedMap<K,V>	checkedSortedMap(SortedMap<K,V> m, Class<K> keyType, Class<V> valueType): Returns
+    *                  a runtime type-safe view of the specified SortedMap. It throws ClassCastException, if you try
+    *                  to insert incompatible element.
+    * - static <E> SortedSet<E>	checkedSortedSet(SortedSet<E> s, Class<E> type): Same to above
+    * - static <T> void	copy(List<? super T> dest, List<? extends T> src): Copies all of the elements from src into dest.
+    * - static boolean disjoint(Collection<?> c1, Collection<?> c2): Returns true if the two specified collections
+    *                have no elements in common.
+    * - static <T> Enumeration<T> emptyEnumeration(): Returns an enumeration that has no elements.
+    * - static <T> Iterator<T> emptyIterator(): Returns an iterator that has no elements.
+    * - static <T> List<T> emptyList(): Returns the empty list (immutable).
+    * - static <T> ListIterator<T> emptyListIterator(): Returns a list iterator that has no elements.
+    * - static <K,V> Map<K,V> emptyMap(): Returns the empty map (immutable).
+    * - static <T> Set<T> emptySet(): Returns the empty set (immutable).
+    * - static <T> Enumeration<T> enumeration(Collection<T> c):  Returns an enumeration over the specified collection.
+    * - static <T> void	fill(List<? super T> list, T obj): Replaces all of the elements of the specified list with
+    *                  the specified element.
+    * - static int frequency(Collection<?> c, Object o): Returns the number of elements in the specified collection
+    *                   equal to the specified object.
+    * - static int indexOfSubList(List<?> source, List<?> target): Returns the starting position of the first
+    *                  occurrence of the specified target list within the specified source list, or -1 if there is
+    *                  no such occurrence.
+    * - static int lastIndexOfSubList(List<?> source, List<?> target): Returns the starting position of the last
+    *                occurrence of the specified target list within the specified source list, or -1 if there is
+    *                no such occurrence.
+    * - static <T> ArrayList<T>	list(Enumeration<T> e): Returns an array list containing the elements returned by
+    *                 the specified enumeration in the order they are returned by the enumeration.
+    * - static <T extends Object & Comparable<? super T>> T	max(Collection<? extends T> coll): Returns the maximum
+    *                 element of the given collection, according to the natural ordering of its elements.
+    * - static <T> T max(Collection<? extends T> coll, Comparator<? super T> comp): Returns the maximum element of
+    *               the given collection, according to the order induced by the specified comparator.
+    * - static <T extends Object & Comparable<? super T>> T	min(Collection<? extends T> coll): Returns the minimum
+    *                element of the given collection, according to the natural ordering of its elements.
+    * - static <T> T min(Collection<? extends T> coll, Comparator<? super T> comp): Returns the minimum element of
+    *              the given collection, according to the order induced by the specified comparator.
+    * - static <T> List<T> nCopies(int n, T o): Returns an immutable list consisting of n copies of the specified object.
+    * - static <E> Set<E> newSetFromMap(Map<E,Boolean> map): Returns a set backed by the specified map.
+    * - static <T> boolean replaceAll(List<T> list, T oldVal, T newVal): Replaces all occurrences of one specified
+    *                value in a list with another.
+    * - static void	reverse(List<?> list): Reverses the order of the elements in the specified list.
+    * - static <T> Comparator<T> reverseOrder(): Returns a comparator that imposes the reverse of the natural
+    *               ordering on a collection of objects that implement the Comparable interface.
+    * - static <T> Comparator<T> reverseOrder(Comparator<T> cmp): Returns a comparator that imposes the reverse
+    *               ordering of the specified comparator.
+    * - static void	rotate(List<?> list, int n): Rotates the elements in list by n places to the right. To rotate left
+    *               use a negative value of n.
+    * - static void	shuffle(List<?> list): Randomly permutes the specified list using a default source of randomness.
+    * - static void	shuffle(List<?> list, Random rnd): Randomly permute the specified list using the specified source
+    *                 of randomness.
+    * - static <T> Set<T> singleton(T o): Returns o as an immutable set. This is an easy way to convert a single object
+    *                  into a set.
+    * - static <T> List<T> singletonList(T o): Returns o as an immutable list.
+    * - static <K,V> Map<K,V> singletonMap(K key, V value): returns key/value pair as an immutable Map
+    * - static <T extends Comparable<? super T>> void sort(List<T> list): Sort the element of list with their natural
+    *                     ordering.
+    * - static <T> void	sort(List<T> list, Comparator<? super T> c): Sort the element of list with comparator c.
+    * - static void	swap(List<?> list, int i, int j): Swaps the elements in list at indices i, and j.
+    * - static <T> Collection<T> synchronizedCollection(Collection<T> c): Returns a synchronized (thread-safe)
+    *                collection backed by the specified collection.
+    * - static <T> List<T> synchronizedList(List<T> list): Returns a synchronized (thread-safe) list backed by list.
+    * - static <K,V> Map<K,V> synchronizedMap(Map<K,V> m): Returns a synchronized (thread-safe) map backed by m.
+    * - static <T> Set<T> synchronizedSet(Set<T> s): Returns a synchronized (thread-safe) set backed by s.
+    * - static <K,V> SortedMap<K,V>	synchronizedSortedMap(SortedMap<K,V> m): Returns a synchronized (thread-safe)
+    *                      sorted map backed by m.
+    * - static <T> SortedSet<T>	synchronizedSortedSet(SortedSet<T> s): Returns a synchronized (thread-safe) sorted set
+    *                          backed by s.
+    * - static <T> Collection<T> unmodifiableCollection(Collection<? extends T> c): Returns an unmodifiable view of c.
+    * - static <T> List<T> unmodifiableList(List<? extends T> list)
+    * - static <K,V> Map<K,V> unmodifiableMap(Map<? extends K,? extends V> m)
+    * - static <T> Set<T> unmodifiableSet(Set<? extends T> s)
+    * - static <K,V> SortedMap<K,V>	unmodifiableSortedMap(SortedMap<K,? extends V> m)
+    * - static <T> SortedSet<T>	unmodifiableSortedSet(SortedSet<T> s)
+    * */
+
+    /** 8.1 The checked methods
+     * The checked methods, such as checkedCollection(), which returns what the API documentation refers to	as a
+     * "dynamically typesafe view" of a collection.	This view is a reference to the collection that	monitors insertions
+     * into	the	collection	for	type compatibility at run time.	An attempt to insert an incompatible element will cause
+     * a ClassCastException. Using such a view is especially helpful during	debugging because it ensures that the
+     * collection always contains valid	elements. Related methods include checkedSet(), checkedList(), checkedMap(),
+     * and so on. They obtain a type-safe view for the indicated collection.
+     * */
+
+    /** 8.2 The synchronized methods
+     * The synchronized methods, such as synchronizedList() and synchronizedSet(), are used	to obtain synchronized
+     * (thread-safe) copies	of the various collections.	As a general rule, the standard	collections	implementations
+     * are not synchronized. You must use the synchronization algorithms to provide synchronization. One other point:
+     * iterators to synchronized collections must be used within synchronized blocks.
+     * */
+
+    /** 8.3 The unmodifiable methods
+     * The set of methods that begins with unmodifiable returns views of the various collections that cannot be
+     * modified. These will be useful when you want to grant some process read—but not write—capabilities on a
+     * collection.
+     * */
+
+    /******************************************** 09 Arrays ****************************************/
+
+    /*
+    * This class contains various methods for manipulating arrays (such as sorting and searching). This class also
+    * contains a static factory that allows arrays to be viewed as lists. It has the following methods:
+    * - static <T> List<T> asList(T... array): Returns a fixed-size list backed by the specified array.
+    * - static int binarySearch(byte[] a, int fromIndex, int toIndex, byte key): It uses a binary search to find
+    *            a specified value(here is key of type byte), you can specify a start index and an end index. This
+    *            method must be applied to sorted arrays. It has many overloaded version for all primitive types
+    *            for example, for int, we will use static int binarySearch(int[] a, int key). For all versions,
+    *            if key exists in array, the index of key is returned, otherwise a negative value is returned.
+    * - static <T,U> T[] copyOf(U[] source, int newLength, Class<? extends T[]> newType): It returns a copy of
+    *           source array. If the newLength is negative, a NegativeArraySizeException is thrown. If newLength is
+    *           greater than the length of source, then the returned array will be truncating or padding with null(for
+    *           object arrays) and 0 (for numeric arrays).
+    *           If source is null, a NullPointerException is thrown. newType is optional, if we need to cast the type
+    *           of the source array, we can specify a new type. If newType is not compatible with the type of source,
+    *           an ArrayStoreException is thrown.
+    * - static <T,U> T[] copyOfRange(U[] original, int start, int end, Class<? extends T[]> newType): It's similar to
+    *           copyOf(), we just use start and end to specify a sub array in source. If we set start=0 end=array.length
+    *           it will return the same thing as copyOf.
+    * - static boolean	equals(boolean[] a, boolean[] a2): It returns true if two arrays are equivalent. like above
+    *          methods. It has many overloaded version for all primitive types.
+    * - static boolean	deepEquals(Object[] a1, Object[] a2): Returns true if the two specified arrays are deeply equal
+    *          to one another. For example, if a1 and a2 contains nested arrays, then the contents of those nested arrays
+    *          are also checked.
+    * - static void	fill(boolean[] a, boolean val): Assigns the specified boolean value to each element of the
+    *          specified array of booleans. Overloaded version for all primitive types.
+    * - static void	sort(byte[] a, int start, int end): It sorts elements in array into ascending order. The start, end
+    *         index is optional, without them, the full array are sorted, with them a sub array is sorted. Overloaded
+    *         version for all primitive types. You can add a custom comparator if you don't want to use the natural order.
+    * - static <T> void	parallelSort(T[] a, int fromIndex, int toIndex, Comparator<? super T> cmp): Sorts the specified
+    *         range of the specified array of objects according to the order induced by the specified comparator. It's
+    *         similar to sort(). It sorts portions of an array in parallel and then merges the results.	This approach
+    *         can greatly speed	up sorting times.
+    *  */
+
     /***********************************************************************************************************
      * ******************************************* Code example ***********************************************
      * **********************************************************************************************************/
@@ -842,5 +1073,21 @@ public static void main(String[] args){
 
     // TreeMap
   //  MapClassesExp.exp2();
-}
+
+    // identity hash map
+   // MapClassesExp.exp3();
+
+    //enumMap
+    //MapClassesExp.exp4();
+
+    // Comparator
+   // ComparatorClassExp.exp1();
+   // ComparatorClassExp.exp2();
+   // ComparatorClassExp.exp3();
+   // ComparatorClassExp.exp4();
+   // ComparatorClassExp.exp5();
+
+    //Collections function
+    CollectionsAlgoExp.exp1();
+     }
 }

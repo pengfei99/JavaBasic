@@ -1,9 +1,6 @@
 package org.pengfei.Lesson01_Java_Standard_API.S03_Exploring_Java_util.source;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
+import java.util.*;
 
 public class MapClassesExp {
     public static void  exp1(){
@@ -72,6 +69,48 @@ public class MapClassesExp {
 
         String floorKey = hm.floorKey("toto");
         System.out.println("The floor key of toto is: "+floorKey);
+
+    }
+
+    public static void exp3(){
+
+        // Creating HashMap and IdentityHashMap objects
+        Map hm = new HashMap();
+        Map ihm = new IdentityHashMap();
+
+        // Putting key and value in HashMap and IdentityHashMap Object
+        hm.put("hmkey","hmvalue");
+        hm.put(new String("hmkey"),"hmvalue1");
+        ihm.put("ihmkey","ihmvalue");
+        ihm.put(new String("ihmkey"),"ihmvalue1");
+
+        // Print Size of HashMap and WeakHashMap Object
+        //hm.size() will print 1 since it compares the objects logically
+        // and both the keys are same
+        System.out.println("Size of HashMap--"+hm.size());
+
+        //ihm.size() will print 2 since it compares the objects by reference
+        System.out.println("Size of IdentityHashMap--"+ihm.size());
+    }
+
+    public static void exp4(){
+        // create an enum map instance
+        EnumMap<Color,String> em=new EnumMap<Color, String>(Color.class);
+
+        // add elements to the map
+        em.put(Color.Yellow,"Yellow is great");
+        em.put(Color.Blue, "Blue is nice");
+        em.put(Color.Black,"Black is dark");
+
+        // get all the keys in the map
+        Set<Color> keys = em.keySet();
+        for(Color c:keys){
+            System.out.println("Key: "+c);
+        }
+
+        // get entrySet
+        Set<Map.Entry<Color, String>> entries = em.entrySet();
+        System.out.println(entries);
 
     }
 }
