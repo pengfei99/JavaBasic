@@ -1,8 +1,6 @@
 package org.pengfei.Lesson01_Java_Standard_API.S03_Exploring_Java_util;
 
-import org.pengfei.Lesson01_Java_Standard_API.S03_Exploring_Java_util.source.CollectionClassesExp;
-import org.pengfei.Lesson01_Java_Standard_API.S03_Exploring_Java_util.source.CollectionsAlgoExp;
-import org.pengfei.Lesson01_Java_Standard_API.S03_Exploring_Java_util.source.MapClassesExp;
+import org.pengfei.Lesson01_Java_Standard_API.S03_Exploring_Java_util.source.*;
 import org.pengfei.Lesson01_Java_Standard_API.S03_Exploring_Java_util.source.comparator.ComparatorClassExp;
 
 import java.util.Comparator;
@@ -1022,7 +1020,125 @@ public class S03_Exploring_Java_util_Collections {
     *         range of the specified array of objects according to the order induced by the specified comparator. It's
     *         similar to sort(). It sorts portions of an array in parallel and then merges the results.	This approach
     *         can greatly speed	up sorting times.
+    * - static Spliterator.OfInt spliterator(int array[]): It returns a spliterator to an entire array. It has
+    *         overloaded version for Double,Long and generic type. You can also specify a range of the array
+    *         in which you want to iterate.
+    * - static IntStream steam(int array[]): It returns a stream of the array. In another words Arrays implements
+    *         the Stream interface. It has overloaded version for Double,Long and generic type. You can also specify
+    *         a range within the array.
+    * - static void setAll(double array[], IntToDoubleFunction< ? extends T> genVal): It assigns values to all
+    *         of the elements. Several overloads exist for handling types int, long, and generic.
+    * - static void parallelSetAll(double array[], IntToDoubleFunction< ? extends T> genVal): It assigns values to all
+    *         of the elements, but works in parallel. Several overloads exist for handling types int, long, and generic.
+    * - static void parallelPrefix(double array[], DoubleBinaryOperator func): It modifies an array so that each element
+    *         contains the cumulative result of an operation applied to all previous elements. DoubleBinaryOperator means
+    *         the operator takes two argument x, y of type Double. In this case, x is the cumulative value with init
+    *         value of 0, y is the element value in the array. Check ArraysAlgoExp.exp1(); for example.
+    * - static int	compare​(boolean[] a, int aFromIndex, int aToIndex, boolean[] b, int bFromIndex, int bToIndex): It
+    *         compares two boolean arrays lexicographically over the specified ranges. Several overloads exist for
+    *         handling types int, long, etc. and generic.
+    * - static int	compareUnsigned​(byte[] a, int aFromIndex, int aToIndex, byte[] b, int bFromIndex, int bToIndex): It
+    *         compares two byte arrays lexicographically over the specified ranges, numerically treating elements
+    *         as unsigned.
+    * - static int	mismatch​(boolean[] a, int aFromIndex, int aToIndex, boolean[] b, int bFromIndex, int bToIndex): It
+    *          finds and returns the relative index of the first mismatch between two boolean arrays over the
+    *          specified ranges, otherwise return -1 if no mismatch is found.
+    *
+    * Arrays also provides toString() and hashCode() for the various types of arrays. In addition, deepToString() and
+    * eepHashCode() are provided, which operate effectively on arrays that contain nested arrays.
     *  */
+
+    /************************************** 10 The Legacy Classes and Interfaces *************************************/
+
+    /*
+    * Before java.util include the Collection framework, it defined several classes and an interface that provided
+    * an ad hoc method of storing objects. When Collections were added by J2SE 1.2, several of the original
+    * classes were reengineered to support the collection interface.
+    *
+    * The legacy interface is the Enumeration Interface. It superseded by Iterator, but not deprecated. It has two
+    * abstract methods:
+    * - boolean hasMoreElements()
+    * - E nextElement()
+    * JDK 9 added a default method:
+    * - default Iterator<E> asIterator(): It returns an iterator to the elements in the enumeration.
+    *
+    *
+    * The legacy classes are:
+    * - Dictionary
+    * - Hashtable
+    * - Properties
+    * - Stack
+    * - Vector
+    *
+    * */
+
+    /** 10.1 Vector
+     *
+     * After JDK 5, it was retrofitted for generics, extends AbstractList and implements Iterable and List
+     * Interface. This means that Vector is fully compatible with collections, and a Vector can use the for
+     * each loop.
+     *
+     * Vector implements List, we can use a vector just like ArrayList instance.
+     * Check LegacyEnumerationClassesExp.exp1();
+     * */
+
+    /** 10.2 Stack
+     *
+     * Stack is a subclass of Vector, that implements last-in,first-out stack. It's not recommended to use this class
+     * anymore. There are two main reason:
+     * - Performance: ArrayDeque is likely to be faster than Stack when used as a stack, and faster than LinkedList
+     *                when used as a queue.
+     * - Functionality: Stack does not implements any interface in collections. So many functions in Collections can't
+     *                be used directly.
+     * */
+
+    /** 10.3 Dictionary
+     *
+     * Dictionary is an abstract class that represents a key/value storage repository and operates much like Map.
+     * So Use map instead of Dictionary.
+     * */
+
+    /** 10.4 Hashtable
+     *
+     * Hashtable was part of the original java.util and is a concrete implementation of a Dictionary. Then, Hashtable
+     * is integrated into the Collection Framework by implementing the Map interface. It is similar to HashMap, but is
+     * synchronized.
+     *
+     * Hashtable stores key/value paris in a hash table. However, neither keys nor values can be null. In a Hashtable,
+     * you specify an object that is used as a key, and the value that you want linked to that key. The key is then
+     * hashed, and the resulting hash code is used as the index at which the value is stored within the table.
+     *
+     * Hashmap vs Hashtable
+     * 1. HashMap is non synchronized. It is not-thread safe and can’t be shared between many threads without proper
+     *    synchronization code whereas Hashtable is synchronized. It is thread-safe and can be shared with many threads.
+     * 2. HashMap allows one null key and multiple null values whereas Hashtable doesn’t allow any null key or value.
+     * 3. HashMap is generally preferred over HashTable if thread synchronization is not needed
+     *
+     * Check LegacyEnumerationClassesExp.exp2();
+     * */
+
+    /** 10.5 Properties
+     *
+     *  Properties is a subclass of Hashtable. It is used to maintain lists of values in which the key is a String
+     *  and the value is also a String. The Properties class is used by some other Java classes. For example,
+     *  System.getProperties() returns an object of Properties type to obtain environmental values. Although the
+     *  Properties class is not generic, several of its method are.
+     *  Check LegacyEnumerationClassesExp.exp3();
+     *
+     * Using store() and load()
+     * One of the most useful aspects of Properties is that the information	contained in a Properties object can be
+     * easily stored to	or loaded from disk with the store() and load() methods. At any time, you can write a
+     * Properties object to a stream or read it back. This makes property lists especially convenient for
+     * implementing simple databases.
+     *
+     * For example,	the	following program uses a property list to create a simple computerized telephone book that
+     * stores names and phone numbers. To find a person’s number, you enter name. The program uses the store() and
+     * load() methods to store and retrieve the	list. When the program executes, it first tries	to load	the	list from
+     * file	called phonebook.db. If this file exists, the list is loaded. You can then add to the list. If you do,
+     * the new list is saved when you terminate the program. Notice how little code is required to implement a small,
+     * but functional, computerized phone book.
+     * Check LegacyEnumerationClassesExp.exp4("/tmp/phonebook.db");
+     * */
 
     /***********************************************************************************************************
      * ******************************************* Code example ***********************************************
@@ -1088,6 +1204,19 @@ public static void main(String[] args){
    // ComparatorClassExp.exp5();
 
     //Collections function
-    CollectionsAlgoExp.exp1();
+    // CollectionsAlgoExp.exp1();
+
+    // Arrays function
+    //ArraysAlgoExp.exp1();
+
+    // Vector
+    // LegacyEnumerationClassesExp.exp1();
+
+    // hashtable
+   // LegacyEnumerationClassesExp.exp2();
+
+    // properties
+   // LegacyEnumerationClassesExp.exp3();
+    LegacyEnumerationClassesExp.exp4("/tmp/phonebook.db");
      }
 }
