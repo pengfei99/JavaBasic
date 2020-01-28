@@ -6,7 +6,7 @@ import org.pengfei.Lesson01_Java_Standard_API.S01_String_Handling.source.StringO
 
 public class S01_String_Handling {
 
-    /********************************************* 01 Introduction **************************************************/
+    /********************************************* 1.0 Introduction **************************************************/
 /*
 * A string is a sequence of characters. But, unlike other languages which implement strings as character arrays, Java
 * implements strings as objects of type String. This makes Java extremely strong on handling string.
@@ -33,7 +33,7 @@ public class S01_String_Handling {
 * A variable declared as a String reference can be changed to point at any other string object at any time.
 * */
 
- /******************************************** 02 The String constructors *****************************************/
+ /******************************************** 1.1 The String constructors *****************************************/
 
  /*
  * The String class supports several constructors.
@@ -67,23 +67,23 @@ public class S01_String_Handling {
  * Check 02 in the code example section
  * */
 
-    /**************************************** 03 The Basic String operations *****************************************/
+    /**************************************** 1.2 The Basic String operations *****************************************/
 
-    /** 3.1 String length
+    /** 1.2.1 String length
      * The length of a string is the number of characters that it contains. To obtain this value, call the length()
      * method: int length(). Note space ' ' is also counted as a character.
      * Check StringOperation.exp1();
      *
      * */
 
-    /** 3.2 String literals
+    /** 1.2.2 String literals
      * For each	string literal in your program,	Java automatically constructs a	String object. Thus, you can use a
      * string literal to initialize	a String object. You can also use string literals to replace any String object.
      * For example, System.out.println("abc".length()); will print 3.
      *
      * */
 
-    /** 3.3 String concatenation
+    /** 1.2.3 String concatenation
      * In general, Java does not allow operators to be applied to String objects. But "+" is the exception, we use it
      * to concatenate String objects. Check StringOperation.exp2();
      *
@@ -91,7 +91,7 @@ public class S01_String_Handling {
      *
      * */
 
-    /** 3.4 String conversion and toString()
+    /** 1.2.4 String conversion and toString()
      * One way to convert data into its string representation is by calling one the overloaded versions of the string
      * conversion method valueOf() defined by String class. valueOf() is overloaded for all the primitive types and for
      * type Object.
