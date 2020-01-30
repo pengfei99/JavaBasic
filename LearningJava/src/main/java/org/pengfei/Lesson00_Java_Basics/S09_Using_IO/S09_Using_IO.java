@@ -36,7 +36,7 @@ public class S09_Using_IO {
     /*
     * Java programs perform I/O through streams. An I/O stream is an abstraction that either produces or consumes
     * information. A stream represents a flow of data or a channel of communication.
-    * A stream is linked to a physical device by theJava I/O system. All streams behave in the same manner,
+    * A stream is linked to a physical device by the Java I/O system. All streams behave in the same manner,
     * even if the actual physical devices they are linked to differ. Thus, the same I/O classes and methods can be
     * applied to different types of devices. For example, the same methods that you use to write to the console can
     * also be used to write to a disk file. Java implements I/O streams within class hierarchies defined in the

@@ -1,0 +1,43 @@
+1. Why does Java define both byte and character streams?
+The byte streams are the original streams defined by Java. They are especially useful for binary I/O,
+and they support random­access files. The character streams are optimized for Unicode.
+
+2. Even though console input and output is text­based, why does Java still use byte streams for this purpose?
+The predefined streams, System.in, System.out, and System.err, were defined before Java added the character streams.
+
+3. Show how to open a file for reading bytes.
+
+4. Show how to open a file for reading characters.
+
+5. Show how to open a file for random­access I/O.
+
+6. How do you convert a numeric string such as "123.23" into its binary equivalent?
+To convert numeric strings into their binary equivalents, use the parsing methods defined by the type wrappers,
+such as Integer or Double.
+
+7. Write a program that copies a text file. In the process, have it convert all spaces into hyphens. Use the
+   byte stream file classes. Use the traditional approach to closing a file by explicitly calling close().
+
+8. Rewrite the program in question 7 so that it uses the character stream classes. This time, use the try­with­resources
+   statement to automatically close the file.
+
+9. What type of stream is System.in?
+InputStream
+
+10. What does the read() method of InputStream return when an attempt is made to read at the end of the stream?
+-1
+
+11. What type of stream is used to read binary data?
+
+12. Reader and Writer are at the top of the ____________ class hierarchies.
+character­based I/O
+
+13. The try­with­resources statement is used for ___________ ____________ ____________.
+automatic resource management
+
+14. If you are using the traditional method of closing a file, then closing a file within a finally block is
+    generally a good approach. True or False?
+True
+
+15. Can local variable type inference be used when declaring the resource in a try­with­resources statement?
+Yes

@@ -41,7 +41,7 @@ public class ByteIOExp {
             // here we use do while, because we need to assign i with a value before we test the loop condition.
             do{
                i =fileInputStream.read();
-                if(i !=1) System.out.print((char) i);
+                if(i !=-1) System.out.print((char) i);
             }while (i!=-1);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
