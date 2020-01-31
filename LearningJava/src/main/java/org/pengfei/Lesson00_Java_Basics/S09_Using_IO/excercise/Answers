@@ -28,6 +28,7 @@ InputStream
 -1
 
 11. What type of stream is used to read binary data?
+DataInputStream
 
 12. Reader and Writer are at the top of the ____________ class hierarchies.
 character­based I/O
