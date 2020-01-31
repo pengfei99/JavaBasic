@@ -156,7 +156,7 @@ public class S09_Using_IO {
     /************************************** 9.5 Using the byte streams ***************************************/
 
     /*
-    *  As explained, at the top of the byte stream hierarchy are the InputStream and OutputStream classes. So we will
+    * As explained, at the top of the byte stream hierarchy are the InputStream and OutputStream classes. So we will
     * start with the method in InputStream and OutputStream.
     * InputStream has the following method:
     * - int available(): Returns the number of bytes of input currently available for reading
