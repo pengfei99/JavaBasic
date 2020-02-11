@@ -1,9 +1,6 @@
 package org.pengfei.Lesson01_Java_Standard_API.S04_Exploring_Java_io.source;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 
 public class AdvanceByteIOExp {
 
@@ -60,16 +57,130 @@ public class AdvanceByteIOExp {
              FileOutputStream f2 = new FileOutputStream("/tmp/test2");
         ) {
 // write to first file
-            for(int i=0;i<buf.length;i+=2) f0.write(buf[i]);
+            for (int i = 0; i < buf.length; i += 2) f0.write(buf[i]);
 
             // write entire buf to second
             f1.write(buf);
 
             // write bytes starts at 3/4 buf length to end of but to third file
-            f2.write(buf,buf.length-buf.length/4,buf.length/4);
+            f2.write(buf, buf.length - buf.length / 4, buf.length / 4);
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public static void exp3() {
+        String str = "abcdefghijklmnopqrstuvwxyz";
+        byte[] b = str.getBytes();
+
+        //the binput1 input stream contains entire string,
+        ByteArrayInputStream binput1 = new ByteArrayInputStream(b);
+
+        //the binput2 contains only the first three character of the string
+        ByteArrayInputStream binput2 = new ByteArrayInputStream(b, 0, 3);
+        int c = -1;
+        do {
+            c = binput2.read();
+            if (c == -1) continue;
+            System.out.print((char) c);
+        } while (c != -1);
+        System.out.println();
+        //after the loop the pointer of binput2 is at the end of stream. so when we do read, it returns -1. To reset
+        //the pointer to the begining of the stream, use reset method
+        System.out.println("Current pointer position returns: " + binput2.read());
+        binput2.reset();
+        System.out.println("Current pointer position returns: " + binput2.read());
+
+        // we can also use mark to set a specific position to reset(), in the following example we mark c(99) as the
+        // start, so when we reset, the pointer does not start from a but from c.
+
+        for (int i = 0; i < 10; i++) {
+            c = binput1.read();
+            if (c == -1) break;
+            //mark c
+            if (c == 99) binput1.mark(3);
+
+            //if i=5 reset once
+            if (i == 5) binput1.reset();
+            System.out.print((char) c);
+        }
+
+    }
+
+    public static void exp4() {
+        String str = "My life will rock";
+        byte[] b = str.getBytes();
+        ByteArrayOutputStream boutput = new ByteArrayOutputStream();
+
+        try {
+            boutput.write(b);
+        } catch (IOException e) {
+            System.out.println("Error writing to buffer");
+        }
+
+        System.out.println("ByteArrayOutputStream as string: " + boutput.toString());
+
+        System.out.println("ByteArrayOutputStream to array: ");
+        byte[] bb = boutput.toByteArray();
+        for (int i = 0; i < bb.length; i++) {
+            System.out.print((char) bb[i]);
+        }
+        System.out.println();
+
+
+        // write to a file
+        try (FileOutputStream f2 = new FileOutputStream("/tmp/test.txt")) {
+            //write to a outputStream
+            boutput.writeTo(f2);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+        System.out.println("doing a reset");
+        boutput.reset();
+
+        for (int i = 0; i < 3; i++) boutput.write('X');
+        System.out.println("After reset, inserting 3 X: " + boutput.toString());
+    }
+
+    public static void exp5() {
+        String str = "This is a &copy; copyright symbol. but this is &copy not.\n";
+        byte[] b = str.getBytes();
+
+        ByteArrayInputStream bin = new ByteArrayInputStream(b);
+        int c;
+        boolean marked = false;
+
+        try (BufferedInputStream f = new BufferedInputStream(bin)) {
+            do {
+                c = f.read();
+                if (c == -1) continue;
+                switch (c) {
+                    case '&':
+                        //f.mark(32) marks the & position and preserves the mark fo the next 32 bytes read.
+                        if(!marked) { f.mark(32); marked=true;}
+                        else marked=false;
+                        break;
+                    case ';':
+                        if(marked){ marked=false; System.out.print("(c)");}
+                        else System.out.print((char) c);
+                        break;
+                    case ' ':
+                        if(marked){marked=false; f.reset(); System.out.print("&");}
+                        else System.out.print((char) c);
+                        break;
+                    default:
+                        if(!marked) System.out.print((char) c);
+                        break;
+                }
+            } while (c != -1);
         } catch (IOException e) {
             e.printStackTrace();
         }
