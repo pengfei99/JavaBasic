@@ -1,6 +1,7 @@
 package org.pengfei.Lesson01_Java_Standard_API.S04_Exploring_Java_io.source;
 
 import java.io.*;
+import java.util.Vector;
 
 public class AdvanceByteIOExp {
 
@@ -165,22 +166,145 @@ public class AdvanceByteIOExp {
                 switch (c) {
                     case '&':
                         //f.mark(32) marks the & position and preserves the mark fo the next 32 bytes read.
-                        if(!marked) { f.mark(32); marked=true;}
-                        else marked=false;
+                        if (!marked) {
+                            f.mark(32);
+                            marked = true;
+                        } else marked = false;
                         break;
                     case ';':
-                        if(marked){ marked=false; System.out.print("(c)");}
-                        else System.out.print((char) c);
+                        if (marked) {
+                            marked = false;
+                            System.out.print("(c)");
+                        } else System.out.print((char) c);
                         break;
                     case ' ':
-                        if(marked){marked=false; f.reset(); System.out.print("&");}
-                        else System.out.print((char) c);
+                        if (marked) {
+                            marked = false;
+                            f.reset();
+                            System.out.print("&");
+                        } else System.out.print((char) c);
                         break;
                     default:
-                        if(!marked) System.out.print((char) c);
+                        if (!marked) System.out.print((char) c);
                         break;
                 }
             } while (c != -1);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void exp6() {
+
+        // build a byte array stream to read a string as byte
+        String str = "if (a == 4) then a = 0;\n";
+        byte[] b = str.getBytes();
+        ByteArrayInputStream in = new ByteArrayInputStream(b);
+
+        int c;
+        try (PushbackInputStream f = new PushbackInputStream(in)) {
+            do {
+                c = f.read();
+                if (c == -1) continue;
+                switch (c) {
+                    case '=':
+                        // we read another byte, the pointer of stream goes further(position of '='+1)
+                        // then we check if the following byte is = or not, if yes, then we encouter ==, so replace it
+                        // by equal, otherwise, we need to push back the new read byte.
+                        c = f.read();
+                        if (c == '=') System.out.print("equal");
+                        else {
+                            System.out.print("assign");
+                            //push back c
+                            f.unread(c);
+                        }
+                        break;
+                    default:
+                        System.out.print((char) c);
+                        break;
+                }
+            } while (c != -1);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public static void exp7(){
+        Vector<String> files=new Vector<String>();
+        files.addElement("/tmp/test1");
+        files.addElement("/tmp/test2");
+        files.addElement("/tmp/test3");
+
+        //call my InputStreamEnumerator
+        InputStreamEnumerator myInputs=new InputStreamEnumerator(files);
+        //build the SequenceInputStream
+        InputStream f=new SequenceInputStream(myInputs);
+
+        int c;
+        try{
+            while((c=f.read())!=-1){
+                System.out.print((char) c);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }catch (NullPointerException e){
+            System.out.println("Error Opening File.");
+        }finally {
+            try{
+                f.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public static void exp8(){
+        //f1 is a directory
+        File f1=new File("/tmp");
+
+        //f2 is a file
+        File f2=new File(f1,"test");
+
+        try (PrintStream f=new PrintStream(f2,"UTF-8");){
+            f.println("Here are some numeric values in different formats. \n");
+            f.printf("%d %(d %+d %05d\n",3,-3,3,3);
+
+            f.println();
+            f.printf("Default floating-point format: %f\n", 1234567.123);
+            f.printf("Floating-point with commas: %,f\n", 1234567.123);
+            f.printf("Negative Default floating-point format: %,f\n", -1234567.123);
+
+            f.println();
+            f.printf("Line up positive and negative values:\n");
+            f.printf("% ,.2f\n% ,.2f\n", 1234567.123,-1234567.123);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void exp9(String filePath){
+        // use DataOutputStream to write data on a file
+        try(DataOutputStream dout=new DataOutputStream(new FileOutputStream(filePath))){
+            dout.writeDouble(88.8);
+            dout.writeInt(88);
+            dout.writeBoolean(true);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        // now read data
+        try(DataInputStream din=new DataInputStream(new FileInputStream(filePath))) {
+           double d=din.readDouble();
+           int i=din.readInt();
+           boolean b=din.readBoolean();
+           System.out.println("here are the values: "+d+" "+i+" "+b);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
