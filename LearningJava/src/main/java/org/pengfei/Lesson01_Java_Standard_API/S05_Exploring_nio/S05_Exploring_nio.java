@@ -1,6 +1,8 @@
 package org.pengfei.Lesson01_Java_Standard_API.S05_Exploring_nio;
 
 import org.pengfei.Lesson01_Java_Standard_API.S05_Exploring_nio.source.ChannelBasedIOExample;
+import org.pengfei.Lesson01_Java_Standard_API.S05_Exploring_nio.source.PathFilesOperationExample;
+import org.pengfei.Lesson01_Java_Standard_API.S05_Exploring_nio.source.StreamBasedIOExample;
 
 public class S05_Exploring_nio {
 
@@ -331,14 +333,203 @@ public class S05_Exploring_nio {
      *
      * An important use of NIO is to access a file iva a channel and buffers.
      *
-     * Reading a File via a Channel
+     * A. Reading a File via a Channel
+     * To read a File via a Channel, we need to follow the below steps:
      * 1. Create a Path that describes the file
-     * 2. Open the file with Path
-     * 3.
+     * 2. Open the file with Path and establish a channel
+     * 3. Allocate a buffer which will be used by the channel
+     * 4. call read() on the channel, passing reference to the buffer. read() fills the buffer with data. Each call
+     *    to read() reads the next buffer's worth of bytes from the channel. It returns -1 when there is nothing
+     *    (end of file).
+     *
+     * Check  ChannelBasedIOExample.exp1("/tmp/test1"); and ChannelBasedIOExample.exp2("/tmp/test1");
+     *
+     * B. Reading a File by mapping it to a buffer.
+     * The advantage of this solution is that the buffer automatically contains the contents of the file. No explicit
+     * read operation is necessary. To do this, we need to follow below steps:
+     * 1. Create a Path
+     * 2. Obtain a channel with Files.newByteChannel().
+     * 3. Map the channel to a buffer by calling map() on the channel.
+     *
+     * Note map() methods is defined by FileChannel, so we need to cast SeekableByteChannel to FileChannel. The
+     * MappedByteBuffer map(FileChannel.MapMode mode, long pos, long size) throws IOException
+     * method causes the data in the file to be mapped into a buffer in memory. The value in mode determines what type
+     * operations are allowed. It can have three value:
+     * - MapMode.READ_ONLY: Read a file
+     * - MapMode.READ_WRITE: Read and write a file
+     * - MapMode.PRIVATE: creates a private copy of the file, and changes to the buffer do not affect the underlying
+     *                   file.
+     * Argument pos specifies the start position in the file for mapping, size specify the number of bytes to be mapped.
+     *
+     * C. Writing to a File via a Channel
+     * To write data to a file via a Channel, we need to follow below steps:
+     * 1. Allocate a buffer
+     * 2. Write data to the buffer
+     * 3. Create a Path and open it with a Channel
+     * 4. Perform an explicit write operation to write that data to a file.
+     * Check ChannelBasedIOExample.exp4("/tmp/test1"); If the file which we write exist already and has data in it, this
+     * program will overwrite only the first 18 byte of the file, the reset is unchanged.
+     *
+     *
+     * Note, in all examples, we used rewind() to reset current position to 0, in some case, we could use flip() method
+     * to reset current position to 0 and set the limit to the previous current position. In our example 4, when finish
+     * writing the buffer, the current position of the buffer equals its limit, so flip() can replace rewind(). But
+     * in some case, it can't. Check ChannelBasedIOExample.exp5(); for flip example
+     *
+     * D. Writing a file by mapping it to a buffer
+     * The advantage of this solution is that the data written to the buffer will automatically be written to the
+     * file. No explicit write operation is necessary. To do this, we need to follow below steps:
+     * 1. Create a Path and open it with a Channel
+     * 2. Map the channel to a buffer by calling map()
+     * 3. write data to buffer
+     *
+     * Check ChannelBasedIOExample.exp6("/tmp/test1"); If the file which we write exist already and has data in it, this
+     * program will overwrite only the first 18 byte of the file, the reset is unchanged.
+     *
+     * E. Copying a File Using NIO
+     * NIO simplifies several types of file operations such as copy. Files class provide a static method:
+     * - static Path copy(Path src, Path dest, CopyOption ... options) throws IOException.
+     * The options are:
+     * - COPY_ATTRIBUTES: Request that the file's attributes be copied
+     * - NOFOLLOW_LINKS: Do not follow symbolic links.
+     * - REPLACE_EXISTING: Overwrite a preexisting file
+     * Other options may be supported, depending on the implementation.
+     *
+     * check ChannelBasedIOExample.exp7("/tmp/test","/tmp/test1");
+     *
      * */
 
 
+    /** 5.5.2 Use NIO for Stream based I/O
+     * Beginning with JDK 7, we can use NIO to open an I/O stream. Once you have a Path object, you can call its two
+     * static methods:
+     * - static InputStream newInputStream(Path path, OpenOption ... options): Open a file for stream based input,
+     *                if no options are specified, the StandardOpenOption.READ were passed. Once opened, you can
+     *                use any of the methods defined by InputStream(e.g. read()).
+     *                Check StreamBasedIOExample.exp1("/tmp/test1");
+     *                We can also wrap the input stream to more advance stream such as a BufferedInputStream. So we
+     *                can perform buffer operation such as mark() and reset().
+     *                Check StreamBasedIOExample.exp2("/tmp/test1");
+     * - static OutputStream newOutputStream(Path path, OpenOption ... options): Open a file for output. If options are
+     *                not specified, default option StandardOpenOption.WRITE, StandardOpenOption.CREATE and
+     *                StandardOpenOption.TRUNCATE_EXISTING will be applied.
+     *
+     */
+
+    /** 5.5.3 Use NIO for Path and File system operations
+     * Compare to File class which we have examined in section 4, NIO offer a better way to perform its functions. For
+     * example:
+     * - support for symbolic link
+     * - better support for directory tree traversal
+     * - improved handling of metadata
+     * - etc.
+     *
+     * A. Obtain information about a Path and a File
+     * To obtain information about a Path, we reply on methods of Path interface, such as:
+     * - getName()
+     * - getParent()
+     * - toAbsolutePath()
+     *
+     * For file, we rely on methods of Files Class, such as:
+     * - isExecutable()
+     * - isHidden()
+     * - isReadable()
+     * - isWritable()
+     * - exists()
+     * Note some file attributes are obtained by requesting a list of attributes by calling Files.readAttributes().
+     * Check  PathFilesOperationExample.exp1("/tmp/test");
+     *
+     * B. List the contents of a Directory
+     * If a path describes a directory, then you can read the contents of that directory by using static methods
+     * defined by Files.
+     * 1. Create a directory stream by calling static DirectoryStream<Path> newDirectoryStream(Path path). It will throw
+     *    an IOException if	an I/O error occurs and a NotDirectoryException (which is a subclass of IOException)
+     *    if the specified path is not a directory. A SecurityException is also possible if access to the directory
+     *    is not permitted. DirectoryStream<Path> implements AutoCloseable interface, so we can use try with resource.
+     *    It also implements Iterable<Path>, we can get an iterator or use for each to loop over its contents.
+     *    Check PathFilesOperationExample.exp2("/tmp"); to see how we get contents of a directory
+     *
+     *    We can also filter the content of a directory. we can use a wildcard option when creating the DirectoryStream.
+     *    Check  PathFilesOperationExample.exp3("/tmp");
+     *
+     *    Another way to filter the content is to use DirectoryStream.Filter interface. It defines a method:
+     *    boolean accept(T entry) throws IOException. In our case, T is Path. This offers the advantage of being able
+     *    to filter a directory based on something other than a filename. For example, we can filter based on file
+     *    size, creation date, etc. Check PathFilesOperationExample.exp4("/tmp");
+     *
+     * 2. Use walkFileTree() to List a Directory Tree
+     *    The preceding examples have obtained the contents of only a single directory. But, sometimes you will want
+     *    to obtain a list of files in a directory tree. We can use walkFileTree() method in Files class.
+     *    - static Path walkFileTree(Path rootPath, FileVisitor<? super Path > fv) throws IOException.
+     *    Here fv is an instance of FileVisitor which defines how the directory tree is traversed. fv also gives you
+     *    access to the directory information.
+     *
+     *    FileVisitor is an interface, it defines following methods:
+     *    - FileVisitResult postVisitDirectory(T dir, IOException exc): Called after a directory has been visited.
+     *               The directory is passed in dir, and any IOException is passed in exc. If exc is null, no
+     *               exception occurred. The result is returned.
+     *    - FileVisitResult preVisitDirectory(T dir, BasicFileAttributes attrs): Called before a directory has been
+     *               visited. The directory is passed in dir, and the attributes associated with the directory are
+     *               passed in attrs. The result is returned. To examine the directory, return FileVisitResult.CONTINUE
+     *    - FileVisitResult visitFile(T file, BasicFileAttributes attrs): Called when a file is visited. the file is
+     *              passed in file, and the attributes associated with the file are passed in attrs. The result is
+     *              returned.
+     *    - FileVisitResult visitFileFailed(T file, IOException exc): Invoked for a file that could not be visited.
+     *    Note all four methods returns a FileVisitResult, which has values:
+     *    - CONTINUE: To continue traversing the directory and subdirectory.
+     *    - SKIP_SIBLINGS: For preVisitDirectory(), it bypass the directory and its siblings and prevent
+     *                postVisitDirectory() from being called.
+     *    - SKIP_SUBTREE: It bypass the directory and sub-directories
+     *    - TERMINATE: It stops the directory traversal.
+     *    You can define your own FileVisitor, but it's easier to extends SimpleFileVisitor and overwrites the
+     *    default implementation.
+     *    Check PathFilesOperationExample.exp5("/tmp");
+     *    Note, we can also watch a directory for changes by using java.nio.file.WatchService.
+     * */
     public static void main(String[] args){
-        ChannelBasedIOExample.exp1("/tmp/test1");
+        /** NIO for channel based I/O*/
+        // read file via channel
+        // ChannelBasedIOExample.exp1("/tmp/test1");
+        // ChannelBasedIOExample.exp2("/tmp/test1");
+
+        // map file to buffer
+        // ChannelBasedIOExample.exp3("/tmp/test1");
+
+        // write data to file via channel
+         // ChannelBasedIOExample.exp4("/tmp/test1");
+
+        // flip example
+       // ChannelBasedIOExample.exp5();
+
+        // write data via buffer mapping
+      //  ChannelBasedIOExample.exp6("/tmp/test1" );
+
+        // copy example
+        // ChannelBasedIOExample.exp7("/tmp/test","/tmp/test1");
+
+        /** NIO for stream based I/O*/
+        // read file via inputStream
+       // StreamBasedIOExample.exp1("/tmp/test1");
+
+        //read file via buffered input stream
+        //StreamBasedIOExample.exp2("/tmp/test1");
+
+        //write a file via buffered output stream
+       // StreamBasedIOExample.exp3("/tmp/test");
+
+        /** Path and file operation*/
+        // get basic attributes of path and file
+       // PathFilesOperationExample.exp1("/tmp/test");
+
+        // iterate over a directory and display its contents
+       // PathFilesOperationExample.exp2("/tmp");
+
+        // filter the contents of a directory
+       // PathFilesOperationExample.exp3("/tmp");
+      //  PathFilesOperationExample.exp4("/tmp");
+
+        // show directory contents with walkFileTree
+        PathFilesOperationExample.exp5("/tmp");
+
     }
 }
