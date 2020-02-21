@@ -143,13 +143,176 @@ public class S09_Concurrency_Utilities {
      * thread is blocked by the semaphore, if we remove the semaphore, you will see the two threads intermix, and the
      * SharedObj.count are accessed by two threads simultaneously are increased or decreased.
      *
+     * Check SynchronizationObjExample.exp2(); we use two semaphores to regulate the producers and
+     * consumers threads.
+     *
      * */
 
+/** 9.3.2 CountDownLatch
+ *
+ * Sometimes you will want a thread to wait until one or more events have occurred. In this kind of situation, we need
+ * to use CountDownLatch. It is initially created with a count of the number of events that must occur before the
+ * latch is released. Each time an event happens, the count is decremented. When the count reaches zero, the latch
+ * opens. It has one constructor:
+ * - CountDownLatch(int num): num specifies the number of events that must occur in order the latch to open. Note This
+ *           num value can be set only once, and CountDownLatch provides no other mechanism to reset this count.
+ *
+ * To wait on the lactch, a thread calls await() methods:
+ * - void await() throws InterruptedException: It waits until the count associated with the invoking CountDownLatch
+ *                       reaches zero.
+ * - boolean await(long wait, TimeUnit tu) throws InterruptedException: It waits only only for the period of time
+ *                     specified by wait. The tu represents the units. It returns false if the time limit is
+ *                     reached and true if the countdown reaches zero.
+ *
+ * To signal an event, call the countDown() method, each call to countDown() decrements the count associated with the
+ * invoking object.
+ *
+ *
+ * */
 
+/** 9.3.3 CyclicBarrier
+ *
+ * A situation not uncommon in concurrent programming occurs when a set of two or more threads must wait at a
+ * predetermined execution point until all threads in the set have reached that point. To handle such a situation, we
+ * use CyclicBarrier class. It enables you to define a synchronization object that suspends until the specified
+ * number of threads has reached the barrier point. It has the following two constructors:
+ * - CyclicBarrier(int numThreads): numThreads specifies the number of threads that must reach the barrier before
+ *              execution continues.
+ * - CyclicBarrier(int numThreads, Runnable action): action specifies a thread that will be executed when the barrier
+ *              is reached.
+ *
+ * The general procedure for using CyclicBarrier:
+ * 1. Create a CyclicBarrier object, and specify the number of threads that you will be waiting for.
+ * 2. When each thread reaches the barrier, have it call await() on that CyclicBarrier. This will pause execution
+ *    of the thread until all of the other threads also call await().
+ * 3. Once the specified number of thread has reached the barrier, if you specified an action in the CyclicBarrier,
+ *    then that thread is executed. Finally await() will return and the waiting thread will resume.
+ *
+ * await() has two forms:
+ * - int await() throws InterruptedException, BrokenBarrierException: It waits until all the threads have reached
+ *                  the barrier point.
+ * - int await(long wait, TimeUnit tu) throws InterruptedException, BrokenBarrierException, TimeoutException: It waits
+ *                  only for the period of time specified by wait with unit tu.
+ * Both forms returns a int value which indicates the order that the threads arrive at the barrier point. It's
+ * calculated with value=numThreads-i, where i is the arrive order starts at 1. So If the numThread =3, the first
+ * arrived thread returns 2, the last thread returns 0.
+ *
+ * Check SynchronizationObjExample.exp4(); we use three worker to add elements in a list, after all three workers
+ * reach the barrier, we have a thread in the barrier which calculates the sum of all inserted elements.
+ *
+ * A CyclicBarrier can be reused because it will release waiting threads each time the specified number of threads
+ * calls await(). check SynchronizationObjExample.exp5();
+ * */
+
+/** 9.3.4 Exchanger
+ *
+ * Exchanger is designed to simplify the exchange of data between two threads. It waits until two separate threads
+ * call its exchange() method. When that occurs, it exchanges the data supplied by the threads.
+ *
+ * Exchanger is a generic class that is declared as Exchanger<V>, V is the type of data being exchanged. It has only
+ * one method exchange(), which has two forms:
+ * - V exchange(V objRef) throws InterruptedException: objRef is a reference to the data to exchange. The data received
+ *                   from the other thread is returned.
+ * - V exchange(V objRef, long wait, TimeUnit tu) throws InterruptedException, TimeoutException: It allows a time-out
+ *                   period to be specified.
+ *
+ * The key point about exchange() is that it won't succeed until it has been called on the same Exchanger object by
+ * two separate threads. Thus, exchange() synchronizes the exchange of the data.
+ * Check  SynchronizationObjExample.exp6();
+ * */
+
+/** 9.3.5 Phaser
+ * To enable the synchronization of threads that represent one or more phases of activity, we need to call Phaser class.
+ * Phaser lets you define a synchronization object that waits until a specific phase has completed. It then advances to
+ * the next phase, again waiting until that phase concludes. It is important to understand that Phaser can also be used
+ * to synchronize only a single phase. In this regard, it acts much like a CyclicBarrier.
+ *
+ * Phaser defines four constructors:
+ * - Phaser(): Creates a new phaser with no initially registered parties, no parent, and initial phase number 0.
+ * - Phaser(int numParties): Creates a new phaser with the given number of registered unarrived parties, no parent,
+ *             and initial phase number 0.
+ * - Phaser(Phaser parent): Equivalent to Phaser(parent, 0).
+ * - Phaser(Phaser parent, int parties): Creates a new phaser with the given parent and number of registered
+ *             unarrived parties.
+ *
+ * The term party is often applied to the objects that register with a phaser. General procedure to use Phaser:
+ * 1. Create a new instance of Phaser.
+ * 2. Register one or more parties with the phaser, either by calling register() or by specifying the number of
+ *    parties in the constructor. For each registerd party, have the phaser wait until all registered parities
+ *    complete a phase. A party signals this by calling one of a variety of methods supplied by Phaser, such as
+ *    arrive() or arriveAndAwaitAdvance().
+ * 3. After all parties have arrived, the phase is complete, and the phaser can move on to the next
+ *    phase(if there is one), or terminate.
+ *
+ * It has the following method
+ * - int register(): It registers parties after a Phaser has been constructed. It returns the phase number of the phase
+ *                   to which it is registered.
+ * - int arrive(): It signals that a party has completed a task. When the number of arrivals equals the number of
+ *                 registered parties, the phase is completed. It returns the current phase number. If the phaser has
+ *                 been terminated, then it returns a negative value. The arrive() method does not suspend execution
+ *                 of the calling thread. This means that it does not wait for the phase to be completed. This method
+ *                 should be called only by registered parties.
+ * - int arriveAndAwaitAdvance(): Similar to arrive. But it will suspend the thread and wait until all other registrants
+ *                 have also completed that phase. It returns the next phase number or a negative value if the phaser
+ *                 has been terminated.
+ * - int arriveAndDeregister(): A thread can arrive and then deregister itself. It returns the current phase number
+ *                 or a negative value. It does not suspend the calling thread. Thus it does not wait until the
+ *                 phase is complete.
+ * - final int getPhase(): It returns the current phase number. When a Phase is created, the first phase will be 0,
+ *                 Second phase 1, and so on. It returns a negative value if the invoking Phaser has been terminated.
+ * - protected boolean onAdvance(int phase, int numParties): phase is the current phase number prior to be incremented
+ *                  and numParties will contain the number of registered parties. This method should be override, if
+ *                  you want to control precisely what happens when a phase advance occurs. It should return false to
+ *                  keep the phaser alive, or true to terminate phaser. The default version is also implemented like
+ *                  this.
+ *                  One reason to override onAdvance() is to enable a phaser to execute a specific number of phases
+ *                  and then stop.
+ * - int awaitAdvance(int phase): phase indicates the number on which awaitAdvance() will wait until a transition to
+ *                  the next phase take place. It will return immediately if the argument passed to phase is not
+ *                  equal to the current phase or the phaser is terminated. But, if phase is the current phase,
+ *                  then it will wait until the phase increments.
+ * - int awaitAdvanceInterruptibly(int phase): It is the interruptible version of awaitAdvance.
+ *
+ * There are also some other interesting method. For example:
+ * - bulkRegister(): It registers more than one party.
+ * - getRegisteredParties(): It obtains the number of registered parties
+ * - getArrivedParties(): It returns the number of arrived parties
+ * - getUnarrivedParties(): It returns the number of unarrived parties
+ * - forceTermination(): It forces the phasers to enter a terminated state.
+ *
+ * We can create a tree of phasers with the two constructor which takes a parent phaser.
+ *
+ * Check SynchronizationObjExample.exp7(); We have three threads registered to a Phaser. During the execution, we
+ * have four phase. In this example, all three threads are all of the same type, this is not a requirement.
+ * Each party that uses a phaser can be unique.
+ *
+ * Check SynchronizationObjExample.exp8(); We create a custom phaser by extending phaser class. By overriding the
+ * onAdvance method, we control how a phaser ends. To avoid explicitly extends Phaser class, you can create an
+ * anonymous inner class to override onAdvance.
+ * */
 
     public static void main(String[] args){
-        /** Semaphore */
+
+        /** Synchronization object*/
+        // Semaphore
         // SynchronizationObjExample.exp1();
-        SynchronizationObjExample.exp2();
+       // SynchronizationObjExample.exp2();
+
+        // CountDownLatch
+       // SynchronizationObjExample.exp3();
+
+        // cyclic barrier
+        // SynchronizationObjExample.exp4();
+
+        // notice that the reducer finish its job before the worker, even the barrier has been reached twice.
+       // SynchronizationObjExample.exp5();
+
+        // Exchanger
+       // SynchronizationObjExample.exp6();
+
+        // Phaser
+        // SynchronizationObjExample.exp7();
+        SynchronizationObjExample.exp8();
+        /**/
     }
 }
