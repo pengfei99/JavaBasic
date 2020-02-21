@@ -291,6 +291,66 @@ public class S09_Concurrency_Utilities {
  * anonymous inner class to override onAdvance.
  * */
 
+    /***************************************** 9.3 Using an Executor **********************************/
+
+    /*
+    * An executor initiates and controls the execution of threads, it offers an alternative to managing threads
+    * through the Thread class. The core of executor is the Executor interface, it defines one method:
+    * - void execute(Runnable thread): It executes the thread.
+    *
+    * The ExecutorService interface extends Executor() by adding methods that help manage and control the execution of
+    * threads. It defines the following methods:
+    * - boolean awaitTermination​(long timeout, TimeUnit unit): Blocks until all tasks have completed execution after
+    *          a shutdown request, or the timeout occurs, or the current thread is interrupted, whichever happens first.
+    * - <T> List<Future<T>> invokeAll​(Collection<? extends Callable<T>> tasks): Executes the given tasks, returning a
+    *          list of Futures holding their status and results when all complete.
+    * - <T> List<Future<T>> invokeAll​(Collection<? extends Callable<T>> tasks, long timeout, TimeUnit unit): Executes
+    *          the given tasks, returning a list of Futures holding their status and results when all complete or
+    *          the timeout expires, whichever happens first.
+    * - <T> T invokeAny​(Collection<? extends Callable<T>> tasks): Executes the given tasks, returning the result of
+    *          one that has completed successfully (i.e., without throwing an exception), if any do.
+    * - <T> T invokeAny​(Collection<? extends Callable<T>> tasks, long timeout, TimeUnit unit): Executes the given
+    *          tasks, returning the result of one that has completed successfully (i.e., without throwing an exception),
+    *          if any do before the given timeout elapses.
+    * - boolean isShutdown​(): Returns true if this executor has been shut down.
+    * - boolean	isTerminated​(): Returns true if all tasks have completed following shut down.
+    * - void shutdown​(): Initiates an orderly shutdown in which previously submitted tasks are executed, but no
+    *          new tasks will be accepted.
+    * - List<Runnable> shutdownNow​(): Attempts to stop all actively executing tasks, halts the processing of waiting
+    *          tasks, and returns a list of the tasks that were awaiting execution.
+    * - Future<?> submit​(Runnable task): Submits a Runnable task for execution and returns a Future representing that
+    *          task.
+    * - <T> Future<T> submit​(Runnable task, T result): Submits a Runnable task for execution and returns a Future
+    *          representing that task.
+    * - <T> Future<T> submit​(Callable<T> task): Submits a value-returning task for execution and returns a Future
+    *           representing the pending results of the task.
+    *
+    * The ScheduledExecutorService interface extends ExecutorService to support the scheduling of threads.
+    *
+    * There are three predefined executor classes:
+    * - ThreadPoolExecutor: It implements ExecutorService, Executor interface and provides support for a managed pool
+    *                 of threads.
+    * - ScheduledThreadPoolExecutor: It implements ScheduledExecutorService interface to allow a pool of threads
+    *                  to be scheduled.
+    * - ForkJoinPool: It implements ExecutorService, Executor interface and is used by the Fork/Join Framework.
+    *
+    * A thread pool provides a set of threads that is used to execute various tasks. Instead of each task using its
+    * own thread, the threads in the pool are used. This reduces the overhead associated with creating many separate
+    * threads.
+    *
+    * Although you can use ThreadPoolExecutor and ScheduledThreadPoolExecutor directly, most often you will want to
+    * obtain an executor by calling one of the static factory methods defined by the Executors utility class. Here
+    * are some examples:
+    * - static ExecutorService newCachedThreadPool(): It creates a thread pool that adds threads as needed but reuses
+    *            thread if possible. It returns a reference to an ExecutorService that can be used to manage the pool.
+    * - static ExecutorService newFixedThreadPool(int numThreads): It creates a thread pool that consists of a
+    *            specific number of threads. It returns a reference to an ExecutorService that can be used to manage
+    *            the pool.
+    * - static ScheduledExecutorService newScheduledThreadPool(int numThreads): It creates a thread pool that supports
+    *            thread scheduling. It returns a reference to an ExecutorService that can be used to manage the pool.
+    * */
+
+
     public static void main(String[] args){
 
         /** Synchronization object*/
