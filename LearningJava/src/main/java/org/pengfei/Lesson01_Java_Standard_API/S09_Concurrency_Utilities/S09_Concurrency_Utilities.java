@@ -1,6 +1,6 @@
 package org.pengfei.Lesson01_Java_Standard_API.S09_Concurrency_Utilities;
 
-import org.pengfei.Lesson01_Java_Standard_API.S09_Concurrency_Utilities.source.SynchronizationObjExample;
+import org.pengfei.Lesson01_Java_Standard_API.S09_Concurrency_Utilities.source.*;
 
 public class S09_Concurrency_Utilities {
 
@@ -350,6 +350,220 @@ public class S09_Concurrency_Utilities {
     *            thread scheduling. It returns a reference to an ExecutorService that can be used to manage the pool.
     * */
 
+    /** 9.3.1 A Simple Executor Example
+     *
+     * Check ExecutorExample.exp1(); We use a fixed thread pool that contains two threads to run four workers. Thus
+     * two workers will run simultaneously, the others must wait until one of the pooled threads is available for
+     * use. The call to shutdown() is important, without it the program would not terminate because the executor
+     * would remain active
+     * */
+
+    /** 9.3.2 Using Callable and Future
+     *
+     * The Callable interface represents a thread that returns a value. An application can use Callable objects to
+     * compute results that are then returned to the invoking thread. This is a powerful mechanism because it
+     * facilitates the coding of many types of numerical computations in which partial results are computed
+     * simultaneously. It can also be used to run a thread that returns a status code that indicates the
+     * successful completion of the thread.
+     *
+     * Callable interface is a generic interface which defines only one method:
+     * - V call() throws Exception: V indicates the type of data returned by the task. In side this method, we define
+     *             the task that you want performed. After that task completes, you return the result. If the result
+     *             cannot be computed, call() must throw an exception.
+     * A Callable task is executed by an ExecutorService, by calling its submit() method. There are three forms of
+     * submit(), but only one is used to execute a Callable:
+     * - <T> Future<T> submit(Callable<T> task): task is the Callable object that will be executed in its own thread.
+     *              The result is returned through an object of type Future.
+     *
+     * Future is a generic interface that represents the value that will be returned by a Callable object. Because
+     * this value is obtained at some future time, the name Future is appropriate. To obtain values, we need to call
+     * get() methods, it has two forms:
+     * - V get(): It waits for the result indefinitely.
+     * - V get(long wait, TimeUnit tu): It waits for the result for wait time with tu as time unit.
+     * */
+
+    /***************************************** 9.4 The TimeUnit Enumeration **********************************/
+
+    /*
+     * The concurrent API defines several methods that take an argument of type TimeUnit, which is an enumeration
+     * that is used to specify the granularity(or resolution) of the timing. It can have following values:
+     * - DAYS
+     * - HOURS
+     * - MINUTES
+     * - SECONDS
+     * - MICROSECONDS
+     * - MILLISECONDS
+     * - NANOSECONDS
+     * Note, there is no guarantee that the system of the running environment is capable of the specific resolution.
+     * Check ExecutorExample.exp3(); we rewrite the get() method by adding waiting time.
+     *
+     * The TimeUnit enumeration defines various methods that convert between units:
+     * - long convert(long val, TimeUnit tu): It converts val to specific time unit of tu.
+     * - long toMicros(long val): It converts val to micro seconds.
+     * - long toMillis(long val): It converts val to millis seconds.
+     * - long toNanos(long val): It converts val to nano seconds.
+     * - long toSeconds(long val): It converts val to seconds.
+     * - long toDays(long val): It converts val to days
+     * - long toHours(long val): It converts val to hours.
+     * - long toMinutes(long val): It converts val to minutes.
+     *
+     * The TimeUnit also defines the following timing methods:
+     * - void sleep(long delay): It pauses execution for the specified delay period, which is specified in terms of the
+     *               invoking enumeration constant. It translates into a call to Thread.sleep().
+     * - timedJoin(Thread thrd, long delay): It pauses thrd for the time period specified by delay.
+     * - timedWait(Object obj, long delay): it is a specialized version of Object.wait, in which, obj is waited on for
+     *                the time period specified by delay
+     * */
+
+    /***************************************** 9.5 The Concurrent Collections **********************************/
+
+    /*
+     *
+     * As explained, the concurrent API defines several collection classes that have been engineered for concurrent
+     * operation. They include:
+     * - ArrayBlockingQueue
+     * - ConcurrentHashMap
+     * - ConcurrentLinkedDeque/ConcurrentLinkedQueue
+     * - ConcurrentSkipListMap
+     * - ConcurrentSkipListSet
+     * - CopyOnWriteArrayList
+     * - CopyOnWriteArraySet
+     * - DelayQueue
+     * - LinkedBlockingDeque
+     * - LinkedBlockingQueue
+     * - LinkedTransferQueue/PriorityBlockingQueue
+     * - SynchronousQueue
+     *
+     * Thread safety: We safe a program is thread safe if different threads in this program can access the same
+     * resources without exposing erroneous behavior or producing unpredictable results.
+     */
+
+     /** 9.5.1 Concurrent collections VS Synchronized Collection (created via Synchronized Wrappers)
+     * As we explained in L01-S3.3, the Java Collections Framework provides factory methods for creating thread-safe
+     * collections. These methods are in the following form: Collections.synchronizedXXX(collection).
+     * Check ConcurrentCollectionsExample.exp1(), we use synchronized wrappers to create a list. When using
+     * the iterator of a synchronized collection, we should use synchronized block to safeguard the iteration code
+     * because the iterator itself is not thread-safe.
+      * Check ConcurrentCollectionsExample.exp2(); If we use a not thread safe list. The listReader thread throws
+      * ConcurrentModificationException
+     *
+     * A drawback of synchronized collections is that their synchronization mechanism uses the collection object itself
+      * as the lock object. That means when a thread is iterating over elements in a collection, all other collection’s
+      * methods block, causing other threads having to wait. This causes overhead and reduces performance.
+     * */
+
+     /** 9.5.2 Concurrent collections thread safety mechanisms
+      *
+      * Concurrent collection classes can be categorized into 3 groups based on their thread safety mechanisms:
+      * - Copy-on-write collections: This kind of thread-safe collections stores values in an immutable array;
+      *              any change to the value of the collection results in a new array being created to reflect
+      *              the new values. These collections are designed for situations in which read operations
+      *              greatly predominate write operations. CopyOnWriteArrayList and CopyOnWriteArraySet are
+      *              in this group.
+      *              Note that copy-on-write collections have snapshot iterators which do not throw
+      *              ConcurrentModificationException. Since these collections are backed by immutable arrays, an
+      *              iterator can read the values in one of these arrays (but never modify them) without danger of
+      *              them being changed by another thread.
+      * - Compare-And-Swap or CAS collections: the collections in this group implement thread safety using an
+      *              algorithm called Compare-And-Swap (CAS) which can be understood like this:
+      *              To perform calculation and update value of a variable, it makes a local copy of the variable
+      *              and performs the calculation without getting exclusive access. When it is ready to update the
+      *              variable, it compares the variable’s value with its value at the start and, if they are the same,
+      *              updates it with the new value.
+      *              If they are not the same, the variable must have been changed by another thread. In this situation,
+      *              the CAS thread can try the whole computation again using the new value, or give up, or continue.
+      *              ConcurrentLinkedQueue and ConcurrentSkipListMap are in this group.
+      *              Note that the CAS collections have weakly consistent iterators, which reflect some but not
+      *              necessarily all of the changes that have been made to their backing collection since they were
+      *              created. Weakly consistent iterators do not throw ConcurrentModificationException
+      * - Using a special lock object: This mechanism is more flexible than classical synchronization. This can be
+      *              understood as following:
+      *              A lock has the same basic behavior as classical synchronization object but a thread can also
+      *              acquire it under special conditions: only if the lock is not currently held, or with a timeout,
+      *              or if the thread is not interrupted.
+      *              Unlike synchronization code, in which an object lock is held while a code block or a method is
+      *              executed, a Lock is held until its unlock() method is called. Some implementations make use of
+      *              this mechanism to divide the collection into parts that can be separately locked, giving improved
+      *              concurrency. For example, LinkedBlockingQueue has separate locks for the head and the tail ends
+      *              of the queue, so that elements can be added and removed in parallel.
+      *              Other collections using this lock include ConcurrentHashMap and most of the implementations of
+      *              BlockingQueue.
+      *              Collections in this group also have weakly consistent iterators and do not throw
+      *              ConcurrentModificationException.
+      * */
+
+    /************************************************* 9.6 Locks **********************************************/
+
+    /*
+    * The java.util.concurrent.locks package provides support for locks, which are objects that offer an alternative
+    * to using synchronized to control access to a shared resource. In general, a lock works like this. Before access
+    * to the resource is complete, the lock that protects that resource is acquired. When access to the resource is
+    * complete , the lock is released. If a second thread try to access the resource, the second thread will suspend
+    * until the lock is released. Locks ar particularly useful when multiple threads need to access the value of
+    * shared data. For example, an inventory of an online store, the number of items decrease whenever sales occurs.
+    * If multiple sales happens at same time, one thread thinks there are still items, but its already been used by
+    * other threads. In this type of situation, a lock offers a convenient means of handling the needed synchronization.
+    *
+    * The Lock interface defines the following methods:
+    * - void lock​(): Waits until the invoking lock can be acquired.
+    * - void lockInterruptibly​(): Acquires the lock unless the current thread is interrupted.
+    * - Condition newCondition​(): Returns a new Condition instance that is bound to this Lock instance. Using a
+    *            Condition, you gain detailed control of the lock through methods such as await() and signal(), which
+    *            similar to Object.wait() and Object.notify().
+    * - boolean tryLock​(): Attempts to acquire the lock. This method will not wait if the lock is unavailable. Instead
+    *             it returns true if the lock has been acquired and false if the lock is currently in use by other
+    *             thread.
+    * - boolean	tryLock​(long time, TimeUnit unit): Attempts to acquire the lock. If the lock is unavailable, this
+    *             method will wait no longer than time in timeUnit unit. it returns true if the lock has been acquired
+    *             and false if the lock is currently in use by other thread.
+    * - void unlock​(): Releases the lock.
+    *
+    * */
+
+    /** 9.6.1 ReentrantLock
+     *
+     * java.util.concurrent.locks supplies an implementation of Lock interface called ReentrantLock. It is a lock
+     * that can be repeatedly entered by the thread that currently holds the lock. Of course, in the case of a thread
+     * reentering a lock, all calls to lock() must be offset by an equal number of calls to unlock(). Otherwise, a
+     * thread seeking to acquire the lock will suspend until the lock is not in use.
+     *
+     * Check LockExample.exp1();
+     * */
+
+    /** 9.6.2 ReentrantReadWriteLock
+     * java.util.concurrent.locks also defines the ReadWriteLock interface. This interface specifies a lock that
+     * maintains separate locks for read and write access. This enables multiple locks to be granted for readers
+     * of a resource as long as the resource is not being written. ReentrantReadWriteLock provides an
+     * implementation of ReadWriteLock.
+     * Check LockExample.exp2(); we use read write lock to separately.
+     * */
+
+    /** 9.6.3 StampedLock
+     * It does not implement the Lock or ReadWriteLock interfaces. However, It provides a mechanism that enables
+     * aspects of it to be used like a Lock or ReadWriteLock.
+     * */
+
+    /********************************************* 9.7 Atomic Operations ******************************************/
+
+    /*
+    * java.util.concurrent.atomic offers an alternative to the other synchronization features when reading or writing
+    * the value of some types of variables.	This package offers methods that get, set, or compare the value of a
+    * variable	in	one uninterruptible	(that is, atomic) operation. This means that no lock or other
+    * synchronization mechanism is required.
+    *
+    * Atomic operations are accomplished through the use of classes, such as AtomicInteger and AtomicLong, and methods
+    * such as get(), set(), compareAndSet(), decrementAndGet(), and getAndSet().
+    * Check  AtomicExample.exp1();
+    *
+    * In general, the atomic operations offer a convenient(and possibly more efficient) alternative to the other
+    * synchronization mechanism when only a single value is involved. Among other features, java.util.concurrent.atomic
+    * also provides four classes that support lock-free cumulative operations:
+    * - DoubleAccumulator: It supports a series of user specified operations.
+    * - DoubleAdder: It maintains a cumulative sum.
+    * - LongAccumulator
+    * - LongAdder
+    * */
+
 
     public static void main(String[] args){
 
@@ -372,7 +586,28 @@ public class S09_Concurrency_Utilities {
 
         // Phaser
         // SynchronizationObjExample.exp7();
-        SynchronizationObjExample.exp8();
-        /**/
+       // SynchronizationObjExample.exp8();
+
+        /** Executor*/
+        /*FixedThreadPool executor*/
+        // ExecutorExample.exp1();
+        // ExecutorExample.exp2();
+       // ExecutorExample.exp3();
+
+        /** ConcurrentCollection */
+        // thread safe collection
+         // ConcurrentCollectionsExample.exp1();
+        // not safe list
+      //  ConcurrentCollectionsExample.exp2();
+
+        /** Lock*/
+        //reentrantLock
+        // LockExample.exp1();
+
+        //reentrantReadWriteLock
+       // LockExample.exp2();
+
+        /** Atomic operation*/
+        AtomicExample.exp1();
     }
 }
