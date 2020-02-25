@@ -564,7 +564,193 @@ public class S09_Concurrency_Utilities {
     * - LongAdder
     * */
 
+    /************************ 9.8 Parallel Programming via the Fork/Join Framework *********************************/
 
+    /*
+    * Parallel programming is the name commonly given to the techniques that take advantage of computers that contain
+    * two or more processors(multicore). JDK 7 added new classes and interfaces that support parallel programming.
+    * They are commonly referred to as the Fork/Join Framework which is defined in the java.util.concurrent package.
+    *
+    * The Fork/Join framework enhances multithreaded programming in two important ways:
+    * 1. It simplifies the creation and use of multiple threads.
+    * 2. It automatically makes use of multiple processors.
+    * As a result, Fork/join is recommended for multithreading when parallel processing is desired in a multicore
+    * running environment.
+    *
+    * It's important to point out the distinction between traditional multithreading and parallel programming. In the
+    * past, most computers has a single CPU and multithreading was primarily used to take advantage of cpu idle time.
+    * On a single-CPU system, multithreading is used to allow two or more tasks to share the CPU, so one can execute
+    * while another is waiting for input. When multicore cpus are present, it is possible to execute portions
+    * of a program simultaneously, with each part executing on its own CPU. This can significantly speed up the
+    * execution of some types of operations, such as sorting, transforming, or searching in large array.
+    *
+    *
+    * */
+
+    /** 9.8.1 The Main Fork/Join Classes
+     *
+     * The core of Fork/Join framework are the following four classes:
+     * - ForkJoinTask<V>: An abstract class that defines a task that can be managed by a ForkJoinPool. It differs from
+     *                    Thread in that ForkJoinTask represents lightweight abstraction of a task, rather than a
+     *                    thread of execution. ForkJoinPool mechanism allows a large number of tasks to be managed
+     *                    by a small number of actual threads. Thus, ForkJoinTasks are very efficient when compared
+     *                    to threads. It defines many methods, the two core methods are
+     *                    -- final ForkJoinTask<V> fork(): It submits the invoking task for asynchronous execution
+     *                                of the invoking task. This means that the thread that calls fork() continues
+     *                                to run. The fork() method returns this(the invoking task) after the task is
+     *                                scheduled for execution. Before JDK 8, fork() could be executed only from within
+     *                                the computational portion of another ForkJoinTask, which is running within a
+     *                                ForkJoinPool. After JDK 8, if fork() is not called while executing within a
+     *                                ForkJoinPool, then a common pool is automatically used.
+     *                    -- final V join(): It waits until the task on which it is called terminates. The result of the
+     *                               task  is returned. Thus you can start one or more new tasks and then wait for
+     *                               them to finish.
+     *                    -- final V invoke(): It combines the fork and join operations into a single call because it
+     *                               begins a task and then waits for it to end. The result of the invoking task
+     *                               is returned.
+     *                    -- static void invokeAll(ForkJoinTask<?> taskA, ForkJoinTask<?> taskB): It invokes two tasks
+     *                                A and B at same time. The calling thread waits until all of the specified tasks
+     *                                have terminated.
+     *                    -- static void invokeAll(ForkJoinTask<?> ... taskList): It invokes all tasks in the list.
+     *                                The calling thread waits until all of the specified tasks have terminated.
+     *                                Note Before JDK 8, invokeAll() could be executed only from within the
+     *                                computational portion of another ForkJoinTask, which is running within a
+     *                                ForkJoinPool. After JDK 8, if fork() is not called while executing within a
+     *                                ForkJoinPool, then a common pool is automatically used.
+     *
+     * - ForkJoinPool: Manages the execution of ForkJoinTasks. Beginning with JDK 8, there are two ways to acquire
+     *                 a ForkJoinPool:
+     *                 1. By using a ForJoinPool constructor:
+     *                         -- ForkJoinPool(): It creates a default pool that supports a level of parallelism equal
+     *                                          to the number of processors available in the system.
+     *                         -- ForkJoinPool(int pLevel): pLevel specifies the level of parallelism. Its value must
+     *                                          be grater than 0 and not more than the limits of the implementation.
+     *                                          The level of parallelism determines the number of threads that can
+     *                                          execute concurrently. As a result, the level of parallelism
+     *                                          effectively determines the number of tasks that can be executed
+     *                                          simultaneously which can not exceed the number of processors. But,
+     *                                          pLevel does not limit the number of tasks that can be managed by the
+     *                                          pool. And pLevel is only a target, not a guarantee.
+     *                 2. By using the common pool, which (was added by JDK 8) is a static ForkJoinPool that is
+     *                    automatically available for your use.
+     *                 It can start a task in a number of different ways.The first task is often thought of as the main
+     *                 task, which begins sub-tasks that are also managed by the pool. To begin a main task we can use
+     *                 the following methods on the ForJoinPool class
+     *                 -- <T> T invoke(ForkJoinTask<T> task): It begins the tasks specified by task, and returns the
+     *                             result of the task. This means that the calling code waits until invoke() returns
+     *                 -- void execute(ForkJoinTask<?> task): It starts a task without waiting for its completion, and
+     *                             the calling code continues its executions asynchronously.
+     *
+     *                  Beginning with JDK8, we don't need to explicitly construct a ForkJoinPool, because the common
+     *                  pool will automatically be used, if no pool is explicitly created. You can get a reference to
+     *                  the common pool by calling
+     *                  -- static ForkJoinPool commonPool(): A static method of ForkJoinPool class. The common pool
+     *                             provides a default level o parallelism. It can be set by use of a system property.
+     *                  There are two basic ways to start a task using the common pool:
+     *                  1. Once you have the reference of the common pool, you can use that reference to call
+     *                     invoke() or execute() to run tasks
+     *                  2. You can call ForkJoinTask methods such as fork() or invoke() on the task from outside its
+     *                     computational portion. In this case, the common poll will automatically be used. It means
+     *                     fork() and invoke() will start a task using the common pool if the task is not already
+     *                     running within a ForkJoinPool.
+     *
+     *                  ForkJoinPool manages the execution of its threads using an approach called work-stealing. Each
+     *                  worker thread maintains a queue of tasks. If one worker thread’s queue is empty, it will take
+     *                  a task from another worker thread. This adds to overall efficiency and help maintain a
+     *                  balanced load. (Because of demands on CPU time by other processes in the system, even two
+     *                  worker threads with identical tasks in their respective queues may not complete at the same time.)
+     *
+     *                  One	other point: ForkJoinPool uses daemon threads. A daemon thread is automatically terminated
+     *                  when all user threads have terminated. Thus, there is no need to explicitly shut down a
+     *                  ForkJoinPool. However, with the exception of the common pool, it is possible to do so by
+     *                  calling shutdown().	The	shutdown() method has no effect on the common pool.
+     *
+     * - RecursiveAction: A subclass of ForkJoinTask<V> for tasks that do not return values. Typically, your code will
+     *                    extend RecursiveAction to create a task that has a void return type. In general,
+     *                    RecursiveAction is used to implement a recursive, divide-and-conquer strategy for tasks that
+     *                    don't return return results.
+     *                    It specifies four methods:
+     *                    -- protected abstract void compute(): It contains the main computation code performed by
+     *                                  this task. In another words, it represents the "computational portion" of
+     *                                  the task. Note its protected and abstract, thus it must be implemented by
+     *                                  a subclass(unless that subclass is also abstract).
+     *                    -- protected boolean exec(): Implements execution conventions for RecursiveActions.
+     *                    -- Void getRawResult(): Always returns null.
+     *                    -- protected void setRawResult(Void mustBeNull): Requires null completion value.
+     * - RecursiveTask: A subclass of ForkJoinTask<V> for tasks that return values. Like RecursiveAction, it's used
+     *                   to implement recursive, divide-and-conquer strategy for tasks that return results.
+     *                   It also has:
+     *                   -- protected abstract V compute(): it represents the computational portion of the task. When
+     *                      you extend RecursiveTask<V> to create a concrete class, put the code that represents
+     *                      the task inside compute(). This code must also return the result of the task.
+     *
+     * A general architecture on how they work together:
+     * 1. A ForkJoinPool (executor) manages the execution of ForkJoinTasks.
+     * 2. ForkJoinTask is an abstract class that is extended by the abstract classes RecursiveAction and RecursiveTask.
+     *    Typically, a program will extend theses classes to create a task.
+     *
+     *
+     * */
+
+    /** 9.8.2 Divide and Conquer Strategy
+     *
+     * The divide-and-conquer strategy is based on recursively dividing a task into smaller subtasks until the size
+     * of a subtask is small enough to be handled sequentially. For example, a task that applies a transform to each
+     * element in an array of N integers can be broken down into two sub-tasks in which each transforms half the
+     * elements in the array. That is, one subtask transforms the elements 0 to N/2, and the other transforms the
+     * elements N/2 to N. In turn, each subtask can be reduced to another set of sub-tasks, each transforming half of
+     * the remaining elements. This process of dividing the array will continue until a threshold is reached in which
+     * a sequential solution is faster than creating another division.
+     *
+     * The advantage of the divide-and-conquer strategy is that the processing can occur in parallel. Therefore,
+     * instead of cycling through an entire array using a single thread, pieces of the array can be processed
+     * simultaneously.
+     *
+     * One of the keys to best employing the divide-and-conquer strategy is correctly selecting the threshold at
+     * which sequential processing (rather than further division) is used. Typically, an optimal threshold is
+     * obtained through profiling the execution characteristics. However, very significant speed-ups will
+     * still occur even when a less-than-optimal threshold is used. It is, however, best to avoid overly
+     * large or overly small thresholds. The Java API documentation for ForkJoinTask<T> states that, as a rule-of-thumb,
+     * a task should perform somewhere between 100 and 10,000 computational	steps.
+     *
+     * It is also important to understand that the optimal threshold value is also affected by how much time the
+     * computation takes. If each computational step is fairly long, then smaller thresholds might be better.
+     * Conversely, if each computational step is quite short, then larger thresholds could yield better results. If you
+     * know the number of processors, you can used it to make informed decisions.
+     *
+     * One other point: Although multiple processors may be available on a system, other tasks (and the operating
+     * system, itself) will be competing with your application for CPU time. Thus, it is important not to assume
+     * that your program will have unrestricted access to all CPUs. Furthermore, different runs of the same program
+     * may display different run time characteristics because of varying task loads.
+     * */
+
+    /** 9.8.3. A Fork/Join Example
+     * Check ForkJoinExample.exp1(); and ForkJoinExample.exp2(); We use a ForkJoinAction to transform an array of
+     * doubles into their square root.
+     * */
+
+    /** 9.8.4 The impact of the level of Parallelism
+     *
+     * Before moving on, it is important to understand the impact that the level of parallelism has on the
+     * performance of a fork/join task and how the parallelism and the threshold interact.
+     *
+     * Check ForkJoinExample.exp3(1,1000); We use ForkJoinPool(int pLevel) to creates a pool with different parallelism
+     * level, and we can set different threshold in the transform class. After test, we can notice with 4 parallelism
+     * level and 2000 threshold, the speed is much quicker than 1, 1000. With a machine of 12 core, we set the pLevel
+     * to 12, se see a great decrease the elapsed time.
+     *
+     * check ForkJoinExample.exp4(0); We can get the parallelism level and available core number of the current pool
+     * and system.
+     * */
+
+    /** 9.8.5 A RecursiveTask example
+     *
+     * To create a task that returns a result, we need to use RecursiveTask. It works as RecursiveAction, the key
+     * difference is the compute() method will return a result. Thus, you must aggregate the results, so that
+     * the first invocation finishes, it returns the overall result. Another difference, you will typically start
+     * a subtask by calling fork() and join() explicitly.
+     *
+     * */
     public static void main(String[] args){
 
         /** Synchronization object*/
@@ -608,6 +794,23 @@ public class S09_Concurrency_Utilities {
        // LockExample.exp2();
 
         /** Atomic operation*/
-        AtomicExample.exp1();
+       // AtomicExample.exp1();
+
+        /** fork join framework*/
+
+        // run task with an explicit pool
+        // ForkJoinExample.exp1();
+
+        // run tank without explicit pool
+        //ForkJoinExample.exp2();
+
+        // test time with different parallelism level and threshold
+       // ForkJoinExample.exp3(1,1000);
+        // ForkJoinExample.exp3(12,2000);
+        // we can notice with 4 parallelism level and 2000 threshold, the speed is much quicker
+
+        // get parallelism level and available core number
+        ForkJoinExample.exp4(0);
+        ForkJoinExample.exp4(12);
     }
 }
