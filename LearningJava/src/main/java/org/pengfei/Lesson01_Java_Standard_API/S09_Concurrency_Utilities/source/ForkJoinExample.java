@@ -1,7 +1,6 @@
 package org.pengfei.Lesson01_Java_Standard_API.S09_Concurrency_Utilities.source;
 
-import org.pengfei.Lesson01_Java_Standard_API.S09_Concurrency_Utilities.source.fork.FlexibleThresholdTransform;
-import org.pengfei.Lesson01_Java_Standard_API.S09_Concurrency_Utilities.source.fork.SquareTransform;
+import org.pengfei.Lesson01_Java_Standard_API.S09_Concurrency_Utilities.source.fork.*;
 
 import java.util.concurrent.ForkJoinPool;
 
@@ -100,6 +99,82 @@ public class ForkJoinExample {
         // get the processor number of current system.
         System.out.println("Available processor: "+Runtime.getRuntime().availableProcessors());
 
+
+    }
+
+    public static void exp5(){
+        int threshold=1000;
+
+        ForkJoinPool pool=new ForkJoinPool();
+        double[] data=new double[6000];
+        for(int i=0;i<data.length;i++) data[i]=(double)i;
+
+        System.out.println("The first 10 element of the array: ");
+        for(int i=0;i<10;i++)
+            System.out.print(data[i]+" ");
+
+        // create sum task
+        SumCalculator task=new SumCalculator(data,threshold,0,data.length);
+
+        // start the task by calling invoke, which returns a result.
+        double result=pool.invoke(task);
+
+        System.out.print("Summation: "+result);
+
+    }
+
+    public static void exp6(){
+        int threshold=1000;
+
+        ForkJoinPool pool=new ForkJoinPool();
+        double[] data=new double[6000];
+        for(int i=0;i<data.length;i++) data[i]=(double)i;
+
+        System.out.println("The first 10 element of the array: ");
+        for(int i=0;i<10;i++)
+            System.out.print(data[i]+" ");
+
+        // create sum task
+        SumCalculatorBis task=new SumCalculatorBis(data,threshold,0,data.length);
+
+        // start the task by calling invoke, which returns a result.
+        double result=pool.invoke(task);
+
+        System.out.print("Summation: "+result);
+
+    }
+
+    public static void exp7(){
+        int threshold=100;
+
+        ForkJoinPool pool=new ForkJoinPool();
+        double[] data=new double[600];
+        for(int i=0;i<data.length;i++) data[i]=(double)i;
+
+        System.out.println("The first 10 element of the array: ");
+        for(int i=0;i<10;i++)
+            System.out.print(data[i]+" ");
+        System.out.println();
+
+        // create sum task
+        SumCalculatorSleep task=new SumCalculatorSleep(data,threshold,0,data.length);
+
+        // start the task by calling execute, so the main thread is not blocked by the task
+        pool.execute(task);
+
+        // get fork join pool state
+        while(!task.isDone()){
+            System.out.println("Pool state: "+pool);
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        double result=task.join();
+
+        System.out.print("Summation: "+result);
 
     }
 }

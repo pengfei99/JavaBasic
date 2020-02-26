@@ -750,7 +750,131 @@ public class S09_Concurrency_Utilities {
      * the first invocation finishes, it returns the overall result. Another difference, you will typically start
      * a subtask by calling fork() and join() explicitly.
      *
+     * check  ForkJoinExample.exp5(); Notice, we use fork to start the subtask, and join to wait the task to finish
+     * and return the result.
+     *
+     * Check ForkJoinExample.exp6(), we can use invoke or compute to replace fork and join.
+     *
      * */
+
+    /** 9.8.6 Executing a Task Asynchronously
+     *
+     * To start a task asynchronously, use execute(), which is also defined by ForkJoinPool. It has the following two
+     * forms:
+     * - void execute(ForkJoinTask<?> task):
+     * - void execute(Runnable task):
+     *
+     * Notice that the second form lets you specify a Runnable rather than a ForkJoinTask task. Thus, it forms a
+     * bridge between Java’s traditional approach to multithreading and the Fork/Join Framework. It is important
+     * to remember that the threads used by a ForkJoinPool are daemon. Thus, they will end when the main thread
+     * ends. As a result, you may need to keep the main thread alive until the tasks have finished.
+     * */
+
+    /** 9.8.7 Cancelling a Task
+     *
+     * A task can be cancelled by calling boolean cancel(boolean interruptOK), which is defined by ForkJoinTask.
+     * It returns true if the invoking task is cancelled. It returns false if the task has ended or can't be cancelled.
+     * At this time, the interruptOK parameter is not used by the default implementation. In general, cancel() is
+     * intended	to be called from code outside the task because a task can easily cancel itself by returning.
+     *
+     * You can determine if a task has been cancelled by calling final boolean isCancelled(). It returns true if
+     * the invoking task has been cancelled prior to completion and false otherwise.
+     * */
+
+    /** 9.8.8 Determining a Task's completion status
+     *
+     * In addition to isCancelled(), which was just described, ForkJoinTask includes two other methods that you can use
+     * to determine a task’s completion status:
+     * - final boolean isCompletedNormally(): It returns true if the invoking task completed normally, that is, if
+     *                it did not throw an exception and it was not cancelled via a call to cancel().
+     * - final boolean isCompletedAbnormally(): It returns true if the invoking task completed because it was
+     *                cancelled or threw an exception.
+     * */
+
+    /** 9.8.9 Restarting a Task
+     *
+     * Normally, you cannot return a task. In other words, once a task completes, it cannot be restarted. However,
+     * you can reinitialize the state of the task (after it has completed) so it can be run again. This is done by
+     * calling reinitialize(). This method resets the state of the invoking task. However, any modification
+     * made to any persistent data that is operated upon by the task will not be undone.
+     * */
+
+    /** 9.8.10 More Features of ForkJoinTask
+     *
+     * In this section, we just see some basics of the ForkJoin Framework, it has many additional capacities that
+     * give you extended control over concurrency. I will list some of these features here.
+     *
+     * ForkJoinTask class features
+     * - You can determine if your code is executing inside a task by calling inForkJoinPool().
+     * - You can convert a Runnable or Callable object into a ForkJoinTask by using the adapt() method defined by
+     *   ForkJoinTask.
+     * - You can obtain an approximate count of the number of tasks that are in the queue of the invoking thread by
+     *   calling getQueuedTaskCount().
+     * - You can obtain an approximate count of	how	many tasks the invoking thread has in its queue that are in excess
+     *   of the number of other threads in the pool that might "steal" them, by calling getSurplusQueuedTaskCount()
+     *   Remember, in the Fork/Join Framework, work-stealing is one way in which a high level of efficiency is obtained.
+     * - To avoid task returning value or throwing exceptions, we can use quietlyJoin() and quietlyInvoke(). They works
+     *   like normal join() and invoke() except they don't return values or throw exceptions.
+     * - You can attempt to "un-invoke" (in other words, unschedule) a task by calling tryUnfork().
+     * - We can use a short integer value to tag a task(setForkJoinTaskTag()), and find a task by using its tag(
+     *   getForkJoinTaskTag())
+     * - ForkJoinTask implements Serializable. Thus, it can be serialized. However, serialization is not used during
+     *    execution.
+     *
+     * ForkJoinPool class features
+     * - The ForkJoinPool's toString() method prints a "user-friendly" synopsis of the state of the pool. Check
+     *   ForkJoinExample.exp7();
+     * - You can determine if a pool is currently idle by calling isQuiescent(). It returns true if the pool has
+     *   no active threads.
+     * - You can obtain the number of worker threads currently in the pool by calling getPoolSize().
+     * - You can obtain an approximate count of the active threads in the pool by calling getActiveThreadCount().
+     * - To shut down a pool, call shutdown(). Currently active tasks will still be executed, but no new tasks can
+     *   be started.
+     * - To	stop a pool immediately, call shutdownNow(). In this case, an attempt is made to cancel currently active
+     *   tasks. (It is important to point out, however, that neither of	the two shutdown() methods affects
+     *   the common pool.)
+     * - You can determine if a pool is shut down by calling isShutdown(). It returns true if the pool has been shut
+     *   down and false otherwise.
+     * - To	determine if the pool has been shut down and all tasks have been completed, call isTerminated().
+     * */
+
+    /** 9.8.11 Some Fork/Join Tips
+     *
+     * Here are a few tips to help you avoid some of the more troublesome pitfalls associated with using the
+     * Fork/Join Framework:
+     * 1. Avoid using a sequential threshold that is too low. In general, erring on the high side is better than erring
+     *    on the low side. If the threshold is too low, more time can be consumed generating and switching tasks
+     *    than in processing the tasks.
+     * 2. Usually it is best to use the default level of parallelism(number of core in your current system.). If you
+     *    specify a smaller number, it may significantly reduce the benefits of using the Fork/Join Framework.
+     * 3. In general, a ForkJoinTask should not use synchronized methods or synchronized blocks of code. Also,
+     *    you will not normally want to have the compute() method use other types of synchronization, such as a
+     *    semaphore. (The Phaser can, however, be used when appropriate because it is compatible with the
+     *    fork/join mechanism.) Remember, the main idea behind a ForkJoinTask is the divide-and-conquer strategy. Such
+     *    an approach does not normally lend itself to situations in which outside synchronization is needed.
+     * 4. Also, avoid situations in which substantial blocking will occur through I/O. Therefore, in general, a
+     *    ForkJoinTask will not perform I/O. Simply put, to best utilize the Fork/Join Framework, a task should
+     *    perform a computation that can run without outside blocking or synchronization.
+     * 5. Except under unusual circumstances, do not make assumptions about the execution environment that your code
+     *    will run in. This means you should not assume that some specific number of processors will be available, or
+     *    that the execution characteristics of your program won’t be affected by other processes running at the same
+     *    time.
+     * */
+
+    /************************ 9.9 Concurrency Utilities VS Java's Traditional Approach  *****************************/
+
+    /*
+    * Given the	power and flexibility found in the concurrency utilities, it is natural to ask the following question:
+    * Do they replace Java’s traditional approach to multithreading and synchronization?
+    *
+    * The answer is a resounding no! The original support for multithreading and the built-in synchronization
+    * features are still the mechanism that should be employed for many, many Java programs. For example, synchronized,
+    * wait(), and notify() offer elegant solutions to a wide range of problems. However, when extra control is needed,
+    * the concurrency utilities are available to handle the chore. Furthermore, the Fork/Join Framework offers a
+    * powerful way to integrate parallel programming techniques into your more sophisticated applications.
+    * */
+
+
     public static void main(String[] args){
 
         /** Synchronization object*/
@@ -810,7 +934,16 @@ public class S09_Concurrency_Utilities {
         // we can notice with 4 parallelism level and 2000 threshold, the speed is much quicker
 
         // get parallelism level and available core number
-        ForkJoinExample.exp4(0);
-        ForkJoinExample.exp4(12);
+       // ForkJoinExample.exp4(0);
+        // ForkJoinExample.exp4(12);
+
+        // use RecursiveAction
+       // ForkJoinExample.exp5();
+
+        // use invoke or compute to start the task
+       // ForkJoinExample.exp6();
+
+        // get ForkJoinPool state
+        ForkJoinExample.exp7();
     }
 }
