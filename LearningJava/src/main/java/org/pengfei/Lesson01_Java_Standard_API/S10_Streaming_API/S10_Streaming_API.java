@@ -139,11 +139,19 @@ public class S10_Streaming_API {
 
 /** 10.2.3 A stream example
  *
- *
+ *  check StreamExample.exp1(); we get a stream of a array list, we use various stream operation to get information
+ *  or transform the list. Note, the stream operation has two type
+ *  - terminal: consume the stream, after this kind of operation, the stream is no longer usable.
+ *  - intermediate: produces a new stream based on the invoking stream. It's possible to chain intermediate operations
+ *             together to form a data processing pipeline.
  *
  * */
 
+    /********************************************* 10.3 Reduction Operations *****************************************/
+
 public static void main(String[] args){
+
+    // A stream example
     StreamExample.exp1();
 }
 }
