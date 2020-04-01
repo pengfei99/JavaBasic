@@ -1,5 +1,6 @@
 package org.pengfei.Lesson01_Java_Standard_API.S10_Streaming_API.source;
 
+import java.lang.reflect.Array;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -291,5 +292,72 @@ public class StreamExample {
         for (NamePhone np : nSet) {
             System.out.println(np.name + " : " + np.phoneNum);
         }
+    }
+
+
+    public static void exp10(){
+        ArrayList<String> myList=new ArrayList<>();
+        myList.add("one");
+        myList.add("two");
+        myList.add("three");
+        myList.add("four");
+        myList.add("five");
+
+        //create stream
+        Stream myStream=myList.stream();
+
+        //create iterator
+        Iterator myIt=myStream.iterator();
+
+        //loop the stream with iterator
+        while(myIt.hasNext()) System.out.println(myIt.next());
+    }
+
+    public static void exp11(){
+        ArrayList<String> myList=new ArrayList<>();
+        myList.add("one");
+        myList.add("two");
+        myList.add("three");
+        myList.add("four");
+        myList.add("five");
+
+        //create stream
+        Stream myStream=myList.stream();
+
+        //create spliterator
+        Spliterator mySplit=myStream.spliterator();
+
+        //loop the stream with Spliterator
+        // spliterator combines the hasNext() and next() together. The consumer inside tryAdvance() is expressed by
+        // using a lambda expression.
+        // The loop will end, when tryAdvance() returns false, which means no next element in the spliterator.
+        while(mySplit.tryAdvance(n->System.out.println(n)));
+    }
+
+    public static void exp12(){
+        ArrayList<String> myList=new ArrayList<>();
+        myList.add("one");
+        myList.add("two");
+        myList.add("three");
+        myList.add("four");
+        myList.add("five");
+
+        //create stream
+        Stream myStream=myList.stream();
+
+        //create spliterator
+        Spliterator split1=myStream.spliterator();
+
+       //split the spliterator, remember after trySplit, the split1 still iterates the element remained. The returned
+        // spliterator iterates the elements have been separated from the other spliterator
+        Spliterator split2=split1.trySplit();
+
+        System.out.println("The new separated elements:");
+        // here we use forEachRemaining method to apply the lambda on all remained element of the iterator
+        split2.forEachRemaining(n->System.out.println(n));
+
+        System.out.println("The old remained elements:");
+        // here we use forEachRemaining method to apply the lambda on all remained element of the iterator
+        split1.forEachRemaining(n->System.out.println(n));
     }
 }

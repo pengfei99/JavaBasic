@@ -346,6 +346,58 @@ public class S10_Streaming_API {
 
     /********************************************* 10.7 Iterators and Streams *****************************************/
 
+    /*
+    * Although a stream is not a data storage object, you can still use an iterator to cycle through its elements in
+    * much the same way as you would use an iterator to cycle through the elements of a collection. The stream API
+    * supports two types of iterators. The first is the traditional Iterator. The second is Spliterator, which was
+    * added by JDK 8. It provides significant advantages in certain situations when used with parallel streams.
+    *
+    * Iterators are objects that implement the Iterator interface declared in java.util. Its two key methods are
+    * hasNext() and next(). Check Lesson01-Section3 Collections for more details.
+    *
+    * To obtain an iterator to a stream, call iterator() on the stream. The version used by Stream is shown here.
+    * - Iterator<T> iterator(): Here, T specifies the element type. (The primitive streams return iterators of the
+    *                           appropriate primitive type.)
+    *
+    * Check StreamExample.exp10();
+    * */
+
+    /** 10.7.1 Spliterator
+     *
+     * Introduction of Spliterator can be found in Lesson03_Sec3.4. We focus on several methods of the Spliterator:
+     * - boolean tryAdvance(Consumer<? super T> action): action specifies the action that is executed on the next
+     *                 element in the iteration. tryAdvance( ) returns true if there is a next element. It returns
+     *                 false if no elements remain. Consumer class declares one method called accept() that
+     *                 receives an element of type T as an argument and returns void.
+     * - default void forEachRemaining(Consumer<? super T> action): This method applies action to each unprocessed
+     *                 element and then returns.
+     * - Spliterator<T> trySplit(): It splits the elements being iterated in two, returning a new Spliterator to one
+     *                 of the partitions. The other partition remains accessible by the original Spliterator.
+     *
+     * Check StreamExample.exp11(); for a simple example of tryAdvance()
+     * StreamExample.exp12() for a simple example of trySplit() and forEachRemaining(). Although splitting the
+     *                  Spliterator in this simple illustration is of no practical value, splitting can be of great
+     *                  value when parallel processing over large data sets. However, in many cases, it is better to
+     *                  use one of the other Stream methods in conjunction with a parallel stream(e.g. map, reduce).
+     *                  Spliterator is primarily for the cases in which none of the predefined methods seems appropriate.
+     *
+     * */
+
+    /************************************ 10.8 More to Explore in the Stream API *************************************/
+
+    /* This section has discussed several key aspects of the stream API and introduced the techniques required to use
+     * them, but the stream API has much more to offer. To begin, here are a few of the other methods provided by
+     * Stream that you will find helpful:
+     * - To determine if one or more elements in a stream satisfy a specified predicate, use allMatch(), anyMatch(),
+     *                  or noneMatch().
+     * - To obtain the number of elements in the stream, call count().
+     * - To obtain a stream that contains only unique elements, use distinct().
+     * - To create a stream that contains a specified set of elements, use of().
+     *
+     * One last point: the stream API is a powerful addition to Java. You will want to explore all of the capabilities
+     * that java.util.stream has to offer.
+     * */
+
     public static void main(String[] args){
 
     /**  A stream example*/
@@ -365,6 +417,11 @@ public class S10_Streaming_API {
 
         /** Collecting */
        // StreamExample.exp8();
-        StreamExample.exp9();
+        // StreamExample.exp9();
+
+        /** Iterators and stream*/
+       // StreamExample.exp10();
+       // StreamExample.exp11();
+        StreamExample.exp12();
 }
 }
