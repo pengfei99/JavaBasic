@@ -2,21 +2,31 @@ package org.pengfei.Lesson01_Java_Standard_API.S12_Reflection.source;
 
 public class MyObject {
 
-    public void m1(){
-        System.out.println("This is public method m1");
+    private int age;
+    private final String name;
+
+    public MyObject(String name, int age){
+        this.name=name;
+        this.age=age;
     }
 
-    public int m2(){
+    private void changeAge(int age){
+        //System.out.println("This is public method changeAge");
+        this.age=age;
+    }
+
+    private int m2(){
         System.out.println("This is public method m2");
         return 1;
     }
 
-    private void m3(){
-        System.out.println("This is private method m3");
+    protected void showAll(){
+        System.out.println("Name: "+this.name+", Age: "+this.age);
     }
 
-    protected void m4(){
-        System.out.println("This is protected method m4");
+    protected void showAge(){
+      //  System.out.println("This is protected method showAge");
+        System.out.println("Age: " + this.age);
     }
 
 }

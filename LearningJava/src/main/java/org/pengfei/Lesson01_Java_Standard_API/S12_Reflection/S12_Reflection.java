@@ -58,12 +58,62 @@ public class S12_Reflection {
     * check ReflectionApplicationExample.exp1(); It prints the constructors, fields, and methods of the class
     * java.awt.Dimension.
     *
+    * Check ReflectionApplicationExample.exp2(); We get class based on an object. Then we get the name and modifier
+    * of fields and methods.
+    *
+    * Check ReflectionApplicationExample.exp3(); We use reflection to create method object and field object. These two object
+    * can bypass the modifier of the origin instance's class. In this example, field name is private and final. By
+    * using reflection, we can modify the value of name even after object creation.
+    *
+    * Check ReflectionApplicationExample.exp4(); We use reflection to get package, interface, super class info
+    * */
+
+    /*************************** 12.3 Java Reflection Use Cases ****************************************/
+
+    /*
+    * One useful real-world use of reflection is when writing a framework that has to inter-operate with user-defined
+    * classes, where the framework author doesn't know what the members (or even the classes) will be. Reflection
+    * allows them to deal with any class without knowing it in advance. For instance, I don't think it would be
+    * possible to write a complex aspect-oriented library without reflection.
+    *
+    * Another useful case, you can retrieve the definition of a private protected or final member(e.g. fields, methods),
+    * remove the protection and manipulate it as if it had been declared public and mutable. However, this subverts
+    * many of the guarantees the language normally makes for your programs. It can be very, very dangerous.
+    *
+    * Marshalling and unmarshalling to some other format. For example, mapping an object with getters and settings that
+    * follow the bean convention to JSON and back again. You don't actually know the names of the fields or the methods
+    * of the mapping object, we use reflection to examine the class of the mapping object and get those information.
+    *
+    * Reflection is much slower than just calling methods by their name, because it has to inspect the metadata in
+    * the bytecode instead of just using precompiled addresses and constants. As a result, don't use reflection until
+    * you have no other options.
+    * */
+
+    /*************************** 12.4 Java Reflection Advantages and drawbacks ****************************************/
+    /*
+    * Advantages of Using Reflection:
+    * Extensibility Features: An application may make use of external, user-defined classes by creating instances of
+    *                         extensibility objects using their fully-qualified names.
+    * Debugging and testing tools: Debuggers use the property of reflection to examine private members on classes.
+    *
+    * Drawbacks:
+    * Performance Overhead: Reflective operations have slower performance than their non-reflective counterparts,
+    *                       and should be avoided in sections of code which are called frequently in
+    *                       performance-sensitive applications.
+    * Exposure of Internals: Reflective code breaks abstractions and therefore may change behavior with upgrades
+    *                       of the platform.
     * */
 
     public static void main(String[] args){
         /** A simple application of reflection*/
        // ReflectionApplicationExample.exp1();
-        ReflectionApplicationExample.exp2();
+       // ReflectionApplicationExample.exp2();
+
+        /* Use reflection to invoke method and change field value of an object*/
+        // ReflectionApplicationExample.exp3();
+
+        /* Use reflection to get package, interface, super class info*/
+        ReflectionApplicationExample.exp4();
     }
 
 }
