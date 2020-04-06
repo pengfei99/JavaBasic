@@ -96,7 +96,10 @@ public class S13_Remote_Method_Invocation {
      * It defines the remote interface that is provided by the server. It contains one method that accepts two double
      * arguments and returns their sum. All remote interfaces must extend the Remote interface, which is part of
      * java.rmi. Remote interface defines no members. Its purpose is simply to indicate that an interface uses
-     * remote methods. All remote methods can throw a RemoteException
+     * remote methods. All remote methods can throw a RemoteException.
+     *
+     * Note, remote interface must always be public and extends Remote interface. All methods described in the Remote
+     * Interface must list RemoteException in their throws clause. It contains all the methods that the Server implements
      * */
 
     /** 13.5.2 AddServerImpl.java
@@ -132,5 +135,59 @@ public class S13_Remote_Method_Invocation {
      * Second, run Sever, you should see Server Starting: in the console
      *
      * Third, run Client, you should see Value of arg1: 1.0, arg2: 2.0 The sum is: 3.0
+     *
+     * If you see argument unmarshalling exception, it means the remote interface or distributed class can not be
+     * found by the jvm where registry runs. For example, if you use console to run like "java Server". You need to make
+     * sure AddServerInterface.class and AddServerImpl.class are also in the same folder. For the client, when you
+     * run "java Client", You also need to make sure AddServerInterface.class and AddServerImpl.class are present.
+     *
+     * If you use a IDE such as IntelliJ IDEA, you need to add the classes to the CLASSPATH.
+     * For example: export CLASSPATH=$CLASSPATH:/home/pliu/IdeaProjects/JavaBasic/LearningJava/target/classes
+     * */
+
+    /************************************** 13.6 A more complex example ********************************************/
+
+    /*
+    * In this example, we will offer a remote book store for search and list books
+    *
+    * */
+
+    /** 13.6.1 The Remote Interface
+     * BookStoreRemoteInterface is the remote interface of this example. it contains all the methods that the Server
+     * implements. The Interface must always be public and extend Remote. All methods described in the Remote Interface
+     * must list RemoteException in their throws clause.
+     * */
+
+    /** 13.6.2 The Distributed Object class
+     *
+     * This is the class of the Object that the Server and Client will exchange, and must implement the Serializable
+     * Interface. It is also extremely important that this class declares an explicit serialVersionUID value to
+     * guarantee the consistency across different java compiler implementations.
+     *
+     * If we ignore that or if the Distributed Object class of the Server declares a different serialVersionUID than
+     * the Distributed Object class of the Client, then the deserialization process will result in an
+     * InvalidClassException.
+     * */
+
+    /** 13.6.3 The Sever side
+     *
+     * The Server side has two classes:
+     * - BookStoreSeverImplementation: It extends UnicastRemoteObject and implements the BookStoreRemoteInterface.
+     * - BookServer: It has the main method where we bind the server on localhost with the name “MyBookstore”.  We fill
+     *               a List with MyBook type Objects that represent the books our Bookstore.
+     *
+     * We also need to add a serialVersionUID for the BookStoreSeverImplementation, but since the Server we designed
+     * in this example intends to exist only on one machine we don’t need to think about it twice, we can just set a
+     * default serialVersionUID. If, however, the Server Class was also distributed, we would have to do make sure
+     * the serialVersionUID for the class was the same across all platforms that implemented it.
+     * */
+
+    /** 13.6.4 The Client side
+     *
+     * The Client “finds” the Server through the remote interface(i.e. BookStoreRemoteInterface) Object that “looks”
+     * for a reference to the remote object associated with the name we pass as parameter. What we just described is
+     * what Naming.lookup("//localhost/MyBookstore"); does.
+     *
+     * The rest of the code for the Client is just to make a working example that you could hopefully experiment with.
      * */
 }

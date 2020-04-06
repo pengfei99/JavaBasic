@@ -1,4 +1,4 @@
-package org.pengfei.Lesson02_Creating_And_Destroying_Objects.S01_staticFactoryMethod;
+package org.pengfei.Lesson02_Effective_Java_Programming.S01_Creating_And_Destroying_Objects.source;
 
 public class MyServiceImplementation implements MyService{
     @Override

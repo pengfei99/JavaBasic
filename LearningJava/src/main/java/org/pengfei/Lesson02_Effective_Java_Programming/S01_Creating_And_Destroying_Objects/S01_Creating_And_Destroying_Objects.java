@@ -1,10 +1,11 @@
-package org.pengfei.Lesson02_Creating_And_Destroying_Objects.S01_staticFactoryMethod;
+package org.pengfei.Lesson02_Effective_Java_Programming.S01_Creating_And_Destroying_Objects;
 
-/**
- * Hello world!
- *
- */
-public class L01_S01_Static_Factory_methods {
+
+import org.pengfei.Lesson02_Effective_Java_Programming.S01_Creating_And_Destroying_Objects.source.MyService;
+import org.pengfei.Lesson02_Effective_Java_Programming.S01_Creating_And_Destroying_Objects.source.StaticFacMethodsDemo;
+import org.pengfei.Lesson02_Effective_Java_Programming.S01_Creating_And_Destroying_Objects.source.StaticFacMethodsExample;
+
+public class S01_Creating_And_Destroying_Objects {
     /********************************************1.1 Static Factory methods for creating an instance ******************/
 
     /* The traditional way for a class to allow a client to obtain an instance is to provide a public constructor.
@@ -83,30 +84,19 @@ public class L01_S01_Static_Factory_methods {
     * their relative merits. Often static factories are preferable, so avoid the reflex to provide public constructors
     * without first considering static factories.
     *
-    *
+    * Check StaticFacMethodsExample.exp2(); for code example.
     * */
+
+    /**************************** 1.2 Use a builder when faced with many constructor parameters ******************/
+
 
     public static void main( String[] args )
     {
-        /* We call the static factory method without creating the object */
-        Boolean valueOfTrue = StaticFacMethodsDemo.valueOf(true);
-        System.out.println("Value of true is :"+valueOfTrue);
+        /* Static factory method example*/
+        StaticFacMethodsExample.exp1();
 
-        /* The name we give to method is more human readable*/
-        Boolean reverseValueOfTrue = StaticFacMethodsDemo.reverseValueOf(true);
-        System.out.println("Reverse Value of true is :"+reverseValueOfTrue);
-         // you can also set system property staticlly with "java -DServiceImplemetationClassName=MyServiceImplementation MyApp"
-
-        System.setProperty("ServiceImplementationClassName","org.pengfei.Lesson01_Creating_And_Destroying_Objects.S01_staticFactoryMethod.MyServiceImplementation");
-        /* //check the property value
-        String className = System.getProperty("ServiceImplemetationClassName");
-        System.out.println("className value stored in the Property: "+className);*/
-
-        /* With the getService method, when we deliver the lib, we don't need to provide the implementation of MyService
-        * The client of the lib can implement the MyService locally and specify it when using the lib by setting system
-        * property. */
-        MyService myService=StaticFacMethodsDemo.getService();
-        myService.doSomething();
+        /* Service provider framework pattern example*/
+        StaticFacMethodsExample.exp2();
 
     }
 
@@ -126,6 +116,7 @@ public class L01_S01_Static_Factory_methods {
     * In this lesson code example, we use MyService as the service interface.
     * In class StaticFacMethodsDemo, we have a static factory method(getService) which plays the role of the service
     * access API. In the main method, we use system setProperty method to play the role of provider registration API.
+    * Check StaticFacMethodsExample.exp2();
      * */
 
 

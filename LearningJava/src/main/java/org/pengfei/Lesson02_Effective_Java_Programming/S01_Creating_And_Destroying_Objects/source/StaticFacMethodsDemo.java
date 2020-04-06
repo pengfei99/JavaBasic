@@ -1,5 +1,7 @@
-package org.pengfei.Lesson02_Creating_And_Destroying_Objects.S01_staticFactoryMethod;
+package org.pengfei.Lesson02_Effective_Java_Programming.S01_Creating_And_Destroying_Objects.source;
 
+
+import java.lang.reflect.Constructor;
 
 public class StaticFacMethodsDemo {
 
@@ -20,11 +22,13 @@ public class StaticFacMethodsDemo {
         MyService myService;
         try {
             /* Beware create object using reflection techniques requires the fully qualified class name. And the
-            * fully qualified class name has the form packagename.classname. In our example, we must do a dynamic property setting
+            * fully qualified class name has the form packagename.classname. In our example, we must do a dynamic
+            * property setting:
             * System.setProperty("ServiceImplementationClassName","org.pengfei.Lesson01_Creating_And_Destroying_Objects.S01_staticFactoryMethod.MyServiceImplementation");
         */
             Class<?> serviceImplementationClass = Class.forName(System.getProperty("ServiceImplementationClassName"));
-            myService=(MyService) serviceImplementationClass.newInstance();
+            Constructor<?> serviceImplementationConstructor = serviceImplementationClass.getConstructor();
+            myService=(MyService) serviceImplementationConstructor.newInstance();
         } catch (Throwable t) {
             throw new Error(t);
         }
