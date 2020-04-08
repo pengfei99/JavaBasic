@@ -197,8 +197,68 @@ public class S00_Applying_Java_With_Beans {
     * - Visibility: Methods in this interface allow a bean to run on servers where a GUI is not available.
     *
     * For the full class list, please check https://docs.oracle.com/javase/9/docs/api/java/beans/package-summary.html
+    *
+    * Here, we only examine four classes:
+    * - Introspector
+    * - PropertyDescriptor
+    * - EventSetDescriptor
+    * - MethodDescriptor
     * */
-    public static void main(String[] args){
 
-}
+    /**  0.7.1 Introspector
+     *
+     * The Introspector class provides several static methods that support introspection. Of most interest is
+     * getBeanInfo(). This method returns a BeanInfo object that can be used to obtain information about the Bean. The
+     * getBeanInfo() method has several forms, including the one shown here:
+     * - static BeanInfo getBeanInfo(Class<?> bean) throws IntrospectionException: It returns an object which
+     *             contains information about the Bean specified by bean.
+     * */
+
+    /** 0.7.2 PropertyDescriptor
+     *
+     * The PropertyDescriptor class describes the characteristics of a Bean property. It supports several methods
+     * that manage and describe properties. For example, you can determine if a property is bound by calling isBound().
+     * To determine if a property is constrained, call isConstrained( ). You can obtain the name of a property by
+     * calling getName().
+     *
+     * */
+
+    /** 0.7.3 EventSetDescriptor
+     *
+     * The EventSetDescriptor class represents a set of Bean events. It supports several methods that obtain the
+     * methods that a Bean uses to add or remove event listeners, and to otherwise manage events. For example,
+     * to obtain the method used to add listeners, call getAddListenerMethod(). To obtain the method used
+     * to remove listeners, call getRemoveListenerMethod(). To obtain the type of a listener, call getListenerType().
+     * You can obtain the name of an event set by calling getName().
+     * */
+
+    /** 0.7.4 MethodDescriptor
+     *
+     * The MethodDescriptor class represents a Bean method. To obtain the name of the method, call getName(). You can
+     * obtain information about the method by calling getMethod(), shown here:
+     * - Method getMethod(): It returns an object of type Method that describes the method is returned.
+     * */
+
+    /*************************************** 0.8 A simple Java Bean example ****************************************/
+
+    /*
+    * In this example, we have three classes:
+    * - MyColors: It is the bean class which displays a colored object within a frame.
+    * - MyColorsBeanInfo: It is a subclass of SimpleBeanInfo that provides explicit information about Colors. In this
+    *           example, we only override the getPropertyDescriptor(). We can also rewrite getEventDescriptor() and
+    *           get getMethodDescriptor(). If they are not override, the SimpleBeanInfo will use the default patterns to
+    *           display the information about property, event and method of beans.
+    * - IntrospectorDemo: It uses introspection to display the properties and events that are available within the
+    *           MyColors Bean.
+    *
+    * Notice two things in the output. First, because MyColorsBeanInfo overrides getPropertyDescriptors() such that
+    * the only property returned is rectangular, only the rectangular property is displayed. However, because
+    * getEventSetDescriptors() is not overridden by MyColorsBeanInfo, design-pattern introspection is used, and all
+    * events are found, including those in MyColors’ superclass, Canvas. Remember, if you don’t override one of the
+    * "get" methods defined by SimpleBeanInfo, then the default, design-pattern introspection is used. To observe
+    * the difference that ColorsBeanInfo makes, erase its class file and then run IntrospectorDemo again. This time
+    * it will report more properties.
+    * */
+
+
 }
