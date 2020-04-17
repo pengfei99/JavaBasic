@@ -1,0 +1,13 @@
+{
+  "brand": "Mercedes",
+  "doors": null,
+  "owners": [
+    "John",
+    "Jack",
+    "Jill"
+  ],
+  "engine": {
+    "model": "s5",
+    "power": 140
+  }
+}

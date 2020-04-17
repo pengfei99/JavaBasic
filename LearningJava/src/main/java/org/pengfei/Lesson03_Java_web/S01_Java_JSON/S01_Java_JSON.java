@@ -149,7 +149,7 @@ public class S01_Java_JSON {
      *
      * */
 
-    /****************************************** 3.0 Jackson ObjectMapper ****************************************/
+    /************************************ 3.0 Jackson ObjectMapper deserialization ***********************************/
     /*
     * The Jackson ObjectMapper class (com.fasterxml.jackson.databind.ObjectMapper) is the simplest way to parse JSON
     * with Jackson. The Jackson ObjectMapper can parse JSON from a string, stream or file, and create a Java object or
@@ -221,9 +221,164 @@ public class S01_Java_JSON {
      * Check JavaJsonExample.exp12(); an exception will be thrown because of null value.
      * */
 
-    /** 3.4 */
+    /** 3.4 Custom deserializer
+     *
+     * Sometimes you might want to read a JSON string into a Java object in a way that is different from how the
+     * Jackson ObjectMapper does this by default. You can add a custom deserializer to the ObjectMapper which can
+     * perform the deserialization as you want it done.
+     * Check JavaJsonExample.exp13(); We can control which field of the json file we want to match. We can also set
+     * the field values of the generated java object.
+     * */
+
+    /************************************* 4.0 Jackson ObjectMapper serialization **********************************/
+
+    /*
+    * We can generate json file with a java object. ObjectMapper offers three methods to do such operation:
+    * - writeValue(): This method generate a json object and write it to a file. JavaJsonExample.exp14();
+    * - writeValueAsString(): This method generate a json object and return it as string. JavaJsonExample.exp15();
+    * - writeValueAsBytes(): This method generate a json object and return it as byte. JavaJsonExample.exp16();
+    *
+    * */
+
+    /** 4.1 Customize serialization
+     *
+     * Sometimes you want to serialize a Java object to JSON differently than what Jackson does by default. For
+     * instance, you might want to use different field names in the JSON than in the Java object, or you might want
+     * to leave out certain fields altogether.
+     *
+     * Jackson enables you to set a custom serializer on the ObjectMapper. This serializer is registered for a certain
+     * class, and will then be called whenever the ObjectMapper is asked to serialize a Car object.
+     *
+     * Check JavaJsonExample.exp17(); we change the output json field name.
+     * */
+
+    /** 4.2 Jackson date format
+     *
+     * By default Jackson will serialize a java.util.Date object to its long value, which is the number of
+     * milliseconds since January 1st 1970. However, Jackson also supports formatting dates as strings.
+     * In JavaJsonExample.exp18() we use the default ObjectMapper date format
+     * In JavaJsonExample.exp19() we create a customize date format.
+     * */
+
+    /************************************* 5.0 Jackson JSON Tree Model **********************************/
+
+    /*
+    * Jackson has a built-in tree model which can be used to represent a JSON object. Jackson's tree model is useful if
+    * you don't know how the JSON you will receive looks, or if you for some reason cannot (or just don't want to)
+    * create a class to represent it. The Jackson Tree Model is also useful if you need to manipulate the JSON before
+    * using or forwarding it. All of these situations can easily occur in a Data Streaming scenario.
+    *
+    * The Jackson tree model is represented by the JsonNode class. The Jackson JsonNode class(com.fasterxml.jackson.
+    * databind.JsonNode) is Jackson's tree model. You use the Jackson ObjectMapper to parse JSON into
+    * a JsonNode tree model, and write a JsonNode out to JSON file or string, just like you would have done with your
+    * own class.
+    *
+    * There are two ways to read json to a JsonNode object:
+    * - use readValue(jsonSource, JsonNode.class): the jsonSource can be a string, file, inputStream, url etc. Check
+    *               JavaJsonExample.exp20();
+    * - use readTree(jsonSource): the jsonSource can be a string, file, inputStream, url etc. Check
+    *               JavaJsonExample.exp21();
+    *
+    * There are three ways to write a JsonNode object just like you do with your own class:
+    * - writeValue(): This method generate a json object and write it to a file.
+    * - writeValueAsString(): This method generate a json object and return it as string.
+    * - writeValueAsBytes(): This method generate a json object and return it as byte.
+    *
+    * Check JavaJsonExample.exp22();, we use the three above methods to write a JsonNode object
+    * */
+
+    /** 5.1 JsonNode vs. ObjectNode
+     *
+     * The Jackson JsonNode class is immutable. That means, that you cannot actually build an object graph of
+     * JsonNode instances directly. Instead, you create an object graph of the JsonNode subclass ObjectNode. Being a
+     * subclass of JsonNode you can use the ObjectNode everywhere you can use a JsonNode. You will see how to do
+     * build ObjectNode graphs later in this section.
+     *
+     *
+     * */
+
+    /** 5.2 JsonNode fields
+     * A json file can has three types of fields
+     * - simple fields (field_name: value of primitive types)
+     * - array fields(field_name: an array of values of primitive types)
+     * - composite fields(field_name: {child_field1, child_field2,etc.})
+     *
+     * We can get all the above fields by using get("field_name") method. Note that, the get() method always returns a
+     * JsonNode to represent the field even for simple fields.
+     *
+     * Check JavaJsonExample.exp23(); how we retrieve fields and their values.
+     *
+     * 5.2.1 Get a field by using its path
+     * We can also get a field by giving the path of the fields, even if the field is a sub field of a field. Check
+     * JavaJsonExample.exp24(); we use the at("field_path") method to get a sub field of a field directly.
+     *
+     * 5.2.2 Convert JsonNode Field
+     * The Jackson JsonNode class contains a set of methods that can convert a field value to another data type. For
+     * instance, convert a String field value to a long, or the other way around by using:
+     * - asDouble()
+     * - asText()
+     * - asInt()
+     * - asLong().
+     *
+     * The asDouble(), asInt() and asLong() methods can also take default parameter values, which are returned in case
+     * the field you try to get the value from is null.
+     *
+     * Please note, that if the field is not explicitly set to null in the JSON, but is missing from the JSON, then
+     * the call jsonNode.get("fieldName") will return a Java null value, on which you cannot call asInt(),
+     * asDouble(), asLong() or asText(). If you try that, you will get a NullPointerException.
+     *
+     * Check JavaJsonExample.exp25();
+     *
+     * 5.2.3 Handling Null Field Values
+     * There are two ways in which a field inside a JsonNode can be null.
+     * 1. If the field is completely missing from the JSON from which the JsonNode was created. The jsonNode object
+     *    you get by using objectMapper.get() is a null object. So you need to check if your jsonNode object is null or
+     *    not
+     * 2. The field exist but the value is null. In this case, your jsonNode object is not null. You can check if the
+     *    value is null or not by using isNull() method of the jsonNode object.
+     *
+     * 5.2.4 Traverse a json node
+     *
+     * A JsonNode that represents a JSON object or JSON array can be traversed like any other object graph. You do so
+     * by iterating its nested fields (or nested elements in case of an array).
+     *
+     * We write a method called traverse in JavaJsonExample class. In JavaJsonExample.exp27(), we use this method to
+     * traverse the finalCar.json file.
+     * */
+
+
+
+    /** 5.3 Use ObjectNode to edit json node fields
+     *
+     * As mentioned earlier, the JsonNode class is immutable. So once a JsonNode object created, we cant edit it.
+     * To edit a JsonNode object graph you must be able to mutate the JsonNode instances in the graph, e.g. setting
+     * property values and child JsonNode instances etc.
+     *
+     * To overcome the immutable problem, we can use ObjectNode class which is a subclass of JsonNode, and it is mutable.
+     * Check JavaJsonExample.exp28(); we create a json object with three types of fields(e.g. simple, array, object).
+     *
+     * Note the following methods:
+     * - put("field_name",field_value): It adds a simple field to the json object
+     * - putArray("field_name"): It adds an array field to the json object. The value is set by calling set() method
+     * - putObject("field_name"): It adds a object field to the json object. The value is set by calling set() method
+     * - remove(): It removes fields from the ObjectNode
+     * - fieldNames(): It returns an Iterator that enables you to iterate all the field names of the JsonNode.
+     * */
+
+    /********************************* 6.0 Convert JsonNode to java object and vise-versa ********************************/
+
+    /*
+    * It is possible to use the Jackson ObjectMapper to convert a Java object to a JsonNode with the JsonNode being a
+    * JSON representation of the Java object converted and vise-versa.
+    * - ObjectMapper.valueToTree(): It converts a Java object to a JsonNode object.
+    * - ObjectMapper.treeToValue(): It converts a JsonNode object to a Java object.
+    * Check JavaJsonExample.exp29();
+    * */
+
+    /********************************* 7.0 Jackson JsonParser ********************************/
 
     public static void main(String[] args){
+        /** deserialize*/
         /* deserialize: convert json file to a java object */
         //JavaJsonExample.exp1();
         //JavaJsonExample.exp2();
@@ -248,5 +403,43 @@ public class S01_Java_JSON {
 
         /* fail on null value*/
        // JavaJsonExample.exp12();
+       // JavaJsonExample.exp13();
+
+        /** Serialization */
+       // JavaJsonExample.exp14();
+        // JavaJsonExample.exp15();
+       // JavaJsonExample.exp16();
+      //  JavaJsonExample.exp17();
+
+        /* jackson date format*/
+       // JavaJsonExample.exp18();
+       // JavaJsonExample.exp19();
+
+        /** Json tree model*/
+        /* read json file to jsonNode*/
+      //  JavaJsonExample.exp20();
+       // JavaJsonExample.exp21();
+
+        /* write jsonNode to json file*/
+       // JavaJsonExample.exp22();
+
+        /*read jsonNode field*/
+       // JavaJsonExample.exp23();
+       // JavaJsonExample.exp24();
+
+        /* convert field type*/
+       // JavaJsonExample.exp25();
+
+        /* check null field*/
+       // JavaJsonExample.exp26();
+
+        /* traverse a json node*/
+       // JavaJsonExample.exp27();
+
+        /* edit json object with ObjectNode*/
+      //  JavaJsonExample.exp28();
+
+        /** Convert jsonNode object to java object and vise-versa*/
+        JavaJsonExample.exp29();
     }
 }
