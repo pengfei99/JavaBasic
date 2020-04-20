@@ -1,9 +1,6 @@
 package org.pengfei.Lesson03_Java_web.S01_Java_JSON.source;
 
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.Version;
+import com.fasterxml.jackson.core.*;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -559,11 +556,11 @@ public class JavaJsonExample {
         String urlStr = "file:/home/pliu/IdeaProjects/JavaBasic/LearningJava/src/main/java/org/pengfei/Lesson03_Java_web/S01_Java_JSON/source/data/finalCar.json";
 
         try {
-            URL url=new URL(urlStr);
+            URL url = new URL(urlStr);
             JsonNode car = objectMapper.readTree(url);
             JsonNode doors = car.get("doors");
             // try to change doors field into null in file finalCar.json.
-            if(doors.isNull()) System.out.println("Field value is null");
+            if (doors.isNull()) System.out.println("Field value is null");
             else System.out.println(doors.asText());
         } catch (JsonMappingException e) {
             e.printStackTrace();
@@ -576,66 +573,66 @@ public class JavaJsonExample {
         }
     }
 
-    public static void exp27(){
+    public static void exp27() {
 
         ObjectMapper objectMapper = new ObjectMapper();
         String jsonSource = "/home/pliu/IdeaProjects/JavaBasic/LearningJava/src/main/java/org/pengfei/Lesson03_Java_web/S01_Java_JSON/source/data/finalCar.json";
 
         try {
-            JsonNode car=objectMapper.readTree(new File(jsonSource));
+            JsonNode car = objectMapper.readTree(new File(jsonSource));
             // call the static method traverse
-            JavaJsonExample.traverse("Car",car);
+            JavaJsonExample.traverse("Car", car);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public static void exp28(){
-        ObjectMapper objectMapper=new ObjectMapper();
+    public static void exp28() {
+        ObjectMapper objectMapper = new ObjectMapper();
 
         //create a new ObjectNode
-        ObjectNode newCar=objectMapper.createObjectNode();
+        ObjectNode newCar = objectMapper.createObjectNode();
 
-         /* We can add simple fields by using put method */
-        newCar.put("brand","BMW");
-        newCar.put("doors",5);
+        /* We can add simple fields by using put method */
+        newCar.put("brand", "BMW");
+        newCar.put("doors", 5);
 
-       /* We can add array fields by using putArray method */
+        /* We can add array fields by using putArray method */
         newCar.putArray("owners");
 
         // To assign the array filed value, we need to create an ArrayNode object
-        ArrayNode owners=objectMapper.createArrayNode();
+        ArrayNode owners = objectMapper.createArrayNode();
         owners.add("John");
         owners.add("Jack");
         owners.add("Jill");
         // We assign the array node object to the field.
-        newCar.set("owners",owners);
+        newCar.set("owners", owners);
 
-         /*we can add object fields by using putObject method*/
+        /*we can add object fields by using putObject method*/
         newCar.putObject("engine");
         ObjectNode engine = objectMapper.createObjectNode();
         engine.put("model", "s10");
         engine.put("power", 15);
-        newCar.set("engine",engine);
+        newCar.set("engine", engine);
 
         /* we can add an array of objects*/
         newCar.putArray("Users");
 
         //create two users object
-        ObjectNode user1=objectMapper.createObjectNode();
-        user1.put("name","pliu");
-        user1.put("age",18);
+        ObjectNode user1 = objectMapper.createObjectNode();
+        user1.put("name", "pliu");
+        user1.put("age", 18);
 
-        ObjectNode user2=objectMapper.createObjectNode();
-        user2.put("name","haha");
-        user2.put("age",38);
+        ObjectNode user2 = objectMapper.createObjectNode();
+        user2.put("name", "haha");
+        user2.put("age", 38);
 
         //create an array object for users
-        ArrayNode users=objectMapper.createArrayNode();
+        ArrayNode users = objectMapper.createArrayNode();
         users.add(user1);
         users.add(user2);
 
-        newCar.set("Users",users);
+        newCar.set("Users", users);
 
 
         // check the created json object
@@ -651,67 +648,171 @@ public class JavaJsonExample {
             // get all field name and values
             System.out.println("Get all field name and values");
             Iterator<String> fieldNames = newCar.fieldNames();
-            while(fieldNames.hasNext()) {
+            while (fieldNames.hasNext()) {
                 String fieldName = fieldNames.next();
                 JsonNode field = newCar.get(fieldName);
                 //note that, if the field is an array or object, we can't print it by using asText()
-                System.out.println("field_name: "+fieldName+", value: "+field.asText("Complex type"));
+                System.out.println("field_name: " + fieldName + ", value: " + field.asText("Complex type"));
             }
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
     }
 
-    public static void exp29(){
-        ObjectMapper objectMapper=new ObjectMapper();
+    public static void exp29() {
+        ObjectMapper objectMapper = new ObjectMapper();
 
-        Car car=new Car();
+        Car car = new Car();
         car.setBrand("BMW");
         car.setDoors(8);
 
         JsonNode carJsonNode = objectMapper.valueToTree(car);
 
         try {
-            Car carObj=objectMapper.treeToValue(carJsonNode,Car.class);
-            System.out.println("The jsonNode object: "+objectMapper.writeValueAsString(carJsonNode));
-            System.out.println("The java car object: "+carObj.toString());
+            Car carObj = objectMapper.treeToValue(carJsonNode, Car.class);
+            System.out.println("The jsonNode object: " + objectMapper.writeValueAsString(carJsonNode));
+            System.out.println("The java car object: " + carObj.toString());
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
 
     }
 
-    /** This method and traverse all fields inside a JsonNode. If the root is the root of a json object. It can traverse
+    public static void exp30() {
+        String carJson =
+                "{ \"brand\" : \"Mercedes\", \"doors\" : 5 }";
+
+        JsonFactory factory = new JsonFactory();
+        JsonParser parser = null;
+        try {
+            // we use json factory to create a json parser
+            parser = factory.createParser(carJson);
+
+            // Note if no more token is found, parser.isClosed() will return false
+            while (!parser.isClosed()) {
+                JsonToken parsedToken = parser.nextToken();
+                System.out.println("jsonToken = " + parsedToken);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
+    public static void exp31() {
+        String carJson =
+                "{ \"brand\" : \"Mercedes\", \"doors\" : 5 }";
+
+        JsonFactory factory = new JsonFactory();
+        JsonParser parser = null;
+        try {
+            parser = factory.createParser(carJson);
+            while (!parser.isClosed()) {
+                // if the token is a field name, then we get the name of the field.
+                JsonToken parsedToken = parser.nextToken();
+                if (parsedToken != null && parsedToken.equals(JsonToken.FIELD_NAME)) {
+                    String fieldName = parser.getCurrentName();
+                    System.out.println("Field name: " + fieldName);
+
+                    // now we get the field value
+                    JsonToken valueToken = parser.nextToken();
+                    // for different fields, the value type is different. so we need to determine the value is for
+                    // which field to assign a correct type.
+                    if (fieldName.equals("brand")) {
+                        String brandValue = parser.getValueAsString();
+                        System.out.println("Field value: " + brandValue);
+                    } else if (fieldName.equals("doors")) {
+                        int doorsValue = parser.getIntValue();
+                        System.out.println("Field value: " + doorsValue);
+                    }
+
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public static void exp32() {
+        JsonFactory jsonFactory = new JsonFactory();
+        File output = new File("/tmp/generator_export.json");
+        try (JsonGenerator jsonGenerator = jsonFactory.createGenerator(output, JsonEncoding.UTF8)) {
+            // a json file always starts with a start object, followed by a list of fields and ends with an ending
+            // object.
+            jsonGenerator.writeStartObject();
+            jsonGenerator.writeObjectField("firstName", "Duke");
+            jsonGenerator.writeObjectField("lastName", "Java");
+            jsonGenerator.writeObjectField("age", 18);
+            jsonGenerator.writeObjectField("streetAddress", "100 Internet Dr");
+            jsonGenerator.writeObjectField("city", "JavaTown");
+            jsonGenerator.writeObjectField("state", "JA");
+            jsonGenerator.writeObjectField("postalCode", "12345");
+            // create an array of phone numbers
+            jsonGenerator.writeFieldName("phoneNumbers");
+            jsonGenerator.writeStartArray();
+            // first element is mobile
+            jsonGenerator.writeStartObject();
+            jsonGenerator.writeObjectField("Mobile", "111-111-1111");
+            jsonGenerator.writeEndObject();
+
+            //second element is home
+            jsonGenerator.writeStartObject();
+            jsonGenerator.writeObjectField("Home", "222-222-2222");
+            jsonGenerator.writeEndObject();
+            jsonGenerator.writeEndArray();
+
+            jsonGenerator.writeFieldName("numbers");
+            jsonGenerator.writeStartArray();
+            jsonGenerator.writeNumber(1);
+            jsonGenerator.writeNumber(2);
+            jsonGenerator.writeNumber(3);
+            jsonGenerator.writeNumber(4);
+            jsonGenerator.writeEndArray();
+            jsonGenerator.writeEndObject();
+
+            jsonGenerator.flush();
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        System.out.println("Done");
+    }
+
+    /**
+     * This method and traverse all fields inside a JsonNode. If the root is the root of a json object. It can traverse
      * the whole json object and print all fields and their values.
      *
+     * @param root is the root of json node which you want to traverse
+     * @return void
      * @author Pengfei liu
      * @version 1.0
      * @since 2020-04-19
-     * @param root is the root of json node which you want to traverse
-     * @return void
-     *
-     * */
-    public static void traverse(String rootName, JsonNode root){
+     */
+    public static void traverse(String rootName, JsonNode root) {
 
         // if the field is a sub json object, for each field of the object call traverse()
-        if(root.isObject()){
+        if (root.isObject()) {
             Iterator<String> fieldNames = root.fieldNames();
 
-            while(fieldNames.hasNext()) {
+            while (fieldNames.hasNext()) {
                 String fieldName = fieldNames.next();
                 JsonNode fieldValue = root.get(fieldName);
-                traverse(rootName+"/"+fieldName,fieldValue);
+                traverse(rootName + "/" + fieldName, fieldValue);
             }
             // if the field is an array traverse each element with the name of root
-        } else if(root.isArray()){
+        } else if (root.isArray()) {
             ArrayNode arrayNode = (ArrayNode) root;
-            for(int i = 0; i < arrayNode.size(); i++) {
+            for (int i = 0; i < arrayNode.size(); i++) {
                 JsonNode arrayElement = arrayNode.get(i);
-                traverse(rootName,arrayElement);
+                traverse(rootName, arrayElement);
             }
             // if the field is a simple primitive type, print it as string.
         } else {
-            System.out.println("field_name: "+rootName+", field_value: "+root.asText());
+            System.out.println("field_name: " + rootName + ", field_value: " + root.asText());
 
         }
     }

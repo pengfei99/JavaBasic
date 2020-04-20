@@ -1,5 +1,6 @@
 package org.pengfei.Lesson03_Java_web.S01_Java_JSON;
 
+import org.pengfei.Lesson03_Java_web.S01_Java_JSON.source.JacksonAnnotationExample;
 import org.pengfei.Lesson03_Java_web.S01_Java_JSON.source.JavaJsonExample;
 
 public class S01_Java_JSON {
@@ -167,7 +168,8 @@ public class S01_Java_JSON {
     *
     * By default Jackson maps the fields of a JSON object to fields in a Java object by matching the names of the JSON
     * field to the getter and setter methods in the Java object. Jackson removes the "get" and "set" part of the names
-    * of the getter and setter methods, and converts the first character of the remaining name to lowercase.
+    * of the getter and setter methods, and converts the first character of the remaining name to lowercase. As a result,
+    * the getter and setter methods of the java mapping object is essential, without them nothing can be mapped.
     *
     * In JavaJsonExample.exp1(), the JSON field named brand matches the Java getter and setter methods called
     * getBrand() and setBrand(). The JSON field named engineNumber would match the getter and setter named
@@ -377,6 +379,116 @@ public class S01_Java_JSON {
 
     /********************************* 7.0 Jackson JsonParser ********************************/
 
+    /*
+    * The Jackson JsonParser class is a low level JSON parser. It is similar to the Java StAX parser for XML, except
+    * the JsonParser parses JSON and not XML.
+    *
+    * The Jackson JsonParser works at a lower level than the Jackson ObjectMapper. This makes the JsonParser faster
+    * than the ObjectMapper, but also more cumbersome to work with.
+    *
+    * The way the JsonParser works is by breaking the JSON up into a sequence of tokens which you can iterate one by one.
+    * Check JavaJsonExample.exp30(); We use a loop to show all the token returned by the parser. Note if no more token
+    * is found, parser.isClosed() will return false
+    *
+    * Check JavaJsonExample.exp31(), We use the parser to get field name and values. Note, parser can only know it's
+    * a field or a value. It does not know the name of the field and the type and value of the field value. So its
+    * very complicate to use it to read large json file.
+    * */
+
+    /********************************* 8.0 Jackson  JsonGenerator ********************************/
+
+    /*
+    * The Jackson JsonGenerator is used to generate JSON from Java objects (or whatever data structure your code
+    * generates JSON from).
+    *
+    * It's harder to use compare to ObjectNode, we must write a lots of code. For example, we need to use method
+    * writeStartObject() to indicate the beginning of a json file. But is uses less resource than the ObjectNode.
+    *
+    * Check JavaJsonExample.exp32(); We write a json file by using JsonGenerator.
+    * */
+
+    /********************************* 9.0 Jackson Annotation ********************************/
+    /*
+    * The Jackson JSON toolkit contains a set of Java annotations which you can use to influence how JSON is read into
+    * objects, or what JSON is generated from the objects.
+    * */
+
+    /** 9.1 Annotations for read and write fields
+     * We have three annotations to ignore fields of a json file
+     * - @JsonIgnore: Ignore a single field, apply on top of the java field declaration.
+     * - @JsonIgnoreProperties: Ignore a list of field, apply on top of the java mapping class.
+     * - @JsonIgnoreType: Ignore a whole type (class) everywhere that type is used.
+     * - @JsonAutoDetect: It tells Jackson to include fields which are not public.
+     * Check JacksonAnnotationExample.exp1();
+     * */
+
+    /** 9.2 Deserialize annotations
+     *
+     * When we read a json file and create a mapping java object, we can use these annotation to control how the field
+     * mapping is done.
+     *
+
+     * - @JsonSetter: It tells Jackson that is should match the name of this setter method to a property name in the
+     *                JSON data, when reading JSON into objects. This is useful if the property names used internally
+     *                in your Java class is not the same as the property name used in the JSON file.
+     * - @JsonAnySetter: It instructs Jackson to call the same setter method for all fields that are not already mapped
+     *                to a property or setter method in the Java object.
+     * - @JsonCreator: It tells Jackson that the Java object has a constructor (a "creator") which can match the
+     *                fields of a JSON object to the fields of the Java object. It is useful in situations where
+     *                the @JsonSetter annotation cannot be used. For instance, immutable objects do not have any
+     *                setter methods, so they need their initial values injected into the constructor.
+     * - @JacksonInject: It is used to inject values into the parsed objects, instead of reading those values from
+     *                the JSON. For instance, imagine you are downloading person JSON objects from various different
+     *                sources, and would like to know what source a given person object came from. The sources may not
+     *                themselves contain that information, but you can have Jackson inject that into the Java objects
+     *                created from the JSON objects.
+     * - @JsonDeserialize: It is used to specify a custom de-serializer class for a given field in a Java object. For
+     *                instance, imagine you wanted to optimize the on-the-wire formatting of the boolean values false
+     *                and true to 0 and 1.
+     * Check JacksonAnnotationExample.exp2(); for JsonSetter and JsonAnySetter example
+     * Check JacksonAnnotationExample.exp3();, note we use @JsonProperty("brand") annotation in java constructor to
+     * map argument with json file field.
+     * Check JacksonAnnotationExample.exp4(); we use @JacksonInject to inject owner filed value into the java object.
+     * Check JacksonAnnotationExample.exp5(); we write a MyBooleanDeserializer and use @JsonDeserialize(using =
+     * MyBooleanDeserializer.class) to modify the value read from json file.
+     * */
+
+    /** 9.2 Serialize annotations
+     * These annotations tells how Jackson serializes (writes) Java objects to JSON.
+     * - @JsonInclude: It tells Jackson only to include properties under certain circumstances. For instance, that
+     *                 properties should only be included if they are
+     *                 -- non-null: JsonInclude.Include.NON_NULL
+     *                 -- non-empty: JsonInclude.Include.NON_EMPTY
+     *                 -- non-default values: JsonInclude.Include.NON_DEFAULT.
+     * - @JsonGetter: It is used to tell Jackson that a certain field value should be obtained from calling a getter
+     *                method instead of via direct field access.
+     * - @JsonAnyGetter: It enables you to use a Map as container for properties that you want to serialize to JSON.
+     *                 Note, it flatten the filed in the container as the same level as other field. So no field
+     *                 hierarchy is showed.
+     * - @JsonPropertyOrder: It can be used to specify in what order the fields of your Java object should be
+     *                 serialized into JSON.
+     * - @JsonRawValue: It tells Jackson that this property value should written directly as it is to the JSON output.
+     *                If the property is a String Jackson would normally have enclosed the value in quotation marks,
+     *                but if annotated with the @JsonRawValue property Jackson won't do that.
+     * - @JsonValue: It tells Jackson that Jackson should not attempt to serialize the object itself by using setters and
+     *               getters, but rather call a method on the object which serializes the object to a JSON string. Note
+     *               that Jackson will escape any quotation marks inside the String returned by the custom serialization,
+     *               so you cannot return e.g. a full JSON object. For that you should use @JsonRawValue instead.
+     * - @JsonSerialize: It is used to specify a custom serializer for a field in a Java object
+     *
+     * Check JacksonAnnotationExample.exp6() and CarWithAnnotation6 class, We use @JsonInclude to control which filed to
+     * export to the json file.
+     * Check JacksonAnnotationExample.exp7(); We use @JsonGetter to map Java object field to a json file with different
+     * names. We use @JsonAnyGetter to export the field list in properties. We use @JsonPropertyOrder to change order.
+     * Note we can't change field order inside the properties, because they are not java object fields. They are
+     * elements of a map. We use @JsonRawValue to let driver print raw value not as string. This is of course invalid
+     * JSON, so why would you want that? A usefull example is the address property contained a JSON string then that
+     * JSON string would be serialized into the final JSON object as part of the JSON object structure, and not just
+     * into a string in the address field in the JSON object.
+     * Check JacksonAnnotationExample.exp8(); We use @JsonValue to call a method toJson() to serialize the Car object.
+     * Check JacksonAnnotationExample.exp9(); We use a custom serializer to modify the boolean output to 0 or 1.
+     *
+     */
     public static void main(String[] args){
         /** deserialize*/
         /* deserialize: convert json file to a java object */
@@ -440,6 +552,30 @@ public class S01_Java_JSON {
       //  JavaJsonExample.exp28();
 
         /** Convert jsonNode object to java object and vise-versa*/
-        JavaJsonExample.exp29();
+       // JavaJsonExample.exp29();
+
+        /** json parser*/
+        // JavaJsonExample.exp30();
+        // JavaJsonExample.exp31();
+
+        /** json generator*/
+       //   JavaJsonExample.exp32();
+
+        /** jackson annotation*/
+
+        /* read, write annotations*/
+       // JacksonAnnotationExample.exp1();
+
+        /* read annotations (Deserialization)*/
+       // JacksonAnnotationExample.exp2();
+       // JacksonAnnotationExample.exp3();
+       // JacksonAnnotationExample.exp4();
+       // JacksonAnnotationExample.exp5();
+
+        /* write annotations (Serialization)*/
+       // JacksonAnnotationExample.exp6();
+        // JacksonAnnotationExample.exp7();
+        //JacksonAnnotationExample.exp8();
+        JacksonAnnotationExample.exp9();
     }
 }
