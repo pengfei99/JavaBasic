@@ -10,9 +10,9 @@ public class main {
     public static void main(String[] args){
         /** Step1: Get information of terms*/
 
-        //String url="https://thesaurus.mom.fr/opentheso/api/76609/crtrMxHMHz9TJ.json";
+        String url="https://thesaurus.mom.fr/opentheso/api/76609/crtrMxHMHz9TJ.json";
         //String url="https://thesaurus.mom.fr/opentheso/api/76609/crtrFvPi3Si8L.json";
-        String url="https://thesaurus.mom.fr/opentheso/api/76609/crtQ5dZHOBTSV.json";
+       // String url="https://thesaurus.mom.fr/opentheso/api/76609/crtQ5dZHOBTSV.json";
         String path="/tmp";
         String fileName="simpleTermOfMom.json";
 
@@ -27,8 +27,8 @@ public class main {
         /** Step2: Parser json file into java object*/
         try {
             ThesaurusParser parser=new ThesaurusParser("/tmp/simpleTermOfMom.json");
-            //parser.getSynonym();
-           // parser.showTermDetail();
+
+            parser.showTermDetail();
             parser.convertFileToJsonNode();
 
             // get term name
