@@ -743,6 +743,21 @@ public class S03_Exploring_Java_util_Collections {
       * - HashMap(int capacity, float fillRatio): Set the capacity and fillRatio
       *
       *  Check MapClassesExp.exp1();
+      *
+      *  JDK8 add a few new methods:
+      *  - public V computeIfAbsent(K key,Function<? super K, ? extends V> remappingFunction): key specifies which
+      *         value we want to compute. remappingFunction defines the operation on that value. If the key is not
+      *         present or associates with null, the function will be executed and the result of the function will be
+      *         associated with the key and returned. If the key is present and associated with a value. The function
+      *         will not be executed. And computeIfAbsent returns the value associated to that key just as a normal
+      *         get(key). Check
+      *  - public V putIfAbsent(K key, V value): It allows to map a value to a given key if given key is not associated
+      *         with a value or mapped to null. If the key is not present, the value will be added to map and putIfAbsent
+      *         returns null. If the key is present, the value will be omitted and the origin value in the map is
+      *         returned.
+      *
+      * Check MapClassesExp.exp5(), we use putIfAbsent and computeIfAbsent to populate a hash map.
+      * Check MapClassesExp.exp5(), we use computeIfAbsent to implement a hashMap which can store duplicate keys.
       * */
 
       /** 6.2.2 TreeMap Class
@@ -813,6 +828,7 @@ public class S03_Exploring_Java_util_Collections {
        *
        * check MapClassesExp.exp4();
        * */
+
 
     /******************************************** 07 Comparators ********************************************/
 
@@ -1186,6 +1202,7 @@ public static void main(String[] args){
 
     //hashMap
   //  MapClassesExp.exp1();
+    MapClassesExp.exp5();
 
     // TreeMap
   //  MapClassesExp.exp2();
@@ -1217,6 +1234,6 @@ public static void main(String[] args){
 
     // properties
    // LegacyEnumerationClassesExp.exp3();
-    LegacyEnumerationClassesExp.exp4("/tmp/phonebook.db");
+   // LegacyEnumerationClassesExp.exp4("/tmp/phonebook.db");
      }
 }
