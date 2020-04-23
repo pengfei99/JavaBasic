@@ -23,6 +23,7 @@ public class ThesaurusParser {
     private JsonNode exactMatch = null;
     private JsonNode closeMatch = null;
     private JsonNode narrowMatch = null;
+    private JsonNode relatedTerm=null;
 
     public ThesaurusParser(String filePath) throws IOException {
         mapper = new ObjectMapper();
@@ -107,6 +108,33 @@ public class ThesaurusParser {
             } else throw new IllegalArgumentException("Not a valid json file for MOM thesaurus.");
         }
         return synonymResultList;
+    }
+
+    /*RelatedTerm, nullable*/
+    public List<String> getRelatedTerm() {
+        String relatedTermRoot = "related";
+        String relatedValueFieldName = relatedTermRoot + "/value";
+        List<String> rTermResultList = new LinkedList<>();
+        if (relatedTerm != null) {
+            // altLabel contains a list of synonym objects which have three fields(value,type,lang)
+            if (relatedTerm.isArray()) {
+                //System.out.println("In synonym");
+                ArrayNode arrayNode = (ArrayNode) relatedTerm;
+                // we loop over the list to exam each synonym
+                for (int i = 0; i < arrayNode.size(); i++) {
+                    JsonNode arrayElement = arrayNode.get(i);
+
+                    // Get all synonym fields of a synonym
+                    Map<String, List<String>> relatedTermFields = new HashMap<>();
+                    parse(relatedTermRoot, arrayElement, relatedTermFields);
+                    // System.out.println(relatedTermFields.toString());
+                    // for now, we only save the name
+                    rTermResultList.add(relatedTermFields.get(relatedValueFieldName).get(0));
+
+                }
+            } else throw new IllegalArgumentException("Not a valid json file for MOM thesaurus.");
+        }
+        return rTermResultList;
     }
 
     /*ExactMatch nullable*/
@@ -249,6 +277,11 @@ public class ThesaurusParser {
             if (rootObjFieldList.contains(MomThesaurusFieldConfiguration.ALT_LABEL)) {
                 altLabel = rootObj.get(MomThesaurusFieldConfiguration.ALT_LABEL);
                 fields.put("altLabel", altLabel);
+            }
+            //get related term json node, which is nullable, so no need to throw exception
+            if (rootObjFieldList.contains(MomThesaurusFieldConfiguration.RELATED_TERM)) {
+                relatedTerm = rootObj.get(MomThesaurusFieldConfiguration.RELATED_TERM);
+                fields.put("relatedTerm", relatedTerm);
             }
             //get exact match json node, which is nullable, so no need to throw exception
             if (rootObjFieldList.contains(MomThesaurusFieldConfiguration.EXACT_MATCH)) {

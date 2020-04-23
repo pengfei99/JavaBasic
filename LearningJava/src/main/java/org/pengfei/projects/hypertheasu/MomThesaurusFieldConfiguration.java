@@ -5,6 +5,7 @@ public class MomThesaurusFieldConfiguration {
     public static final String PREF_LABEL="http://www.w3.org/2004/02/skos/core#prefLabel";
     // It contains the name of synonym terms
     public static final String ALT_LABEL="http://www.w3.org/2004/02/skos/core#altLabel";
+    public static final String RELATED_TERM="http://www.w3.org/2004/02/skos/core#related";
     // It contains the description of the term
     public static final String DESCRIPTION="http://www.w3.org/2004/02/skos/core#definition";
 

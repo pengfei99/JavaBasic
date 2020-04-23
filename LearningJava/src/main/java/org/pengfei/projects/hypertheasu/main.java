@@ -10,9 +10,10 @@ public class main {
     public static void main(String[] args){
         /** Step1: Get information of terms*/
 
-        String url="https://thesaurus.mom.fr/opentheso/api/76609/crtrMxHMHz9TJ.json";
+        // String url="https://thesaurus.mom.fr/opentheso/api/76609/crtrMxHMHz9TJ.json";
         //String url="https://thesaurus.mom.fr/opentheso/api/76609/crtrFvPi3Si8L.json";
        // String url="https://thesaurus.mom.fr/opentheso/api/76609/crtQ5dZHOBTSV.json";
+          String url="https://thesaurus.mom.fr/opentheso/api/76609/crt6ky3AVWFQp.json";
         String path="/tmp";
         String fileName="simpleTermOfMom.json";
 
@@ -43,7 +44,9 @@ public class main {
             List<String> synonyms = parser.getSynonym();
             System.out.println("Synonym: "+synonyms.toString());
 
-            // todo add related term
+            // get related term
+            List<String> relatedTerm = parser.getRelatedTerm();
+            System.out.println("Related Term: "+relatedTerm.toString());
 
             // get exactMatch
             Map<String, String> exactMatch = parser.getExactMatch();
@@ -57,6 +60,10 @@ public class main {
             Map<String, String> narrowMatch = parser.getNarrowMatch();
             System.out.println("NarrowMatch: "+narrowMatch.toString());
 
+            /** Step 3 generate atlas json file*/
+            AtlasJsonGenerator generator=new AtlasJsonGenerator(allTermNames, description);
+generator.generateTerm("Artefact","0101010101001");
+generator.showGeneratedJsonFile();
         } catch (IOException e) {
             e.printStackTrace();
         }

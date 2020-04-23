@@ -1,5 +1,6 @@
 package org.pengfei.projects.hypertheasu;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -13,11 +14,11 @@ public class AtlasJsonGenerator {
 
     private Map<String, String> termNames;
     private String description;
-    private List<String> synonyms=null;
-    private List<String> relatedTerms=null;
-    private Map<String, String> exactMatch=null;
-    private Map<String, String> closeMatch=null;
-    private Map<String, String> narrowMatch=null;
+    private List<String> synonyms = null;
+    private List<String> relatedTerms = null;
+    private Map<String, String> exactMatch = null;
+    private Map<String, String> closeMatch = null;
+    private Map<String, String> narrowMatch = null;
 
 
     public AtlasJsonGenerator(Map<String, String> termNames, String description) {
@@ -34,44 +35,41 @@ public class AtlasJsonGenerator {
 
     public AtlasJsonGenerator(Map<String, String> termNames, String description, List<String> synonyms, List<String> relatedTerms) {
 
-        this(termNames, description,synonyms);
+        this(termNames, description, synonyms);
         this.relatedTerms = relatedTerms;
 
     }
+
     public AtlasJsonGenerator(Map<String, String> termNames, String description, List<String> synonyms, List<String> relatedTerms,
                               Map<String, String> exactMatch) {
-        this(termNames, description,synonyms,relatedTerms);
+        this(termNames, description, synonyms, relatedTerms);
         this.exactMatch = exactMatch;
 
     }
 
     public AtlasJsonGenerator(Map<String, String> termNames, String description, List<String> synonyms, List<String> relatedTerms,
                               Map<String, String> exactMatch, Map<String, String> closeMatch) {
-        this(termNames, description,synonyms,relatedTerms,exactMatch);
+        this(termNames, description, synonyms, relatedTerms, exactMatch);
         this.closeMatch = closeMatch;
 
     }
 
     public AtlasJsonGenerator(Map<String, String> termNames, String description, List<String> synonyms, List<String> relatedTerms,
                               Map<String, String> exactMatch, Map<String, String> closeMatch, Map<String, String> narrowMatch) {
-        this(termNames, description,synonyms,relatedTerms,exactMatch,closeMatch);
+        this(termNames, description, synonyms, relatedTerms, exactMatch, closeMatch);
         this.narrowMatch = narrowMatch;
 
     }
 
 /*
-"anchor":{
-"displayText" : "Artefacts",
-"glossaryGuid":"ee3f05ba-2fe1-4806-a81e-660c777a3403"},
 
-"longDescription":"Pièce ornementale ou de renfort fixée sur une autre (fr)",
-"name":"applique",
+
 "qualifiedName":"applique@Artefacts",
-"shortDescription":"applique"
+
 */
 
 
-    public void generateTerm(String glossaryName,String glossaryGuid) {
+    public void generateTerm(String glossaryName, String glossaryGuid) {
 
 
         /** Step1 : generate anchor object, not nullable
@@ -84,14 +82,20 @@ public class AtlasJsonGenerator {
 
         //add anchor to global term object
         termNode.putObject("anchor");
-        termNode.set("anchor",anchor);
+        termNode.set("anchor", anchor);
 
         /** Step2: Add term name*/
-        String termName=getName("fr");
-        termNode.put("name",termName);
+        String termName = getName("fr");
+        termNode.put("name", termName);
 
+        /** Step3: Add long description and short description*/
+        termNode.put("longDescription", description);
+        termNode.put("shortDescription", termName);
 
-        //create two users object
+        /** Step4: Add qualifiedName*/
+        termNode.put("qualifiedName", termName + "@" + glossaryName);
+
+       /* //create two users object
         ObjectNode user1 = objectMapper.createObjectNode();
         user1.put("name", "pliu");
         user1.put("age", 18);
@@ -103,15 +107,21 @@ public class AtlasJsonGenerator {
         //create an array object for users
         ArrayNode users = objectMapper.createArrayNode();
         users.add(user1);
-        users.add(user2);
+        users.add(user2);*/
 
 
     }
 
-    public String getName(String lang){
+    public String getName(String lang) {
         return termNames.get(lang);
     }
 
-
+    public void showGeneratedJsonFile() {
+        try {
+            System.out.println(objectMapper.writeValueAsString(termNode));
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+    }
 
 }
