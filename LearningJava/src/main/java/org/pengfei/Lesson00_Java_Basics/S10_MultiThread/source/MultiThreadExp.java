@@ -61,17 +61,17 @@ public class MultiThreadExp {
     }
 
     public static void exp6(){
-        MyThreadVar2 mt1=MyThreadVar2.createAndRun("Thread #1");
-        MyThreadVar2 mt2=MyThreadVar2.createAndRun("Thread #2");
-        MyThreadVar2 mt3=MyThreadVar2.createAndRun("Thread #3");
+        MyThreadVar2 child1=MyThreadVar2.createAndRun("Thread #1");
+        MyThreadVar2 child2=MyThreadVar2.createAndRun("Thread #2");
+        MyThreadVar2 child3=MyThreadVar2.createAndRun("Thread #3");
         try{
-            mt1.join();
+            child1.join();
             System.out.println("Child #1 joined");
 
-            mt2.join();
+            child2.join();
             System.out.println("Child #2 joined");
 
-            mt3.join();
+            child3.join();
             System.out.println("Child #3 joined");
         } catch (InterruptedException e) {
             System.out.println("Main thread interrupted");

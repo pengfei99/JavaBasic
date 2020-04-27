@@ -6,11 +6,11 @@ public class S10_MultiThread {
     /******************************************** 10. Introduction *******************************************/
 
     /*
-    * A multithreaded program contains two or more parts that can run concurrently. Each part of such a program is
+    * A multi-threaded program contains two or more parts that can run concurrently. Each part of such a program is
     * called a thread, and each thread defines a separate path of execution. In this section, we will learn the
-    * fundamentals of multithreading. We will use another full lesson to learn "Java concurrency programing". In this
+    * fundamentals of multi-threading. We will use another full lesson to learn "Java concurrency programing". In this
     * section, we will see the following key concepts:
-    * - Understand multithreading fundamentals
+    * - Understand multi-threading fundamentals
     * - Know the Thread class and the Runnable interface
     * - Create a thread
     * - Create multiple threads
@@ -23,7 +23,7 @@ public class S10_MultiThread {
     * - Suspend, resume, and stop threads
     * */
 
-    /*********************************** 10.1 Multithreading fundamentals *******************************************/
+    /*********************************** 10.1 Multi-threading fundamentals *******************************************/
 
     /*
     * There are two distinct types of multitasking: process­based and thread­based. It is important to understand
@@ -31,26 +31,31 @@ public class S10_MultiThread {
     * multitasking is the feature that allows your computer to run two or more programs concurrently. For example,
     * it is process­based multitasking that allows you to run the Java compiler at the same time you are using a text
     * editor or browsing the Internet. In process­based multitasking, a program is the smallest unit of code that can
-    * be dispatched by the scheduler.
+    * be dispatched by the scheduler. A process runs independently and isolated of other processes. It cannot directly
+    * access shared data in other processes. The resources of the process, e.g. memory and CPU time, are allocated to
+    * it via the operating system.
     *
     * In a thread­based multitasking environment, the thread is the smallest unit of dispatchable code. This means
     * that a single program can perform two or more tasks at once. For instance, a text editor can be formatting
     * text at the same time that it is printing, as long as these two actions are being performed by two separate
     * threads. Although Java programs make use of process­based multitasking environments, process­based multitasking
-    * is not under the control of Java. Multithreaded multitasking is.
+    * is not under the control of Java. Multi-threaded multitasking is. A thread is a so called lightweight process.
+    * It has its own call stack, but can access shared data of other threads in the same process. Every thread has
+    * its own memory cache. If a thread reads shared data it stores this data in its own memory cache. A thread can
+    * re-read the shared data.
     *
-    * A principal advantage of multithreading is that it enables you to write very efficient programs because it lets
+    * A principal advantage of multi-threading is that it enables you to write very efficient programs because it lets
     * you utilize the idle time that is present in most programs. As you probably know, most I/O devices, whether they
     * be network ports, disk drives, or the keyboard, are much slower than the CPU. Thus, a program will often spend a
     * majority of its execution time waiting to send or receive information to or from a device. By using
-    * multithreading, your program can execute another task during this idle time. For example, while one part of
+    * multi-threading, your program can execute another task during this idle time. For example, while one part of
     * your program is sending a file over the Internet, another part can be reading keyboard input, and still another
     * can be buffering the next block of data to send.
     *
-    *  Java’s multithreading features work in both multicore and single core system. In a single­core system,
+    * Java’s multi-threading features work in both multicore and single core system. In a single­core system,
     * concurrently executing threads share the CPU, with each thread receiving a slice of CPU time. Therefore,
     * in a single­core system, two or more threads do not actually run at the same time, but idle CPU time is utilized.
-    * However, in multiprocessor/multicore systems, it is possible for two or more threads to actually execute
+    * However, in multi-processor/multi-core systems, it is possible for two or more threads to actually execute
     * simultaneously. In many cases, this can further improve program efficiency and increase the speed of certain
     * operations.
     *
@@ -69,7 +74,7 @@ public class S10_MultiThread {
     /******************************* 10.2 The thread class and runnable interface ************************************/
 
     /*
-    * Java’s multithreading system is built upon the Thread class and its companion interface, Runnable. Both are
+    * Java’s multi-threading system is built upon the Thread class and its companion interface, Runnable. Both are
     * packaged in java.lang. Thread encapsulates a thread of execution. To create a new thread, your program will
     * either extend Thread or implement the Runnable interface.
     *
@@ -98,7 +103,7 @@ public class S10_MultiThread {
     * difference is how a thread­enabled class is created.
     *
     * The Runnable interface abstracts a unit of executable code. You can construct a thread on any object that
-    * implements the Runnable interface. Runnable defines only one method called run( ), which is declared like this:
+    * implements the Runnable interface. Runnable defines only one method called run(), which is declared like this:
     * public void run(). Inside run() method, you will define the code that constitutes the new thread. It is important
     * to understand that run() can call all other methods, use other classes, and declare local variables just like
     * the main thread. The only difference is that run() establishes the entry point for another, concurrent thread
@@ -122,7 +127,7 @@ public class S10_MultiThread {
     * a better way for one thread to wait until another completes. Remove the main thread sleep code, you will see
     * main thread ends before child thread.
     *
-    * One other point: In a multithreaded program, you often will want the main thread to be the last thread to
+    * One other point: In a multi-threaded program, you often will want the main thread to be the last thread to
     * finish running. As a general rule, a program continues to run until all of its threads have ended. Thus,
     * having the main thread finish last is not a requirement. It is, however, often a good practice to follow,
     * especially when you are first learning about threads.
@@ -155,7 +160,7 @@ public class S10_MultiThread {
      * Check MultiThreadExp.exp2(); You can notice that the code to create and run MyThread is simpler.
      *
      * Factory Method
-     * Check Lesson01_Creating_And_Destroying_Objects->S01_staticFactoryMethod
+     * Check Lesson02_Effective_java_programming->S01_Creating_And_Destroying_Objects->staticFactoryMethod
      * */
 
     /** 10.3.4 Variation 2 : Extends Thread
@@ -187,7 +192,8 @@ public class S10_MultiThread {
     * illustration, we used println to show when thread starts and ends. However, in real world situation, we need
     * better solutions, Fortunately, Thread provides two means by which you can determine if a thread has ended:
     * 1. Call isAlive() on the thread: It returns true if the thread is still running, returns false otherwise.
-    * 2. Call join():
+    * 2. Call join(): It suspend the execution of a thread until the joined thread execution finished. For example
+    *                 MultiThreadExp.exp6();
     * */
 
     /** 10.5.1 isAlive example
@@ -202,7 +208,10 @@ public class S10_MultiThread {
      * joins it. Additional forms of join() allow you to specify maximum amount of time that you want to wait for
      * the specified thread to terminate.
      *
-     * You can noticed in the outputs, after the calls to join() return, the threads have stopped executing.
+     * Check MultiThreadExp.exp6(); In the main thread, we create three child thread. Without the child.join(). The
+     * main thread will finish without waiting for child. After adding child.join(). The main thread are suspended.
+     * You can noticed in the outputs, the print statements are executed  after the calls to child.join() return,
+     * which means child threads have finished executing.
      * */
 
     /************************************** 10.6  Thread priorities ************************************/
@@ -319,24 +328,33 @@ public class S10_MultiThread {
      * Here, object-reference is a reference to the object being synchronized. Once a synchronized block has been
      * entered, no other thread can call a synchronized method on the object referred to by object-reference until
      * the block has been exited.
+     *
+     * Check MultiThreadExp.exp9(); We use a SumArray without synchronized method. So SumArray can no longer control
+     * the concurrent access of threads. We need to control the concurrent access inside each thread. Check the
+     * ThreadSynchronizedBlock class. In the run method, we have a synchronized block which synchronize on a SumArray
+     * object. This block encapsulates all statements which we need to synchronize of the SumArray.
      */
 
     /** 10.7.3 Concurrency utilities and Fork/Join framework
      *
      * The concurrency utilities, which are packaged in java.util.concurrent (and its subpackages), support concurrent
-     * programming. Among several other items, they offer synchronizers, thread pools, execution managers, and locks
+     * programming. Among several other items, they offer:
+     * - synchronizers
+     * - thread pools
+     * - execution managers
+     * - locks
      * that expand your control over thread execution. One of the most exciting features of the concurrent API is the
      * Fork/Join Framework.
      *
      * The Fork/Join Framework supports what is often termed parallel programming. This is the name commonly given to
-     * the techniques that take advantage of computers that contain two or more processors (including multicore systems)
-     * by subdividing a task into subtasks, with each subtask executing on its own processor. As you can imagine,
+     * the techniques that take advantage of computers that contain two or more processors (including multi-core systems)
+     * by subdividing a task into sub-tasks, with each subtask executing on its own processor. As you can imagine,
      * such an approach can lead to significantly higher throughput and performance. The key advantage of the Fork/Join
-     * Framework is ease of use; it streamlines the development of multithreaded code that automatically scales to
+     * Framework is ease of use; it streamlines the development of multi-threaded code that automatically scales to
      * utilize the number of processors in a system. Thus, it facilitates the creation of concurrent solutions to
      * some common programming tasks, such as performing operations on the elements of an array. The concurrency
      * utilities in general, and the Fork/Join Framework specifically, are features that you will want to explore
-     * after you have become more experienced with multithreading.
+     * after you have become more experienced with multi-threading.
      * */
 
     /************************************** 10.8  Thread communication  ************************************/
@@ -346,7 +364,7 @@ public class S10_MultiThread {
     * Consider the following situation. A thread called T is executing inside a synchronized method and needs access
     * to a resource called R that is temporarily unavailable. What should T do? If T enters some form of polling loop
     * that waits for R, T ties up the object, preventing other threads’ access to it. This is a less than optimal
-    * solution because it partially defeats the advantages of programming for a multithreaded environment. A better
+    * solution because it partially defeats the advantages of programming for a multi-threaded environment. A better
     * solution is to have T temporarily relinquish control of the object, allowing another thread to run. When R
     * becomes available, T can be notified and resume execution. Such an approach relies upon some form of inter thread
     * communication in which one thread can notify another that it is blocked and be notified that it can resume
@@ -503,7 +521,7 @@ public class S10_MultiThread {
         // MultiThreadExp.exp5();
 
         /** 10.5.2 Join example*/
-          // MultiThreadExp.exp6();
+          MultiThreadExp.exp6();
 
          /** 10.6 thread priority */
          // MultiThreadExp.exp7();
@@ -523,7 +541,7 @@ public class S10_MultiThread {
         /** 10.11 Control the main thread*/
 
         // get main thread name
-        Thread mainThread=Thread.currentThread();
+        /*Thread mainThread=Thread.currentThread();
         System.out.println("Main thread is called "+mainThread.getName());
 
         // display main thread priority
@@ -536,6 +554,6 @@ public class S10_MultiThread {
         System.out.println("Main thread is called "+mainThread.getName());
         System.out.println("Main thread priority is:  "+mainThread.getPriority());
 
-         System.out.println("Main Thread ending ...");
+         System.out.println("Main Thread ending ...");*/
     }
 }

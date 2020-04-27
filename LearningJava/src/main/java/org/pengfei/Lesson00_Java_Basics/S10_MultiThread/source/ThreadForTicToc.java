@@ -16,7 +16,7 @@ public class ThreadForTicToc extends Thread {
     }
 
     /** In one thread, we run 5 times tick or tock, depends on the name of the thread
-     * It's the wait and nofity make sure that Tick tock print in patterns*/
+     * It's the wait and notify make sure that Tick tock print in patterns*/
     public void run(){
         String threadName=this.getName();
         if(threadName.equals("Tick")){
