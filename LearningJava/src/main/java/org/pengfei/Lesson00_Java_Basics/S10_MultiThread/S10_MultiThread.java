@@ -186,6 +186,27 @@ public class S10_MultiThread {
     * may differ, so don’t be surprised if you see slightly different results when you try the program.
     * */
 
+    /** 10.4.1 Start() vs Run()
+     *
+     * In Java’s multi-threading concept, start() and run() are the two most important methods. Below are the two of the
+     * differences between the Thread.start() and Thread.run() methods:
+     * 1. New Thread creation: When a program calls the start() method, a new thread is created and then the run()
+     *                         method is executed. But if we directly call the run() method then no new thread will be
+     *                         created and run() method will be executed as a normal method call on the current calling
+     *                         thread itself and no multi-threading will take place.
+     * 2. Multiple invocation: In Java’s multi-threading concept, another most important difference between start()
+     *                         and run() method is that we can’t call the start() method twice otherwise it will throw
+     *                         an IllegalStateException whereas run() method can be called multiple times as it is just
+     *                         a normal method calling.
+     *
+     * Check MultiThreadExp.exp12(), when we call run(), no new sub thread is created, the code in run() is executed
+     * in main thread.
+     * Check MultiThreadExp.exp13(), when we call start(), a new sub thread is created, the code in run() is executed
+     * in the newly created child thread.
+     * Check MultiThreadExp.exp14(), we try to call start() twice for a thread. An exception occurred when we start
+     * the second call of start().
+     * */
+
     /************************************** 10.5 Determining when a thread ends ************************************/
     /*
     * It is often useful to know when a thread has ended. For example, in the preceding examples, for the sake of
@@ -288,7 +309,9 @@ public class S10_MultiThread {
          *
          * Check MultiThreadExp.exp8(); We have two thread of class ThreadSynchronization which calls an object of
          * Class SumArray which contains a synchronized method sumArray(). In the output of this program, you can notice
-         * Thread1 starts and terminates, then Thread2 starts and terminates.
+         * Thread1 starts and terminates, then Thread2 starts and terminates. It means only one thread can access the
+         * object "sa"'s synchronized method at one time. Other threads try to access are suspended util the lock is
+         * released.
          *
          * Inside class ThreadSynchronization, we declare "sa" (object of class SumArray) as static, which means all
          * object of class ThreadSynchronization shared the unique "sa" object. Inside "sa", the method sumArray() is
@@ -323,7 +346,8 @@ public class S10_MultiThread {
      * To resolve synchronization problem in this kind of situation, we use the synchronized block. It has the
      * following general form:
      * synchronized(object-reference){
-     *     // statement to be synchronized
+     *     // statement to be synchronized, it must contains the key method which you want to add the lock to
+     *     // prevent concurrent access.
      * }
      * Here, object-reference is a reference to the object being synchronized. Once a synchronized block has been
      * entered, no other thread can call a synchronized method on the object referred to by object-reference until
@@ -378,6 +402,15 @@ public class S10_MultiThread {
     * later point, the sleeping thread is awakened when some other thread enters the same monitor and calls notify(),
     * or notifyAll().
     *
+    * Simply put, when we call wait() in a synchronized method or block, this forces the current thread to wait until
+    * some other thread invokes notify() or notifyAll() on the same object. For this, the current thread must own the
+    * object's monitor(lock). According to Javadocs, this can happen when:
+    * - we've executed synchronized instance method for the given object
+    * - we've executed the body of a synchronized block on the given object
+    * - by executing synchronized static methods for objects of type Class
+    *
+    * Note that only one active thread can own an object's monitor at a time.
+    *
     * wait() has the following variations:
     * - final void wait( ) throws InterruptedException : waits until notified.
     * - final void wait(long timeout) throws InterruptedException : waits until notified or until the specified period
@@ -419,9 +452,27 @@ public class S10_MultiThread {
      * returns, it means that a spurious wakeup occurred, and wait( ) is simply called again.
      *
      * Try to remove all wait() and notify(), and check the output.
+     *
+     * We also add more examples. The FooBar example print FooBar Alternately by using two methods foo()(print foo)
+     * and bar()(print bar). They need to be synchronized to avoid foofoo or barbar.
+     *
+     * In the sender_receiver example. The Sender is supposed to send a data packet to the Receiver. The Receiver
+     * cannot process the data packet until the Sender is finished sending it. Similarly, the Sender mustn't attempt
+     * to send another packet unless the Receiver has already processed the previous packet.
+     *
+     * In the printer_order example, we print first second third in order, no matter in which order the thread is
+     * started.
+     *
+     * Note, in these examples,  we enclose wait() in a while Loop. Since notify() and notifyAll() randomly wakes up
+     * threads that are waiting on this object's monitor, and not always appropriate threads are wake. Sometimes it
+     * can happen that the thread is woken up, but the condition isn't actually satisfied yet. We need to put thread
+     * in wait again. We can also define a check to save us from spurious wakeups – where a thread can wake up from
+     * waiting without ever having received a notification.
+     *
+     *
      * */
 
-    /** 10.8.2 Deadlock and race condition in multithreaded program
+    /** 10.8.2 Deadlock and race condition in multi-threaded program
      *
      * Deadlock is, as the name implies, a situation in which one thread is waiting for another thread to do something,
      * but that other thread is waiting on the first. Thus, both threads are suspended, waiting on each other, and
@@ -431,8 +482,10 @@ public class S10_MultiThread {
      * Avoiding deadlock seems easy, but it’s not. For example, deadlock can occur in roundabout ways. The cause of
      * the deadlock often is not readily understood just by looking at the source code to the program because
      * concurrently executing threads can interact in complex ways at run time. To avoid deadlock, careful programming
-     * and thorough testing is required. Remember, if a multithreaded program occasionally “hangs,” deadlock is the
-     * likely cause.
+     * and thorough testing is required. Remember, if a multi-threaded program occasionally “hangs,” deadlock is the
+     * likely cause. Check the printer_order example, try to modify the boolean first, second, third all to false.
+     * The printer example enters a dead lock
+     *
      *
      * A race condition occurs when two (or more) threads attempt to access a shared resource at the same time,
      * without proper synchronization. For example, one thread may be writing a new value to a variable while another
@@ -442,6 +495,7 @@ public class S10_MultiThread {
      * “racing each other,” with the final outcome determined by which thread finishes first. Like deadlock, a
      * race condition can occur in difficult­to­discover ways. The solution is prevention: careful programming that
      * properly synchronizes access to shared resources.
+     * Check MultiThreadExp.exp9(); if you remove the synchronized block, the sumArray enters a race condition.
      * */
 
     /************************** 10.9  Suspending, Resuming, and stopping a thread  ********************************/
@@ -471,10 +525,10 @@ public class S10_MultiThread {
     * then end the run method(Thread ends after run ends)
     *  */
 
-    /******************** 10.10  How to use multithreading to improve efficiency of your program  *******************/
+    /******************** 10.10  How to use multi-threading to improve efficiency of your program  *******************/
 
     /**
-     * The key to effectively utilizing multithreading is to think concurrently rather than serially. For example,
+     * The key to effectively utilizing multi-threading is to think concurrently rather than serially. For example,
      * when you have two subsystems within a program that are fully independent of each other, consider making them
      * into individual threads. A word of caution is in order, however. If you create too many threads, you can
      * actually degrade the performance of your program rather than enhance it. Remember, overhead is associated with
@@ -516,12 +570,19 @@ public class S10_MultiThread {
 
         /** 10.4 Multiple threads*/
        //  MultiThreadExp.exp4();
+        /** 10.4.1 start() vs run() */
+        //call run()
+      //  MultiThreadExp.exp12();
+        // call start()
+       // MultiThreadExp.exp13();
+        // multiple call on start() generate exception
+       // MultiThreadExp.exp14();
 
         /** 10.5.1 isAlive example*/
         // MultiThreadExp.exp5();
 
         /** 10.5.2 Join example*/
-          MultiThreadExp.exp6();
+        //  MultiThreadExp.exp6();
 
          /** 10.6 thread priority */
          // MultiThreadExp.exp7();
@@ -541,7 +602,7 @@ public class S10_MultiThread {
         /** 10.11 Control the main thread*/
 
         // get main thread name
-        /*Thread mainThread=Thread.currentThread();
+        Thread mainThread=Thread.currentThread();
         System.out.println("Main thread is called "+mainThread.getName());
 
         // display main thread priority
@@ -554,6 +615,6 @@ public class S10_MultiThread {
         System.out.println("Main thread is called "+mainThread.getName());
         System.out.println("Main thread priority is:  "+mainThread.getPriority());
 
-         System.out.println("Main Thread ending ...");*/
+         System.out.println("Main Thread ending ...");
     }
 }

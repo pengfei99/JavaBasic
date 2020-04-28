@@ -2,11 +2,11 @@ package org.pengfei.Lesson00_Java_Basics.S10_MultiThread.source;
 
 public class ThreadForTicToc extends Thread {
 
-    TickTock ttOb;
+    TickTock ttObj;
 
-    private ThreadForTicToc(String name, TickTock tickTockOb){
+    private ThreadForTicToc(String name, TickTock tickTockObj){
         super(name);
-        this.ttOb=tickTockOb;
+        this.ttObj=tickTockObj;
     }
 
     public static ThreadForTicToc createAndStart(String name, TickTock tickTockOb){
@@ -21,15 +21,15 @@ public class ThreadForTicToc extends Thread {
         String threadName=this.getName();
         if(threadName.equals("Tick")){
             for(int i=0; i<5;i++){
-                ttOb.tick(true);
+                ttObj.tick(true);
             }
-            ttOb.tick(false);
+            ttObj.tick(false);
         }
         if(threadName.equals("Tock")){
             for(int i=0; i<5;i++){
-                ttOb.tock(true);
+                ttObj.tock(true);
             }
-            ttOb.tock(false);
+            ttObj.tock(false);
         }
 
 

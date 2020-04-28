@@ -4,6 +4,7 @@ public class ThreadSynchronizedMethod extends Thread {
 
     // all threads of this class share the same SumArray object
     private final static SumArray sa= new SumArray();
+
     int nums[];
     int answer;
 

@@ -99,6 +99,10 @@ public class MultiThreadExp {
 
     public static void exp8(){
         int nums[]={1,2,3,4,5};
+        //In ThreadSynchronizedMethod, we have a static field SumArray. As its static, its shared by all instances
+        // of its class. Therefore, its a shared object by all threads. That's why we need SumArray methods to be
+        // synchronized. If each thread has its own instance of SumArray, no need to synchronized the method of
+        // SumArray.
         ThreadSynchronizedMethod ts1= ThreadSynchronizedMethod.createAndRun("Thread #1", nums);
         ThreadSynchronizedMethod ts2= ThreadSynchronizedMethod.createAndRun("Thread #2", nums);
         try{
@@ -179,4 +183,33 @@ public class MultiThreadExp {
             System.out.println("Main thread interrupted");
         }
     }
+
+    public static void exp12(){
+        MyThreadVar3 myThreadVar3=new MyThreadVar3("First Child Thread");
+
+        //only call run no thread will be created
+        myThreadVar3.run();
+
+
+    }
+
+    public static void exp13(){
+        MyThreadVar3 myThreadVar3=new MyThreadVar3("First Child Thread");
+
+        //all start(), a child thread will be created
+        myThreadVar3.start();
+
+
+    }
+
+    public static void exp14(){
+        MyThreadVar3 myThreadVar3=new MyThreadVar3("First Child Thread");
+
+        //try to call start() twice for a thread, and see what happens
+        myThreadVar3.start();
+        myThreadVar3.start();
+
+
+    }
+
 }
