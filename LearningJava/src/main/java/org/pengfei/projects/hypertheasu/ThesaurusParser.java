@@ -14,7 +14,7 @@ public class ThesaurusParser {
 
     private ObjectMapper mapper;
     private JsonNode term;
-    private List<String> synonym = new LinkedList<>();
+
 
     // important field of a term for MOM thesaurus
     private JsonNode preLabel = null;

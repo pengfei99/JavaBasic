@@ -19,8 +19,10 @@ public class SynchronizationObjExample {
     /*In this example, we use one semaphore, two threads to access one resources*/
     public static void exp1(){
         Semaphore sem= new Semaphore(1,true);
-        new Thread(new IncThread("Thread Inc",sem)).start();
+
         new Thread(new DecThread("Thread Dec",sem)).start();
+
+        new Thread(new IncThread("Thread Inc",sem)).start();
     }
 
     /*In this example, we have two producer and one consumer which access one SynchronizedQueue*/
@@ -149,5 +151,30 @@ public class SynchronizationObjExample {
             myPhaser.arriveAndAwaitAdvance();
         }
         System.out.println("The phaser is terminated");
+    }
+
+
+    public static void exp9(){
+        /*
+         * Creates a new phaser with no registered unArrived parties.
+         */
+        Phaser parentPhaser = new Phaser();
+
+        /*
+         * Creates a new phaser with the given parent &
+         * no registered unArrived parties.
+         */
+        Phaser childPhaser = new Phaser(parentPhaser,0);
+
+        childPhaser.register();
+
+        System.out.println("parentPhaser isTerminated : "+parentPhaser.isTerminated());
+        System.out.println("childPhaser isTerminated : "+childPhaser.isTerminated());
+
+        childPhaser.arriveAndDeregister();
+        System.out.println("\n--childPhaser has called arriveAndDeregister()-- \n");
+
+        System.out.println("parentPhaser isTerminated : "+parentPhaser.isTerminated());
+        System.out.println("childPhaser isTerminated : "+childPhaser.isTerminated());
     }
 }

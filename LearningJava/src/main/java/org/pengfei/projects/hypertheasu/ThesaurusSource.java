@@ -14,49 +14,49 @@ public class ThesaurusSource {
     public ThesaurusSource(String url, String storagePath, String fileName) throws MalformedURLException {
         // build a URL object based on a string url
         sourceURL = new URL(url);
-        this.storagePath=storagePath;
-        this.fileName=fileName;
+        this.storagePath = storagePath;
+        this.fileName = fileName;
     }
 
     /**
      * This function establish a connexion to the given url and get content of that url and save it to a file
      *
+     * @return void
      * @author Pengfei liu
      * @version 1.0
      * @since 2020-04-19
-     * @return void
      **/
 
-    public void getContent(){
+    public void getContent() {
         /** Step1. Create connexion and get a input steam*/
         BufferedReader br = null;
-		try {
-        // create a URL connexion
+        try {
+            // create a URL connexion
             URLConnection connexion = sourceURL.openConnection();
 
-        // open the stream on the URL connexion and put it into BufferedReader
-        br = new BufferedReader(
-                new InputStreamReader(connexion.getInputStream()));
+            // open the stream on the URL connexion and put it into BufferedReader
+            br = new BufferedReader(
+                    new InputStreamReader(connexion.getInputStream()));
 
             System.out.println("Connexion established");
-    } catch (MalformedURLException e) {
-        e.printStackTrace();
-    } catch (IOException e) {
-        e.printStackTrace();
-    }
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
-		/** Step2. Create a file and write the input stream of the connexion to the file*/
+        /** Step2. Create a file and write the input stream of the connexion to the file*/
         String inputLine;
 
         //save content to this location, only works for linux, for windows, need to change
-        String fileAbs = storagePath+"/"+fileName;
+        String fileAbs = storagePath + "/" + fileName;
 
         // use try with resource, so no need to close FileWriter. We also use BufferedWriter to encapsulate FileWriter.
         // This can avoid i/o blocking which can improve performance. We set append false, each execution will rewrite
         // the file with new content.
-        try(BufferedWriter bw = new BufferedWriter(new FileWriter(fileAbs,false))){
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(fileAbs, false))) {
 
-            while (br!=null&&(inputLine = br.readLine()) != null) {
+            while (br != null && (inputLine = br.readLine()) != null) {
                 bw.write(inputLine);
                 //System.out.println(inputLine);
             }
@@ -64,8 +64,8 @@ public class ThesaurusSource {
             // it explicitly.
             br.close();
 
-            System.out.println("Content saved to: "+fileAbs);
-        }  catch (IOException e) {
+            System.out.println("Content saved to: " + fileAbs);
+        } catch (IOException e) {
             e.printStackTrace();
         }
 

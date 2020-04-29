@@ -139,13 +139,21 @@ public class S09_Concurrency_Utilities {
      *
      * To use a semaphore to control access to a resource, each thread that wants to use that resource must first call
      * acquire() before accessing the resource. When the thread is done with the resource, it must call release().
+     *
      * Check SynchronizationObjExample.exp1(); Note that the sleep() method can't release the context, because other
      * thread is blocked by the semaphore, if we remove the semaphore, you will see the two threads intermix, and the
-     * SharedObj.count are accessed by two threads simultaneously are increased or decreased.
+     * SharedObj.count are accessed by two threads simultaneously are increased or decreased. Note we also set access
+     * order of the semaphore as FIFO. try to change the order of the two threads. See what happens.
      *
-     * Check SynchronizationObjExample.exp2(); we use two semaphores to regulate the producers and
-     * consumers threads.
-     *
+     * Check SynchronizationObjExample.exp2(); we use two semaphores to regulate the producers and consumers threads.
+     * We can use the default synchronized method, wait(), notify() to resolve the same problem. But semaphore just
+     * makes more clear for human reader. Check the foobar example (Lesson0_S10MultiThread), we rewrite it with
+     * two semaphores. In old version, in the shared object, we set all method which can be invoked by thread to
+     * synchronized, and use wait() and notify() to control the synchronization. In new version, with semaphore, no
+     * need to set method to synchronized, no need to suspend thread and wake them up by yourself. Its controlled
+     * automatically by semaphore.
+     * In example build_hho_semaphore, we demonstrate, we can release 2 or more permits at one time. We can also use
+     * availablePermits() method to check the number of permit of a semaphore.
      * */
 
 /** 9.3.2 CountDownLatch
@@ -157,7 +165,7 @@ public class S09_Concurrency_Utilities {
  * - CountDownLatch(int num): num specifies the number of events that must occur in order the latch to open. Note This
  *           num value can be set only once, and CountDownLatch provides no other mechanism to reset this count.
  *
- * To wait on the lactch, a thread calls await() methods:
+ * To wait on the latch, a thread calls await() methods:
  * - void await() throws InterruptedException: It waits until the count associated with the invoking CountDownLatch
  *                       reaches zero.
  * - boolean await(long wait, TimeUnit tu) throws InterruptedException: It waits only only for the period of time
@@ -167,7 +175,9 @@ public class S09_Concurrency_Utilities {
  * To signal an event, call the countDown() method, each call to countDown() decrements the count associated with the
  * invoking object.
  *
- *
+ * Check SynchronizationObjExample.exp3(); We use a countDownLatch to count three sub thread, If all three ended, then
+ * the main thread continues, otherwise it waits. If we use the java default multi-thread feature, we could use join()
+ * to make the main thread to wait.
  * */
 
 /** 9.3.3 CyclicBarrier
@@ -202,6 +212,8 @@ public class S09_Concurrency_Utilities {
  *
  * A CyclicBarrier can be reused because it will release waiting threads each time the specified number of threads
  * calls await(). check SynchronizationObjExample.exp5();
+ *
+ * In example build_hho_cyclicB, we require two h to reach the barrier to produce a o, in order to build a h2o.
  * */
 
 /** 9.3.4 Exchanger
@@ -289,8 +301,14 @@ public class S09_Concurrency_Utilities {
  * Check SynchronizationObjExample.exp8(); We create a custom phaser by extending phaser class. By overriding the
  * onAdvance method, we control how a phaser ends. To avoid explicitly extends Phaser class, you can create an
  * anonymous inner class to override onAdvance.
+ *
+ * Check SynchronizationObjExample.exp9(); We creat a parent phraser which has one child phaser. The parent will not
+ * terminated until the child terminated.
  * */
 
+/**
+ * Check example build_molecule, we mix semaphore, cyclicBarrier and phaser to build any molecule.
+ * */
     /***************************************** 9.3 Using an Executor **********************************/
 
     /*
@@ -897,10 +915,11 @@ public class S09_Concurrency_Utilities {
         // Phaser
         // SynchronizationObjExample.exp7();
        // SynchronizationObjExample.exp8();
+       // SynchronizationObjExample.exp9();
 
         /** Executor*/
         /*FixedThreadPool executor*/
-        // ExecutorExample.exp1();
+         ExecutorExample.exp1();
         // ExecutorExample.exp2();
        // ExecutorExample.exp3();
 
@@ -944,6 +963,6 @@ public class S09_Concurrency_Utilities {
        // ForkJoinExample.exp6();
 
         // get ForkJoinPool state
-        ForkJoinExample.exp7();
+        // ForkJoinExample.exp7();
     }
 }
