@@ -11,9 +11,9 @@ public class main {
         /** Step1: Get information of terms*/
 
         // String url="https://thesaurus.mom.fr/opentheso/api/76609/crtrMxHMHz9TJ.json";
-        //String url="https://thesaurus.mom.fr/opentheso/api/76609/crtrFvPi3Si8L.json";
-        // String url="https://thesaurus.mom.fr/opentheso/api/76609/crtQ5dZHOBTSV.json";
-        String url = "https://thesaurus.mom.fr/opentheso/api/76609/crt6ky3AVWFQp.json";
+        // String url="https://thesaurus.mom.fr/opentheso/api/76609/crtrFvPi3Si8L.json";
+         // String url="https://thesaurus.mom.fr/opentheso/api/76609/crtQ5dZHOBTSV.json";
+         String url = "https://thesaurus.mom.fr/opentheso/api/76609/crt6ky3AVWFQp.json";
         String path = "/tmp";
         String fileName = "simpleTermOfMom.json";
 
@@ -61,9 +61,11 @@ public class main {
             System.out.println("NarrowMatch: " + narrowMatch.toString());
 
             /** Step 3 generate atlas json file*/
-            /*AtlasJsonGenerator generator = new AtlasJsonGenerator(allTermNames, description);
+            AtlasJsonGenerator generator = new AtlasJsonGenerator(allTermNames, description);
             generator.generateTerm("Artefact", "0101010101001");
-            generator.showGeneratedJsonFile();*/
+            generator.showGeneratedJsonFile();
+
+            /** Step 4 Load atlas json file into data lakes*/
 
         } catch (IOException e) {
             e.printStackTrace();

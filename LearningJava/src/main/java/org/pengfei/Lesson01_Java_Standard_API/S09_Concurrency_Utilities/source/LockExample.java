@@ -14,14 +14,11 @@ public class LockExample {
 
 
     /*
-    * It	creates	two	threads
-that	access	a	shared	resource	called	Shared.count.	Before	a	thread	can	access
-Shared.count,	it	must	obtain	a	lock.	After	obtaining	the	lock,	Shared.count	is
-incremented	and	then,	before	releasing	the	lock,	the	thread	sleeps.	This	causes
-the	second	thread	to	attempt	to	obtain	the	lock.	However,	because	the	lock	is	still
-held	by	the	first	thread,	the	second	thread	must	wait	until	the	first	thread	stops
-sleeping	and	releases	the	lock.	The	output	shows	that	access	to	Shared.count	is,
-indeed,	synchronized	by	the	lock.
+    * It creates two threads that access a shared resource called Shared.count.	Before a thread can access Shared.count,
+    * it must obtain a lock. After obtaining the lock, Shared.count is incremented and then, before releasing the lock,
+    * the thread sleeps. This causes the second thread to attempt to obtain the lock. However, because the lock is
+    * still held by the first thread, the second thread must wait until the first thread stops sleeping	and	releases
+    * the lock.	The	output shows that access to Shared.count is, indeed, synchronized by the lock.
 * */
     public static void exp1(){
         ReentrantLock lock=new ReentrantLock();

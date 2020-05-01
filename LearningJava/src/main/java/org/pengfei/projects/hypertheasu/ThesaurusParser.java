@@ -127,6 +127,7 @@ public class ThesaurusParser {
                     // Get all synonym fields of a synonym
                     Map<String, List<String>> relatedTermFields = new HashMap<>();
                     parse(relatedTermRoot, arrayElement, relatedTermFields);
+                   // System.out.println("Related terms");
                     // System.out.println(relatedTermFields.toString());
                     // for now, we only save the name
                     rTermResultList.add(relatedTermFields.get(relatedValueFieldName).get(0));

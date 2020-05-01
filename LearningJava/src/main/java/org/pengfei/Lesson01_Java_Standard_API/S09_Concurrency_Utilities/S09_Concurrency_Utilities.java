@@ -398,6 +398,12 @@ public class S09_Concurrency_Utilities {
      * get() methods, it has two forms:
      * - V get(): It waits for the result indefinitely.
      * - V get(long wait, TimeUnit tu): It waits for the result for wait time with tu as time unit.
+     *
+     * Check ExecutorExample.exp2(); We use a fixed thread pool to run three callable, each callable returns its result
+     * as Future. Note an executor runs a Runnable with method execute(), a Callable with method submit(). The return
+     * value of a Callable must be a Future. Check Sum.java implements Callable, the call() method returns Integer.
+     * As the Callable is generic, we can't use primitive types in the call() return type. We must use the wrap object
+     * type of primitive types.
      * */
 
     /***************************************** 9.4 The TimeUnit Enumeration **********************************/
@@ -580,6 +586,8 @@ public class S09_Concurrency_Utilities {
     * - DoubleAdder: It maintains a cumulative sum.
     * - LongAccumulator
     * - LongAdder
+    *
+    * Check FizzBuzz example in atomic package, we use atomic integer as a shared index which four threads can update it.
     * */
 
     /************************ 9.8 Parallel Programming via the Fork/Join Framework *********************************/
@@ -919,25 +927,25 @@ public class S09_Concurrency_Utilities {
 
         /** Executor*/
         /*FixedThreadPool executor*/
-         ExecutorExample.exp1();
-        // ExecutorExample.exp2();
+         // ExecutorExample.exp1();
+       // ExecutorExample.exp2();
        // ExecutorExample.exp3();
 
         /** ConcurrentCollection */
         // thread safe collection
-         // ConcurrentCollectionsExample.exp1();
+        //  ConcurrentCollectionsExample.exp1();
         // not safe list
       //  ConcurrentCollectionsExample.exp2();
 
         /** Lock*/
         //reentrantLock
-        // LockExample.exp1();
+         //LockExample.exp1();
 
         //reentrantReadWriteLock
        // LockExample.exp2();
 
         /** Atomic operation*/
-       // AtomicExample.exp1();
+        AtomicExample.exp1();
 
         /** fork join framework*/
 

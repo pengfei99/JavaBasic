@@ -19,6 +19,7 @@ public class ListReader implements Runnable {
             e.printStackTrace();
         }
         Iterator<Integer> it=list.iterator();
+        // iterator of synchronized list is not thread safe, so we need to run iterator in a synchronized block.
         synchronized (list){
             System.out.println("The list contents: ");
             while(it.hasNext()) {
