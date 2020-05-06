@@ -592,21 +592,40 @@ public class S09_Concurrency_Utilities {
 
     /************************ 9.8 Parallel Programming via the Fork/Join Framework *********************************/
 
+    /* Important note, there are many critiques on the Fork/Join performance. Think carefully, if you want to use it.
+     * Read this http://coopsoft.com/ar/CalamityArticle.html. The work-stealing principal is inefficient
+     * compare to scatter-gather principal.
+     *
+     * */
+
     /*
     * Parallel programming is the name commonly given to the techniques that take advantage of computers that contain
-    * two or more processors(multicore). JDK 7 added new classes and interfaces that support parallel programming.
+    * two or more processors(multi-core). JDK 7 added new classes and interfaces that support parallel programming.
     * They are commonly referred to as the Fork/Join Framework which is defined in the java.util.concurrent package.
     *
-    * The Fork/Join framework enhances multithreaded programming in two important ways:
+    * We call this framework Fork/Join, because it uses the fork and join principle, which consists of two steps
+    * which are performed recursively. These two steps are the fork step and the join step.
+    *
+    * The fork step can fork (split) a task into smaller sub-tasks recursively, if the splitting of sub-tasks
+    * reached a point(threshold), it stops splitting ans start to compute each sub-task which can be executed
+    * concurrently. There is an overhead to splitting up a task into sub-tasks, so for small amounts of work this
+    * overhead may be greater than the speedup achieved by executing sub-tasks concurrently.
+    *
+    * The join step waits and joins(merge) the result of sub-tasks to the final result. Once the sub-tasks have finished
+    * executing, the task may join all the results into one result. Of course, not all types of tasks may return a
+    * result. If the tasks do not return a result then a task just waits for its sub-tasks to complete. No result
+    * merging takes place then.
+    *
+    * The Fork/Join framework enhances multi-threaded programming in two important ways:
     * 1. It simplifies the creation and use of multiple threads.
     * 2. It automatically makes use of multiple processors.
-    * As a result, Fork/join is recommended for multithreading when parallel processing is desired in a multicore
+    * As a result, Fork/join is recommended for multi-threading when parallel processing is desired in a multi-core
     * running environment.
     *
-    * It's important to point out the distinction between traditional multithreading and parallel programming. In the
-    * past, most computers has a single CPU and multithreading was primarily used to take advantage of cpu idle time.
-    * On a single-CPU system, multithreading is used to allow two or more tasks to share the CPU, so one can execute
-    * while another is waiting for input. When multicore cpus are present, it is possible to execute portions
+    * It's important to point out the distinction between traditional multi-threading and parallel programming. In the
+    * past, most computers has a single CPU and multi-threading was primarily used to take advantage of cpu idle time.
+    * On a single-CPU system, multi-threading is used to allow two or more tasks to share the CPU, so one can execute
+    * while another is waiting for input. When multi-core cpus are present, it is possible to execute portions
     * of a program simultaneously, with each part executing on its own CPU. This can significantly speed up the
     * execution of some types of operations, such as sorting, transforming, or searching in large array.
     *
@@ -672,17 +691,11 @@ public class S09_Concurrency_Utilities {
      *                  the common pool by calling
      *                  -- static ForkJoinPool commonPool(): A static method of ForkJoinPool class. The common pool
      *                             provides a default level o parallelism. It can be set by use of a system property.
-     *                  There are two basic ways to start a task using the common pool:
-     *                  1. Once you have the reference of the common pool, you can use that reference to call
-     *                     invoke() or execute() to run tasks
-     *                  2. You can call ForkJoinTask methods such as fork() or invoke() on the task from outside its
-     *                     computational portion. In this case, the common poll will automatically be used. It means
-     *                     fork() and invoke() will start a task using the common pool if the task is not already
-     *                     running within a ForkJoinPool.
      *
      *                  ForkJoinPool manages the execution of its threads using an approach called work-stealing. Each
-     *                  worker thread maintains a queue of tasks. If one worker thread’s queue is empty, it will take
-     *                  a task from another worker thread. This adds to overall efficiency and help maintain a
+     *                  worker thread maintains a queue of tasks. A worker thread gets tasks from the head of its own
+     *                  deque. When it is empty, the thread takes a task from the tail of the deque of another busy
+     *                  thread or from the global entry queue. This adds to overall efficiency and help maintain a
      *                  balanced load. (Because of demands on CPU time by other processes in the system, even two
      *                  worker threads with identical tasks in their respective queues may not complete at the same time.)
      *
@@ -710,12 +723,30 @@ public class S09_Concurrency_Utilities {
      *                      you extend RecursiveTask<V> to create a concrete class, put the code that represents
      *                      the task inside compute(). This code must also return the result of the task.
      *
-     * A general architecture on how they work together:
-     * 1. A ForkJoinPool (executor) manages the execution of ForkJoinTasks.
-     * 2. ForkJoinTask is an abstract class that is extended by the abstract classes RecursiveAction and RecursiveTask.
-     *    Typically, a program will extend theses classes to create a task.
+     * 9.8.1.1 A general architecture on how they work together:
+     * 1. Initiate a ForkJoinPool (executor) which will manage the execution of ForkJoinTasks.
+     * 2. Create a ForkJoinTask which can resolve your problem in a parallel way. ForkJoinTask is an abstract class
+     *    that is extended by the abstract classes RecursiveAction and RecursiveTask.
+     * 3. Submit the ForkJoinTask to the ForkJoinPool
      *
+     * 9.8.1.2 Submitting tasks to the ForkJoinPool:
+     * - submit(task) and execute(task): submit and execute are called by using the reference of the threadPoll. After
+     *      this call, the threadPool will run the task. But to get the result, we need a manual joining. For example
+     *      forkJoinPool.execute(customRecursiveTask);
+     *      int result = customRecursiveTask.join();
+     * - invoke() and invokeAll(): The invoke() method forks the task and waits for the result, and does not need any
+     *      manual joining. The invokeAll() method is the most convenient way to submit a sequence of ForkJoinTasks
+     *      to the ForkJoinPool. It takes tasks as parameters (two tasks, var args, or a collection), forks then
+     *      returns a collection of Future objects in the order in which they were produced.
+     * - fork() and join(): The fork() method submits a task to a pool, but it doesn't trigger its execution. The
+     *      join() method must be used for this purpose. In the case of RecursiveAction, the join() returns nothing
+     *      but null; for RecursiveTask<V>, it returns the result of the task's execution. For example,
+     *      customRecursiveTaskFirst.fork();
+     *      result = customRecursiveTaskLast.join();
      *
+     * You can call ForkJoinTask methods such as fork() or invoke() on the task from outside its computational portion.
+     * In this case, the common poll will automatically be used. It means fork() and invoke() will start a task using
+     * the common pool if the task is not already running within a ForkJoinPool.
      * */
 
     /** 9.8.2 Divide and Conquer Strategy

@@ -1,5 +1,10 @@
 package org.pengfei.Lesson00_Java_Basics.S10_MultiThread.source;
 
+import org.pengfei.Lesson00_Java_Basics.S10_MultiThread.source.volatile_exp.MySharedDate;
+import org.pengfei.Lesson00_Java_Basics.S10_MultiThread.source.volatile_exp.Reader;
+import org.pengfei.Lesson00_Java_Basics.S10_MultiThread.source.volatile_exp.ThreadForSharedDate;
+import org.pengfei.Lesson00_Java_Basics.S10_MultiThread.source.volatile_exp.Writer;
+
 public class MultiThreadExp {
 
     public static void exp1(){
@@ -209,6 +214,51 @@ public class MultiThreadExp {
         myThreadVar3.start();
         myThreadVar3.start();
 
+
+    }
+
+    //volatile is enough for this situation
+    public static void exp15(){
+        Thread r1=new Thread(new Reader("r1"));
+        Thread w1=new Thread(new Writer("w1"));
+       r1.start();
+       w1.start();
+
+        try {
+            r1.join();
+            w1.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    //volatile is not enough for this situation
+
+    public static void exp16(){
+        Thread w1=new Thread(new Writer("w1"));
+        Thread w2=new Thread(new Writer("w2"));
+        Thread w3=new Thread(new Writer("w3"));
+        w1.start();
+        w2.start();
+        w3.start();
+
+
+    }
+
+    public static void exp17(){
+        MySharedDate date=new MySharedDate();
+        Thread reader=new ThreadForSharedDate("reader",date);
+        Thread writer=new ThreadForSharedDate("writer",date);
+
+        writer.start();
+        reader.start();
+
+        try {
+            writer.join();
+            reader.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
     }
 

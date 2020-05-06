@@ -21,6 +21,13 @@ public class S10_MultiThread {
     * - Use synchronized blocks
     * - Communicate between threads
     * - Suspend, resume, and stop threads
+    * - Java Volatile Keyword
+    *
+    * If you don't know the two major problems caused by multi-thread
+    * - Visibility of Shared Objects
+    * - Race condition
+    *
+    * Read my wiki (id=employes:pengfei.liu:java:java_memory_model)
     * */
 
     /*********************************** 10.1 Multi-threading fundamentals *******************************************/
@@ -277,7 +284,7 @@ public class S10_MultiThread {
      * for one thread to dominate, preventing others from running.
      * */
 
-        /************************************** 10.7  Synchronization ************************************/
+        /************************************** 10.7 Synchronization and Locks ************************************/
 
         /*
         * When using multiple threads, it is sometimes necessary to coordinate the activities of two or more. The
@@ -293,11 +300,15 @@ public class S10_MultiThread {
         * gain access to the object. When the thread exits, the object is unlocked and is available for use by another
         * thread.
         *
-        * All objects in Java have a monitor. This feature is built into the Java language itself. Thus, all objects
-        * can be synchronized. Synchronization is supported by the keyword synchronized and a few well­defined methods
-        * that all objects have. Since synchronization was designed into Java from the start, it is much easier to
-        * use than you might first expect. In fact, for many programs, the synchronization of objects is almost
-        * transparent.
+        * All objects in Java have a monitor(lock). This feature is built into the Java language itself. Locks can
+        * protect certain parts of the code to be executed by several threads at the same time. The simplest way of
+        * locking a certain method or Java class is to define the method or class with the synchronized keyword.
+        * The synchronized keyword in Java ensures:
+        * - that only a single thread can execute a block of code at the same time
+        * - that each thread entering a synchronized block of code sees the effects of all previous modifications
+        *   that were guarded by the same lock.
+        *
+        *
         * */
 
         /** 10.7.1 Using synchronized methods
@@ -525,7 +536,104 @@ public class S10_MultiThread {
     * then end the run method(Thread ends after run ends)
     *  */
 
-    /******************** 10.10  How to use multi-threading to improve efficiency of your program  *******************/
+    /************************************* 10.10  Java Volatile Keyword  *****************************************/
+
+    /*
+    * The problem of variable visibility need to be resolved, if we have threads read and write a shared variable at
+    * same time. Read my wiki (id=employes:pengfei.liu:java:java_memory_model), if you don't know why.
+    *
+    * The Java volatile keyword guarantees visibility of changes to variables across threads. In a multi-threaded
+    * application where the threads operate on non-volatile variables, each thread may copy variables from main
+    * memory into a CPU cache while working on them, for performance reasons. If your computer contains more than
+    * one CPU, each thread may run on a different CPU. That means, that each thread may copy the variables into
+    * the CPU cache of different CPUs.
+    *
+    * With non-volatile variables there are no guarantees about when the Java Virtual Machine (JVM) reads data from
+    * main memory into CPU caches, or writes data from CPU caches to main memory.
+    *
+    * Check MultiThreadExp.exp15(); We have a shared object which can be incremented by the Writer. The reader thread
+    * reads the value of shared object. Try to remove the key word volatile of the shared object. Sometimes, the reader
+    * does not get the latest updated value.
+    *
+    * In the scenario given above, where one thread (T1) modifies the counter, and another thread (T2) reads the
+    * counter (but never modifies it), declaring the counter variable volatile is enough to guarantee visibility for
+    * T2 of writes to the counter variable.
+    *
+    * But volatile is not enough in some situation. For example, if we have two writer which increment the counter
+    * variable, then declaring the counter variable volatile would not have been enough. Check MultiThreadExp.exp16();
+    *
+    * The volatile keyword is guaranteed to work on 32 bit and 64 variables.
+     * */
+
+    /** 10.10.1 Full volatile Visibility Guarantee
+     *
+     * Actually, the visibility guarantee of Java volatile goes beyond the volatile variable itself. The visibility
+     * guarantee is as follows:
+     * - If Thread A writes to a volatile variable and Thread B subsequently reads the same volatile variable, then
+     *   all variables visible to Thread A before writing the volatile variable, will also be visible to Thread B
+     *   after it has read the volatile variable.
+     * - If Thread A reads a volatile variable, then all all variables visible to Thread A when reading the volatile
+     *   variable will also be re-read from main memory.
+     *
+     * Check MultiThreadExp.exp15(); Even only one field day is volatile, with full volatile visibility guarantee, the
+     * year and month is treated also as volatile
+     * */
+
+    /** 10.10.2 The Java volatile Happens-Before Guarantee
+     *
+     * The JVM and the CPU are allowed to reorder instructions in the program for performance reasons, as long as the
+     * semantic meaning of the instructions remain the same. However, instruction reordering present a challenge when
+     * one of the variables is a volatile variable.
+     *
+     * For example, in method update() of class MyShareDate, if the reordering makes the  this.days   = days; happens
+     * before year and month. According to full volatile visibility guarantee, the new values of year and month are
+     * thus not properly made visible to other threads.
+     *
+     * To address the instruction reordering challenge, the Java volatile keyword gives a "happens-before" guarantee,
+     * in addition to the visibility guarantee. The happens-before guarantee guarantees that:
+     * - Reads from and writes to other variables cannot be reordered to occur after a write to a volatile variable,
+     *   if the reads/writes originally occurred before the write to the volatile variable.
+     * - The reads/writes before a write to a volatile variable are guaranteed to "happen before" the write to the
+     *   volatile variable. Notice that it is still possible for e.g. reads/writes of other variables located
+     *   after a write to a volatile to be reordered to occur before that write to the volatile. Just not the other
+     *   way around. From after to before is allowed, but from before to after is not allowed.
+     *
+     * The happens-before guarantee assures that the visibility guarantee of the volatile keyword are being enforced.
+     * */
+
+    /** 10.10.3 The Java volatile limitation
+     *
+     * If a thread needs to first read the value of a volatile variable, and based on that value generate a new
+     * value for the shared volatile variable, a volatile variable is no longer enough to guarantee correct
+     * visibility. The short time gap in between the reading of the volatile variable and the writing of its
+     * new value, creates an race condition where multiple threads might read the same value of the volatile
+     * variable, generate a new value for the variable, and when writing the value back to main memory - overwrite
+     * each other's values.
+     *
+     * The situation where multiple threads are incrementing the same counter is exactly such a situation where a
+     * volatile variable is not enough. Check MultiThreadExp.exp16();
+     *
+     * When threads are both reading and writing to a shared variable, then using the volatile keyword for that is
+     * not enough. You need to use a synchronized block in that case to guarantee that the reading and writing of the
+     * variable is atomic. Reading or writing a volatile variable does not block threads reading or writing. For this
+     * to happen you must use the synchronized keyword around critical sections.
+     *
+     * As an alternative to a synchronized block you could also use one of the many atomic data types found in the
+     * java.util.concurrent package. For instance, the AtomicLong or AtomicReference or one of the others. See Lesson01_
+     * Section 09 Concurrency_utilities for more details.
+     *
+     *
+     * */
+
+    /** 10.10.4 Performance Considerations of volatile
+     *
+     * Reading and writing of volatile variables causes the variable to be read or written to main memory.
+     * Reading from and writing to main memory is more expensive than accessing the CPU cache. Accessing volatile
+     * variables also prevent instruction reordering which is a normal performance enhancement technique. Thus, you
+     * should only use volatile variables when you really need to enforce visibility of variables.
+     * */
+
+    /******************** 10.11  How to use multi-threading to improve efficiency of your program  *******************/
 
     /**
      * The key to effectively utilizing multi-threading is to think concurrently rather than serially. For example,
@@ -536,7 +644,7 @@ public class S10_MultiThread {
      * executing your program!
      *  */
 
-    /************************** 10.11  Understand and control the main thread  ********************************/
+    /************************** 10.12  Understand and control the main thread  ********************************/
 
     /**
      * All Java programs have at least one thread of execution, called the main thread, which is given to the program
@@ -599,9 +707,18 @@ public class S10_MultiThread {
         /** 10.9 Suspending, stopping , resuming a thread*/
        // MultiThreadExp.exp11();
 
-        /** 10.11 Control the main thread*/
+        /** volatile*/
+        // MultiThreadExp.exp15();
 
-        // get main thread name
+        // volatile fails in some condition
+        MultiThreadExp.exp16();
+
+        //Full volatile Visibility Guarantee
+       // MultiThreadExp.exp17();
+
+        /** 10.12 Control the main thread*/
+
+       /* // get main thread name
         Thread mainThread=Thread.currentThread();
         System.out.println("Main thread is called "+mainThread.getName());
 
@@ -615,6 +732,6 @@ public class S10_MultiThread {
         System.out.println("Main thread is called "+mainThread.getName());
         System.out.println("Main thread priority is:  "+mainThread.getPriority());
 
-         System.out.println("Main Thread ending ...");
+         System.out.println("Main Thread ending ...");*/
     }
 }
