@@ -24,10 +24,18 @@ public class S10_MultiThread {
     * - Java Volatile Keyword
     *
     * If you don't know the two major problems caused by multi-thread
-    * - Visibility of Shared Objects
-    * - Race condition
+    * - Visibility of Shared Objects: It occurs if thread A reads shared data which is later changed by thread B and
+    *            thread A is unaware of this change.
+    * - Race condition: It occurs if several thread access and change the same shared data at the same time.
     *
-    * Read my wiki (id=employes:pengfei.liu:java:java_memory_model)
+    * These two problems can lead to:
+    * - Liveness failure: The program does not react anymore due to problems in the concurrent access of data,
+    *          e.g. deadlocks.
+    * - Safety failure: The program creates incorrect data.
+    *
+    * Java provide locks and synchronization to resolve the above problems.
+    *
+    * Read my wiki (id=employes:pengfei.liu:java:java_memory_model) for more details
     * */
 
     /*********************************** 10.1 Multi-threading fundamentals *******************************************/
@@ -548,6 +556,10 @@ public class S10_MultiThread {
     * one CPU, each thread may run on a different CPU. That means, that each thread may copy the variables into
     * the CPU cache of different CPUs.
     *
+    * In a simple phrase, if a variable is declared with the volatile keyword then it is guaranteed that any
+    * thread that reads the field will see the most recently written value. The volatile keyword will not perform any
+    * mutual exclusive lock on the variable.
+    *
     * With non-volatile variables there are no guarantees about when the Java Virtual Machine (JVM) reads data from
     * main memory into CPU caches, or writes data from CPU caches to main memory.
     *
@@ -662,6 +674,57 @@ public class S10_MultiThread {
      * wait itself to finish to start running.
      * */
 
+    /************************** 10.13 Limits of concurrency gains ********************************/
+
+    /*
+    * Concurrency promises to perform certain task faster as these tasks can be divided into sub-tasks and these
+    * sub-tasks can be executed in parallel. Of course the runtime is limited by parts of the task which can be
+    * performed in parallel.
+    *
+    * The theoretical possible performance gain can be calculated by the following rule which is referred to as
+    * "Amdahl’s Law". If F is the percentage of the program which can not run in parallel and N is the number of
+    * processes, then the maximum performance gain is 1 / (F+ ((1-F)/n)).
+    *
+    * For example, if F=0.5 (half the application can be executed in parallel). And we have five threads (i.e. n=5)
+    * The gain of running in parallel is 1/(0.5+0.1)=1.67. You can notice that, even we have unlimited resource to run
+    * the application in parallel, the limit of the gain of this application si 1/0.5=2. In practice, we will never
+    * reach this gain.
+    *
+    * */
+
+    /************************** 10.14 Immutability and Defensive Copies ********************************/
+
+    /*
+    * The simplest way to avoid problems with concurrency is to share only immutable data(i.e. data which cannot changed)
+    * between threads.
+    *
+    * To make a class immutable, you need to make:
+    * - all its fields final
+    * - the class declared as final
+    * - the this reference is not allowed to escape during construction
+    * - Any fields which refer to mutable data objects are
+    * - private
+    * - have no setter method
+    * - they are never directly returned of otherwise exposed to a caller
+    * - if they are changed internally in the class this change is not visible and has no effect outside of the class
+    *
+    * For all mutable fields, e.g. Arrays, that are passed from the outside to the class during the construction phase,
+    * the class needs to make a defensive-copy of the elements to make sure that no other object from the outside
+    * still can change the data
+    * */
+
+    /** 10.14.1 Defensive copies
+     *
+     * You must protect your immutable classes from calling code. Assume that calling code will do its best to change
+     * your data in a way you did not expect it. While this is especially true in case of immutable data it is also
+     * true for non-immutable data which you still not expect that this data is changed outside your class.
+     *
+     * To protect your class against all external modifications. You should
+     * 1. Copy data that you receive
+     * 2. Return copies of data to calling code.
+     *
+     * The Planet class in defensive_copies package shows an example of immutable classes which uses defensive copies.
+     * */
 
     public static void main(String[] args){
 

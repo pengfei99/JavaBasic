@@ -312,11 +312,15 @@ public class S09_Concurrency_Utilities {
     /***************************************** 9.3 Using an Executor **********************************/
 
     /*
-    * An executor initiates and controls the execution of threads, it offers an alternative to managing threads
+    * An Executor is an object that is responsible for threads management and execution of Runnable tasks submitted
+    * from the client code. It decouples the details of thread creation, scheduling, etc from the task submission
+    * so you can focus on developing the task’s business logic without caring about the thread management details.
+    * It offers an alternative to managing threads
     * through the Thread class. The core of executor is the Executor interface, it defines one method:
     * - void execute(Runnable thread): It executes the thread.
     *
-    * The ExecutorService interface extends Executor() by adding methods that help manage and control the execution of
+    * ExecutorService interface
+    * It extends Executor interface by adding methods that help manage and control the execution of
     * threads. It defines the following methods:
     * - boolean awaitTermination​(long timeout, TimeUnit unit): Blocks until all tasks have completed execution after
     *          a shutdown request, or the timeout occurs, or the current thread is interrupted, whichever happens first.
@@ -343,7 +347,10 @@ public class S09_Concurrency_Utilities {
     * - <T> Future<T> submit​(Callable<T> task): Submits a value-returning task for execution and returns a Future
     *           representing the pending results of the task.
     *
-    * The ScheduledExecutorService interface extends ExecutorService to support the scheduling of threads.
+    * ScheduledExecutorService interface
+    * It extends ExecutorService to support the scheduling of threads. It can schedule tasks to execute after a
+    * given delay, or to execute periodically. Its key methods are schedule(), scheduleAtFixedRate() and
+    * scheduleWithFixedDelay()
     *
     * There are three predefined executor classes:
     * - ThreadPoolExecutor: It implements ExecutorService, Executor interface and provides support for a managed pool
@@ -404,6 +411,127 @@ public class S09_Concurrency_Utilities {
      * value of a Callable must be a Future. Check Sum.java implements Callable, the call() method returns Integer.
      * As the Callable is generic, we can't use primitive types in the call() return type. We must use the wrap object
      * type of primitive types.
+     * */
+
+    /** 9.3.3 Thread pools
+     *
+     * You can notice that in ExecutorExample.exp1() and exp2(). The ExecutorServices points to an object called
+     * FixedThreadPool. Java Thread pool represents a group of worker threads that are waiting for the job and reuse
+     * many times.
+     *
+     * Thread Pools are useful when you need to limit the number of threads running in your application at the same
+     * time. There is a performance overhead associated with starting a new thread, and each thread is also allocated
+     * some memory for its stack etc. As a result, thread pool has better performance. It saves time because there
+     * is no need to create new thread.
+     *
+     * In practice thread pool is used for large-scale applications that launch a lot of short-lived threads in order
+     * to utilize resources efficiently and increase performance. For example, it is used in Servlet and JSP where
+     * container creates a thread pool to process the request.
+     *
+     * The thread pool implementation consists of two parts. A ThreadPool class which is the public interface to the
+     * thread pool, and a PoolThread class which implements the threads that execute the tasks. The ThreadPool class
+     * use a queue to store tasks to be executed. Different thread pool implementation(type) use different types of
+     * queues. There are four thread pool types (We will discuss them one by one) in Java:
+     * - SingleThreadPool
+     * - FixedThreadPool
+     * - CachedThreadPool
+     * - Fork/joinPool
+     * */
+
+    /** 9.3.3.1 SingleThreadPool executor,
+     *
+     * It creates a thread pool executor with one thread. So all the submitted tasks will be executed sequentially. The
+     * SingleThreadPool is often used when we want to run task one after another.
+     *
+     * Check ExecutorExample.exp4().
+     * Note, if we use Executors.newFixedThreadPool(1), we have exactly the same result
+     * */
+
+    /** 9.3.3.1 FixedThreadPool executor,
+     *
+     * It creates an executor with a fixed number of threads in the pool. This executor ensures that there are no more
+     * than n concurrent threads at any time. If additional tasks are submitted when all threads are active, they will
+     * wait in the queue until a thread becomes available. If any thread terminates due to failure during execution,
+     * it will be replaced by a new one. The threads in the pool will exist until it is explicitly shutdown. Use this
+     * executor if you want to limit the maximum number of concurrent threads.
+     *
+     * It uses a BlockingQueue to store tasks. A blocking Queue supports operations that wait for the queue to
+     * become non-empty when retrieving and removing an element, and wait for space to become available in the queue
+     * when adding an element. It does not accept null values and throw NullPointerException if you try to store null
+     * value in the queue. It’s primarily used for implementing producer consumer problem. We don’t need to worry
+     * about waiting for the space to be available for producer or object to be available for consumer in
+     * BlockingQueue because it’s handled by implementation classes of BlockingQueue.
+     *
+     * Check ExecutorExample.exp1()
+     */
+
+
+    /** 9.3.3.3 CachedThreadPool executor,
+     * It creates an expandable thread pool executor. New threads are created as needed, and previously constructed
+     * threads are reused when they are available. Idle threads are kept in the pool for one minute. After
+     * the one minute wait, the idle threads are removed from the pool. This executor
+     * is suitable for applications that launch many short-lived concurrent tasks.
+     *
+     * It uses a SynchronousQueue to store tasks to be executed in the pool. This queue contains maximum one element.
+     * It implements a rendezvous approach (producer waits until consumer is ready, consumer waits until producer is
+     * ready). Another reason for using SynchronousQueue is performance. Implementation of SynchronousQueue seems to
+     * be heavily optimized.
+     *
+     * SynchronousQueue can be seen as a special blocking queue with size of 1. For more details on their difference
+     * https://stackoverflow.com/questions/5102570/implementation-of-blockingqueue-what-are-the-differences-between-synchronousque
+     *
+     * Check ExecutorExample.exp5()
+     */
+
+    /** 9.3.3.4 Fork/JoinPool executor,
+     *
+     */
+
+    /** 9.3.3.5 Schedule thread executors
+     *
+     * These executors use the four thread pool model which we described above, they just allow us to add scheduling
+     * features.
+     *
+     * They use DelayQueue to store tasks. DelayQueue is a blocking queue that could be used in producer-consumer
+     * programs. It has a very useful characteristic, when the consumer wants to take an element from the queue,
+     * they can take it only when the delay for that particular element has expired.
+     *
+     * For example, newSingleThreadScheduleExecutor() creates a single-threaded executor that can schedule tasks to
+     * execute after a given delay, or to execute periodically. Consider using this executor if you want to schedule
+     * tasks to execute sequentially.
+     *
+     * newScheduledThreadPool(int corePoolSize) creates an executor that can schedule tasks to execute after
+     * a given delay, or to execute periodically. Consider using this executor if you want to schedule tasks to
+     * execute concurrently.
+     * */
+
+    /** 9.3.3.6 Customize thread executors
+     *
+     * All the example above, we have used the static factory methods to create thread pool executors. These methods
+     * call the real threadPoolExecutor constructors with some default parameters, for example the newFixedThreadPool
+     * method in the Executors class are shown in the following code.
+     * public static ExecutorService newFixedThreadPool(int nThreads) {
+     *     return new ThreadPoolExecutor(nThreads, nThreads,
+     *                                   0L, TimeUnit.MILLISECONDS,
+     *                                   new LinkedBlockingQueue<Runnable>());
+     * }
+     *
+     * In case the factory methods do not meet your need, you can construct an executor directly as an instance of
+     * either ThreadPoolExecutor or ScheduledThreadPoolExecutor, which gives you additional options such as pool size,
+     * on-demand construction, keep-alive times, and the tasks queue implementation.
+     *
+     * You can also implement your own thread pool executors.
+     * */
+
+    /** 9.3.4 Shut down an executor service
+     *
+     * There are two methods which we can use to shutdown an executor service.
+     * - shutdown(): will just tell the executor service that it can't accept new tasks, but the already submitted
+     *         tasks continue to run
+     * - shutdownNow(): will do the same AND will try to cancel the already submitted tasks by interrupting the
+     *         relevant threads. Note that if your tasks ignore the interruption, shutdownNow will behave exactly
+     *         the same way as shutdown.
+     *
      * */
 
     /***************************************** 9.4 The TimeUnit Enumeration **********************************/
@@ -570,6 +698,15 @@ public class S09_Concurrency_Utilities {
     /********************************************* 9.7 Atomic Operations ******************************************/
 
     /*
+    * An atomic operation is an operation which is performed as a single unit of work without the possibility of
+    * interference from other operations. The Java language specification guarantees that reading or writing a
+    * variable is an atomic operation(unless the variable is of type long or double ). Operations variables of type
+    * long or double are only atomic if they declared with the volatile keyword.
+    *
+    * Assume i is defined as int. The i++ (increment) operation it not an atomic operation in Java. The i++ operation
+    * first reads the value which is currently stored in i (atomic operations) and then it adds one to it
+    * (atomic operation). But between the read and the write the value of i might have changed.
+    *
     * java.util.concurrent.atomic offers an alternative to the other synchronization features when reading or writing
     * the value of some types of variables.	This package offers methods that get, set, or compare the value of a
     * variable	in	one uninterruptible	(that is, atomic) operation. This means that no lock or other
@@ -962,6 +1099,16 @@ public class S09_Concurrency_Utilities {
        // ExecutorExample.exp2();
        // ExecutorExample.exp3();
 
+        /* SingleThreadPool*/
+       // ExecutorExample.exp4();
+
+        /* CachedThreadPool*/
+       // ExecutorExample.exp5();
+
+        /* ScheduledThreadPool*/
+        ExecutorExample.exp8();
+
+
         /** ConcurrentCollection */
         // thread safe collection
         //  ConcurrentCollectionsExample.exp1();
@@ -976,7 +1123,7 @@ public class S09_Concurrency_Utilities {
        // LockExample.exp2();
 
         /** Atomic operation*/
-        AtomicExample.exp1();
+       // AtomicExample.exp1();
 
         /** fork join framework*/
 

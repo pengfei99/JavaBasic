@@ -4,6 +4,7 @@ import org.pengfei.Lesson01_Java_Standard_API.S09_Concurrency_Utilities.source.e
 import org.pengfei.Lesson01_Java_Standard_API.S09_Concurrency_Utilities.source.executor.Hypotenuse;
 import org.pengfei.Lesson01_Java_Standard_API.S09_Concurrency_Utilities.source.executor.MySimpleWorker;
 import org.pengfei.Lesson01_Java_Standard_API.S09_Concurrency_Utilities.source.executor.Sum;
+import org.pengfei.Lesson01_Java_Standard_API.S09_Concurrency_Utilities.source.thread_pool.MyTasks;
 
 import java.util.concurrent.*;
 
@@ -102,5 +103,71 @@ public class ExecutorExample {
         es.shutdown();
         System.out.println("Done");
 
+    }
+
+    /* singleThreadExecutor*/
+    public static void exp4(){
+
+        //We can also use executor directly instead of executor service. Because Executor is the father interface
+        // of the ExecutorService interface. But it does not have shutdown() to close the executor pool properly.
+       // Executor executor=Executors.newSingleThreadExecutor();
+        ExecutorService es=Executors.newSingleThreadExecutor();
+       // ExecutorService es=Executors.newFixedThreadPool(1);
+
+
+        MyTasks t1=new MyTasks("t1");
+        MyTasks t2=new MyTasks("t2");
+        MyTasks t3=new MyTasks("t3");
+
+       /* executor.execute(t1);
+        executor.execute(t2);
+        executor.execute(t3);*/
+
+
+        es.execute(t1);
+        es.execute(t2);
+        es.execute(t3);
+        es.shutdown();
+
+    }
+
+    /*cachedThreadPool*/
+    public static void exp5(){
+        ExecutorService es=Executors.newCachedThreadPool();
+
+        //submit 10 tasks to the thread pool
+        for(int i=0;i<10;i++){
+            es.execute(new MyTasks("t"+i));
+
+            //note the casting of the ExectuorService to a ThreadPoolExecutor is not guaranteed all implementations of Java.
+            // Because it returned by newCachedThreadPoo. In my java 11 running env, it failed. so I cant see the
+            // current pool size
+            ThreadPoolExecutor tpe= (ThreadPoolExecutor) es;
+            System.out.println("current pool size: "+tpe.getPoolSize());
+
+        }
+
+        es.shutdown();
+    }
+
+    /* fork/join Pool*/
+    public static void exp6(){}
+    public static void exp7(){}
+
+    /* scheduledThreadPool*/
+    public static void exp8(){
+        ScheduledExecutorService ses=Executors.newScheduledThreadPool(3);
+
+        //task 1 only a 10 sec delay
+        ses.schedule(new MyTasks("t1"),10,TimeUnit.SECONDS);
+
+        //task 2 repeat every 15 sec after a init delay of 5 sec
+        ses.scheduleAtFixedRate(new MyTasks("t2"),5,15,TimeUnit.SECONDS);
+
+        //task 3 repeat after the previous task finished with 30 sec, the first task has 10 sec initial delay
+        ses.scheduleWithFixedDelay(new MyTasks("t3"),10,30,TimeUnit.SECONDS);
+
+        //As we run the task repeatly, so we can't shutdown the pool, if we shutdown, all tasks ends with the threadPool
+       // ses.shutdown();
     }
 }
