@@ -432,10 +432,13 @@ public class S09_Concurrency_Utilities {
      * thread pool, and a PoolThread class which implements the threads that execute the tasks. The ThreadPool class
      * use a queue to store tasks to be executed. Different thread pool implementation(type) use different types of
      * queues. There are four thread pool types (We will discuss them one by one) in Java:
-     * - SingleThreadPool
-     * - FixedThreadPool
-     * - CachedThreadPool
-     * - Fork/joinPool
+     * - SingleThreadPool: 适用于需要保证顺序地执行各个任务并且在任意时间点，不会有多个线程是活动的应用场景
+     * - FixedThreadPool: 适用于为了满足资源管理需求，而需要限制当前线程数量的应用场景。它适用于负载比较重的服务器；
+     * - CachedThreadPool: 适用于执行很多的短期异步任务的小程序，或者是负载较轻的服务器
+     * - Fork/joinPool: It's used to optimize big computational recursive tasks
+     * - WorkStealingPool(since JDK8): It's used to optimize big computational recursive tasks
+     * - ScheduledThreadPoolExecutor： 适用于需要多个后台执行周期任务，同时为了满足资源管理需求而需要限制后台线程的数量的应用场景
+     * - SingleThreadScheduledExecutor： 适用于需要单个后台线程执行周期任务，同时保证顺序地执行各个任务的应用场景
      * */
 
     /** 9.3.3.1 SingleThreadPool executor,
@@ -447,7 +450,7 @@ public class S09_Concurrency_Utilities {
      * Note, if we use Executors.newFixedThreadPool(1), we have exactly the same result
      * */
 
-    /** 9.3.3.1 FixedThreadPool executor,
+    /** 9.3.3.2 FixedThreadPool executor,
      *
      * It creates an executor with a fixed number of threads in the pool. This executor ensures that there are no more
      * than n concurrent threads at any time. If additional tasks are submitted when all threads are active, they will
@@ -518,7 +521,35 @@ public class S09_Concurrency_Utilities {
      * Check ExecutorExample.exp8(); We create a scheduledThreadPool with 3 thread.
      * */
 
-    /** 9.3.3.6 Customize thread executors
+    /** 9.3.3.6 WorkStealingPool executor
+     *
+     * Since Java 8, Executors adds a new static factory method newWorkStealingPool(int pLevel), it creates a work-stealing
+     * thread pool and returns it. The pLevel(optional) is the parallelism level of the pool. If not specified, it will
+     * use the number of current available processors as its target parallelism level.
+     *
+     * If you check the source code in Executor
+     * public static ExecutorService newWorkStealingPool(int parallelism) {
+     *     return new ForkJoinPool(parallelism,
+     *                                                     ForkJoinPool.defaultForkJoinWorkerThreadFactory,
+     *                                                     null, true);
+     * }
+     * You can notice, this method will create a forkJoinPool with some parameters
+     * - parallelism is the parallelism level of this forkJoinPool, if you don't specify it, it will be
+     *        replaced by the default value Runtime.getRuntime().availableProcessors().
+     * - defaultForkJoinWorkerThreadFactory is the default factory for creating new threads in forkJoinPool
+     * - null is the default value for handler(the handler for internal worker threads that terminate due to
+     *        unrecoverable errors encountered while executing tasks.
+     * - true sets this pool in asyncMode(It establishes local first-in-first-out scheduling mode for forked tasks
+     *        that are never joined. This mode may be more appropriate than default locally stack-based mode in
+     *        applications in which worker threads only process event-style asynchronous tasks.
+     *        For default value, use false.
+     *
+     * So to conclude, the newWorkStealingPool provided in Java 8 is not new at all — it just provides a level
+     * of abstraction over ForkJoinPool. As ForkJoinPool, workStealing pool is used to optimize big computational
+     * recursive tasks.
+     * */
+
+    /** 9.3.3.7 Customize thread executors
      *
      * All the example above, we have used the static factory methods to create thread pool executors. These methods
      * call the real threadPoolExecutor constructors with some default parameters, for example the newFixedThreadPool
@@ -592,6 +623,15 @@ public class S09_Concurrency_Utilities {
      *            5. Custom Policy: It's also possible to provide a custom saturation policy just by implementing
      *                            the RejectedExecutionHandler interface. In MySaturationPolicy class, we implement
      *                            a policy which we will increase the size of queue by 1 and add the new tasks
+     * ThreadPool behaviour:
+     * -when the number of thread in the thread pool is less than the corePoolSize，新提交任务将创建一个新线程执行任务，
+     *   即使此时线程池中存在空闲线程。
+     * - when the number of thread in the thread pool is equal to the corePoolSize，新提交任务将被放入workQueue中，
+     *   等待线程池中任务调度执行
+     * - 当workQueue已满，且maximumPoolSize>corePoolSize时，新提交任务会创建新线程执行任务
+     * - 当提交任务数超过maximumPoolSize时，新提交任务由RejectedExecutionHandler处理, based on the default policy(can be changed)
+     * - 当线程池中超过corePoolSize线程，空闲时间达到keepAliveTime时，关闭空闲线程
+     * - 当设置allowCoreThreadTimeOut(true)时，线程池中corePoolSize线程空闲时间达到keepAliveTime也将关闭
      *
      * Check ExecutorExample.exp9(); We create a custom thread pool with threadPoolExecutor, it has one initial thread,
      * the max thread number is 1, discard oldest policy.
