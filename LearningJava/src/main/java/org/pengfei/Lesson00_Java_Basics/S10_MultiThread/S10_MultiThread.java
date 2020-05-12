@@ -292,6 +292,39 @@ public class S10_MultiThread {
      * for one thread to dominate, preventing others from running.
      * */
 
+    /** 10.6.2 Daemon thread
+     *
+     * It is a low priority thread (in context of JVM) that runs in background to perform tasks such as
+     * garbage collection (gc) etc., they do not prevent the JVM from exiting (even if the daemon thread itself is running)
+     * when all the user threads (non-daemon threads) finish their execution. JVM terminates itself when all user threads
+     * (non-daemon threads) finish their execution, JVM does not care whether Daemon thread is running or not,
+     * if JVM finds running daemon thread (upon completion of user threads), it terminates the thread and after that
+     * shutdown itself.
+     *
+     *
+     * Properties of Daemon threads:
+     * 1. A newly created thread inherits the daemon status of its parent. That’s the reason all threads created
+     *    inside main method (child threads of main thread) are non-daemon by default, because main thread is
+     *    non-daemon. However you can make a user thread to Daemon by using setDaemon() method of thread class.
+     *
+     *    Just a quick note on main thread: When the JVM starts, it creates a thread called “Main”. Your program will
+     *    run on this thread, unless you create additional threads yourself. The first thing the “Main” thread does
+     *    is to look for your static void main (String args[]) method and invoke it. That is the entry-point to your
+     *    program. If you create additional threads in the main method those threads would be the child threads of
+     *    main thread.
+     * 2. Methods of Thread class that are related to Daemon threads:
+     *      -- public void setDaemon(boolean status): This method is used for making a user thread to Daemon
+     *              thread or vice versa. For example if I have a user thread t then t.setDaemon(true) would make
+     *              it Daemon thread. On the other hand if I have a Daemon thread td then by calling
+     *              td.setDaemon(false) would make it normal thread(user thread/non-daemon thread).
+     *      -- public boolean isDaemon(): This method is used for checking the status of a thread. It returns true
+     *              if the thread is Daemon else it returns false.
+     * 3. setDaemon() method can only be called before starting the thread. This method would throw
+     *        IllegalThreadStateException if you call this method after Thread.start() method.
+     *
+     *  Check MultiThreadExp.exp18(); We can set user defined thread to daemon thread.
+     * */
+
         /************************************** 10.7 Synchronization and Locks ************************************/
 
         /*
@@ -758,6 +791,9 @@ public class S10_MultiThread {
          /** 10.6 thread priority */
          // MultiThreadExp.exp7();
 
+        // daemon thread
+        MultiThreadExp.exp18();
+
         /** 10.7.1 Synchronized methods*/
         // MultiThreadExp.exp8();
 
@@ -774,7 +810,7 @@ public class S10_MultiThread {
         // MultiThreadExp.exp15();
 
         // volatile fails in some condition
-        MultiThreadExp.exp16();
+       // MultiThreadExp.exp16();
 
         //Full volatile Visibility Guarantee
        // MultiThreadExp.exp17();

@@ -5,8 +5,15 @@ import org.pengfei.Lesson01_Java_Standard_API.S09_Concurrency_Utilities.source.e
 import org.pengfei.Lesson01_Java_Standard_API.S09_Concurrency_Utilities.source.executor.MySimpleWorker;
 import org.pengfei.Lesson01_Java_Standard_API.S09_Concurrency_Utilities.source.executor.Sum;
 import org.pengfei.Lesson01_Java_Standard_API.S09_Concurrency_Utilities.source.thread_pool.MyTasks;
+import org.pengfei.Lesson01_Java_Standard_API.S09_Concurrency_Utilities.source.thread_pool.MyThreadFactory;
+import org.pengfei.Lesson01_Java_Standard_API.S09_Concurrency_Utilities.source.thread_pool.MyThreadPool;
+import org.pengfei.Lesson01_Java_Standard_API.S09_Concurrency_Utilities.source.thread_pool.ThreadForMyThreadPool;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.*;
+
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 public class ExecutorExample {
 
@@ -18,6 +25,19 @@ public class ExecutorExample {
 
         // Get a executor of type FixedThreadPool which contains two thread
         ExecutorService es= Executors.newFixedThreadPool(2);
+
+        /** The second static method takes an extra argument, ThreadFactory
+        *  The custom ThreadFactory implementation can customize the thread creation. This version is useful when
+         *  user wants to customize certain aspects of thread creation. For example, user would like to change the
+         *  thread group, thread pool naming patterns, thread priorities and so on.
+         *
+         *  In the following example, we use a custom thread(it builds a thread name based on the id and thread group
+         *  name which threadFactory provides) and a custom threadFactory (it builds thread with thread group, poolname,
+         *  id, etc. and it checks the priority and isDaemon or not.)
+         *
+         * */
+
+        ExecutorService es1=Executors.newFixedThreadPool(2,new MyThreadFactory("thread_Test"));
 
         System.out.println("Starting ...");
 
@@ -89,9 +109,9 @@ public class ExecutorExample {
         // because before get() gets its value, it will block the program from continuing.
         // so the second print will not run until first get its value.
         try{
-            System.out.println("Sum returns: "+f1.get(10, TimeUnit.MILLISECONDS));
-            System.out.println("Hypotenuse returns: "+f2.get(10, TimeUnit.MILLISECONDS));
-            System.out.println("Factorial returns: "+f3.get(10, TimeUnit.MILLISECONDS));
+            System.out.println("Sum returns: "+f1.get(10, MILLISECONDS));
+            System.out.println("Hypotenuse returns: "+f2.get(10, MILLISECONDS));
+            System.out.println("Factorial returns: "+f3.get(10, MILLISECONDS));
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
@@ -150,9 +170,35 @@ public class ExecutorExample {
         es.shutdown();
     }
 
-    /* fork/join Pool*/
-    public static void exp6(){}
-    public static void exp7(){}
+    /* self implementation of a thread Pool*/
+    public static void exp6(){
+        //
+        MyThreadPool threadPool=new MyThreadPool(1,20);
+        //submit 10 tasks to the thread pool
+        for(int i=0;i<10;i++){
+            try {
+                threadPool.execute(new MyTasks("t"+i));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        // We can't shut down the pool, because the unfinished tasks will be interrupted.
+       // threadPool.shutDown();
+    }
+    public static void exp7(){
+        BlockingQueue<Runnable> queue=new ArrayBlockingQueue(2);
+        queue.add(new MyTasks("t1"));
+        queue.add(new MyTasks("t2"));
+        ThreadForMyThreadPool t1=new ThreadForMyThreadPool(queue);
+t1.start();
+        // sleep
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        t1.stopThread();
+    }
 
     /* scheduledThreadPool*/
     public static void exp8(){
@@ -169,5 +215,37 @@ public class ExecutorExample {
 
         //As we run the task repeatly, so we can't shutdown the pool, if we shutdown, all tasks ends with the threadPool
        // ses.shutdown();
+    }
+
+    /* a custom build thread pool by using threadPoolExecutor constructor*/
+    public static void exp9(){
+        ThreadPoolExecutor executor = new ThreadPoolExecutor(1, 1, 0, MILLISECONDS,
+                new ArrayBlockingQueue<>(2),
+                new ThreadPoolExecutor.DiscardOldestPolicy());
+
+        executor.execute(() -> waitFor(100));
+
+        BlockingQueue<String> queue = new LinkedBlockingDeque<>();
+        // we have three tasks to put a string in a blocking queue, as we have only 1 thread, they will be put in
+        // task waiting queue, and waiting queue size is 2, we reached the saturation when we submit the third task
+        // the discardOldestPolicy removes the oldest task.
+        executor.execute(() -> queue.offer("First"));
+        executor.execute(() -> queue.offer("Second"));
+        executor.execute(() -> queue.offer("Third"));
+        waitFor(150);
+
+        List<String> results = new ArrayList<>();
+        queue.drainTo(results);
+
+        System.out.println(results);
+        executor.shutdown();
+    }
+
+    private static void waitFor(int i) {
+        try {
+            Thread.sleep(i);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }

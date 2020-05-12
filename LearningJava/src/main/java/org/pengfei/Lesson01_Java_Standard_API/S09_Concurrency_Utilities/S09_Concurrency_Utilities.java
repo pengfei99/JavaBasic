@@ -455,14 +455,17 @@ public class S09_Concurrency_Utilities {
      * it will be replaced by a new one. The threads in the pool will exist until it is explicitly shutdown. Use this
      * executor if you want to limit the maximum number of concurrent threads.
      *
-     * It uses a BlockingQueue to store tasks. A blocking Queue supports operations that wait for the queue to
+     * It uses a LinkedBlockingQueue to store tasks. A blocking Queue supports operations that wait for the queue to
      * become non-empty when retrieving and removing an element, and wait for space to become available in the queue
      * when adding an element. It does not accept null values and throw NullPointerException if you try to store null
      * value in the queue. It’s primarily used for implementing producer consumer problem. We don’t need to worry
      * about waiting for the space to be available for producer or object to be available for consumer in
      * BlockingQueue because it’s handled by implementation classes of BlockingQueue.
      *
-     * Check ExecutorExample.exp1()
+     * Check ExecutorExample.exp1(), we use the two static factory method to create a fixedThreadPool. The second uses
+     * a custom ThreadFactory
+     *
+     *
      */
 
 
@@ -472,10 +475,14 @@ public class S09_Concurrency_Utilities {
      * the one minute wait, the idle threads are removed from the pool. This executor
      * is suitable for applications that launch many short-lived concurrent tasks.
      *
-     * It uses a SynchronousQueue to store tasks to be executed in the pool. This queue contains maximum one element.
-     * It implements a rendezvous approach (producer waits until consumer is ready, consumer waits until producer is
-     * ready). Another reason for using SynchronousQueue is performance. Implementation of SynchronousQueue seems to
-     * be heavily optimized.
+     * It uses a SynchronousQueue to store tasks to be executed in the pool. The basic idea of synchronous handoff is
+     * simple and yet counter-intuitive: One can queue an item if and only if another thread takes that item at the
+     * same time. In other words, the SynchronousQueue can not hold any tasks whatsoever. Suppose a new task comes in.
+     * If there is an idle thread waiting on the queue, then the task producer hands off the task to that thread.
+     * Otherwise, since the queue is always full, the executor creates a new thread to handle that task.
+     *
+     * The cached pool starts with zero threads and can potentially grow to have Integer.MAX_VALUE threads.
+     * Practically, the only limitation for a cached thread pool is the available system resources.
      *
      * SynchronousQueue can be seen as a special blocking queue with size of 1. For more details on their difference
      * https://stackoverflow.com/questions/5102570/implementation-of-blockingqueue-what-are-the-differences-between-synchronousque
@@ -484,6 +491,10 @@ public class S09_Concurrency_Utilities {
      */
 
     /** 9.3.3.4 Fork/JoinPool executor,
+     *
+     * The ForkJoinPool is a special thread pool which is designed to work well with fork-and-join task splitting. To
+     * understand better Fork/Join Pool executor, we need to know first how fork/join works. So this paragraph will
+     * be discussed in 9.8.3
      *
      */
 
@@ -503,6 +514,8 @@ public class S09_Concurrency_Utilities {
      * newScheduledThreadPool(int corePoolSize) creates an executor that can schedule tasks to execute after
      * a given delay, or to execute periodically. Consider using this executor if you want to schedule tasks to
      * execute concurrently.
+     *
+     * Check ExecutorExample.exp8(); We create a scheduledThreadPool with 3 thread.
      * */
 
     /** 9.3.3.6 Customize thread executors
@@ -520,10 +533,75 @@ public class S09_Concurrency_Utilities {
      * either ThreadPoolExecutor or ScheduledThreadPoolExecutor, which gives you additional options such as pool size,
      * on-demand construction, keep-alive times, and the tasks queue implementation.
      *
-     * You can also implement your own thread pool executors.
+     * Another reason we need to build our own threadPool is that, in some situation CachedThreadPool will creat thread
+     * without stop as more tasks come in. For FixedThreadPool, the tasks will be stored in the blocking queue. Many
+     * threads or many tasks in queue, they will consume a lot of memory for creating threads or queuing tasks.
+     * Cached thread pools will also incur a lot of processor context switches.
+     *
      * */
 
-    /** 9.3.4 Shut down an executor service
+    /** 9.3.4 ThreadPoolExecutor
+     *
+     * ThreadPoolExecutor is essential for building your own thread pool implementation. Most of the existing thread
+     * pool implementation use it as the base. So it's important to know how it works
+     * You can find full doc https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/ThreadPoolExecutor.html#allowCoreThreadTimeOut-boolean
+     *
+     * We only highlight some key parameters.
+     *
+     * The ThreadPoolExecutor's constructor can take following parameters
+     *      * public ThreadPoolExecutor(
+     *      *   int corePoolSize,
+     *      *   int maximumPoolSize,
+     *      *   long keepAliveTime,
+     *      *   TimeUnit unit,
+     *      *   BlockingQueue<Runnable> workQueue,
+     *      *   RejectedExecutionHandler handler
+     *      * )
+     *
+     * - corePoolSize: It determines the initial size of the thread pool. Usually, the executor makes sure that the
+     *               thread pool contains at least corePoolSize number of threads. However, it's possible to have
+     *               fewer threads if we enable the allowCoreThreadTimeOut parameter
+     * - maximumPoolSize: When all threads are busy and task queue becomes full, the executor can add more threads to
+     *               the thread pool. The maximumPoolSize puts an upper bound on the number of threads a thread pool
+     *               can potentially contain. When those threads remain idle for some time, the executor can remove
+     *               them from the pool. Hence, the pool size can shrink back to its core size.
+     * - keepAliveTime: When the number of threads is greater than the core, this is the maximum time that excess
+     *               idle threads will wait for new tasks before terminating. A time value of zero will cause excess
+     *               threads to terminate immediately after executing tasks.
+     * - unit: The time unit for the keepAliveTime argument
+     * - workQueue: When all core threads are busy, the executor adds the new tasks to a queue. There are three
+     *              different approaches for queueing:
+     *              1. Unbounded Queue: The queue can hold an unlimited number of tasks. Since this queue never fills
+     *                 up, the executor ignores the maximum size. The fixed size and single thread executors both use
+     *                 this approach.
+     *              2. Bounded Queue: As its name suggests, the queue can only hold a limited number of tasks. As a
+     *                 result, the thread pool would grow when a bounded queue fills up.
+     *              3. Synchronous Handoff: Quite surprisingly, this queue can't hold any tasks! With this approach,
+     *                 we can queue a task if and only if there is another thread picking the same task on the other
+     *                 side at the same time. The cached thread pool executor uses this approach internally.
+     * - handler: When all threads are busy, and the internal queue fills up, the executor becomes saturated. An
+     *            instance of RejectedExecutionHandler can define thread pool actions once it hits saturation.
+     *            Java provides some predefined policies:
+     *            1. Abort policy: It's the default policy of a thread pool executor. It causes the executor to
+     *                             throw a RejectedExecutionException when saturation reached.
+     *            2. Caller-Runs Policy: Instead of running a task asynchronously in another thread, this policy makes
+     *                             the caller thread execute the task
+     *            3. Discard Policy: It silently discards the new task when it fails to submit it
+     *            4. Discard-Oldest Policy: It first removes a task from the head of the queue, then re-submits the
+     *                             new task.
+     *            5. Custom Policy: It's also possible to provide a custom saturation policy just by implementing
+     *                            the RejectedExecutionHandler interface. In MySaturationPolicy class, we implement
+     *                            a policy which we will increase the size of queue by 1 and add the new tasks
+     *
+     * Check ExecutorExample.exp9(); We create a custom thread pool with threadPoolExecutor, it has one initial thread,
+     * the max thread number is 1, discard oldest policy.
+     *
+     * You can also implement your own thread pool executors.
+     * Check ExecutorExample.exp6(); we use a self implemented thread pool to run 10 tasks. The core of the thread pool
+     * is a blocking queue which stores the submitted tasks, and a list of thread(ie. ThreadForMyThreadPool)
+     * */
+
+    /** 9.3.5 Shut down an executor service
      *
      * There are two methods which we can use to shutdown an executor service.
      * - shutdown(): will just tell the executor service that it can't accept new tasks, but the already submitted
@@ -918,9 +996,15 @@ public class S09_Concurrency_Utilities {
      * may display different run time characteristics because of varying task loads.
      * */
 
-    /** 9.8.3. A Fork/Join Example
-     * Check ForkJoinExample.exp1(); and ForkJoinExample.exp2(); We use a ForkJoinAction to transform an array of
-     * doubles into their square root.
+    /** 9.8.3. The Fork/Join Pool executor and a Fork/Join Example
+     * To run a fork/join task(e.g. RecursiveAction, RecursiveTask), we need a ForkJoinPool executor. We can build
+     * a new one by using its constructor. Or call the static factory method to return the commonPool. As mentioned
+     * above, After JDK8, no need to get the commonPool explicitly. When we call task.invoke(), the commonPool is
+     * used automatically.
+     * Check ForkJoinExample.exp1(); We used the constructor to create one forkJoinPool and static factory method to
+     * get commonPool.
+     * In ForkJoinExample.exp2(); We use a ForkJoinAction to transform an array of doubles into their square root. We
+     * used the task.invoke() method to use the commonPool implicitly.
      * */
 
     /** 9.8.4 The impact of the level of Parallelism
@@ -1106,8 +1190,14 @@ public class S09_Concurrency_Utilities {
        // ExecutorExample.exp5();
 
         /* ScheduledThreadPool*/
-        ExecutorExample.exp8();
+       // ExecutorExample.exp8();
 
+        /* custom build Thread pool*/
+       // ExecutorExample.exp9();
+
+        /* self implemented thread pool*/
+        ExecutorExample.exp6();
+     //   ExecutorExample.exp7();
 
         /** ConcurrentCollection */
         // thread safe collection

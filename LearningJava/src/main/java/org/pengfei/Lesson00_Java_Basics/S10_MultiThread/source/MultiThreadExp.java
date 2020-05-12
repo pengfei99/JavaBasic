@@ -262,4 +262,20 @@ public class MultiThreadExp {
 
     }
 
+    public static void exp18(){
+        DaemonTesterThread t1=new DaemonTesterThread("t1");
+        DaemonTesterThread t2=new DaemonTesterThread("t2");
+
+        //set t1 as daemon thread
+        t1.setDaemon(true);
+
+        // start t1, t2
+        t1.start();
+        t2.start();
+
+        //set t2 as daemon thread after start, not allowed and exception will be thrown
+        //
+        //t2.setDaemon(true);
+    }
+
 }

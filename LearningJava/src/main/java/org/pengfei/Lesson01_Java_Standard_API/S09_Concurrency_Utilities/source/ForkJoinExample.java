@@ -8,7 +8,8 @@ public class ForkJoinExample {
 
     public static void exp1(){
     // create a task pool.
-        ForkJoinPool pool=new ForkJoinPool();
+        // normally the forkjoinpool parallelism level equals to the number of core of your jvm runtime can detect.
+        ForkJoinPool pool=new ForkJoinPool(Runtime.getRuntime().availableProcessors());
 
         // we can get the reference of commonPool with the following code, if we don't want to create a ForkJoinPool
         //ForkJoinPool commonPool=ForkJoinPool.commonPool();
