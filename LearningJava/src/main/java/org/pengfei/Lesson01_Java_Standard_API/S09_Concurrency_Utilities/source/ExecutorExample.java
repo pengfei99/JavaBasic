@@ -4,6 +4,7 @@ import org.pengfei.Lesson01_Java_Standard_API.S09_Concurrency_Utilities.source.e
 import org.pengfei.Lesson01_Java_Standard_API.S09_Concurrency_Utilities.source.executor.Hypotenuse;
 import org.pengfei.Lesson01_Java_Standard_API.S09_Concurrency_Utilities.source.executor.MySimpleWorker;
 import org.pengfei.Lesson01_Java_Standard_API.S09_Concurrency_Utilities.source.executor.Sum;
+import org.pengfei.Lesson01_Java_Standard_API.S09_Concurrency_Utilities.source.fork.SquareTransform;
 import org.pengfei.Lesson01_Java_Standard_API.S09_Concurrency_Utilities.source.thread_pool.MyTasks;
 import org.pengfei.Lesson01_Java_Standard_API.S09_Concurrency_Utilities.source.thread_pool.MyThreadFactory;
 import org.pengfei.Lesson01_Java_Standard_API.S09_Concurrency_Utilities.source.thread_pool.MyThreadPool;
@@ -185,19 +186,32 @@ public class ExecutorExample {
         // We can't shut down the pool, because the unfinished tasks will be interrupted.
        // threadPool.shutDown();
     }
+
+    /* workStealingThreadPool*/
     public static void exp7(){
-        BlockingQueue<Runnable> queue=new ArrayBlockingQueue(2);
-        queue.add(new MyTasks("t1"));
-        queue.add(new MyTasks("t2"));
-        ThreadForMyThreadPool t1=new ThreadForMyThreadPool(queue);
-t1.start();
-        // sleep
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        t1.stopThread();
+        ExecutorService es = Executors.newWorkStealingPool();
+        ForkJoinPool pool=(ForkJoinPool) es;
+
+        /*run a runnable, no need to use WorkStealingPool*/
+        es.submit(new MyTasks("t1"));
+        es.submit(new MyTasks("t2"));
+
+        /* run a forkJoinTask*/
+        // create array data set for transform
+        double[] data=new double[1000];
+        for(int i=0;i<data.length;i++) data[i]=(double) i;
+
+        System.out.println("The first 10 element of the array: ");
+        for(int i=0;i<10;i++)
+            System.out.print(data[i]+" ");
+
+        //create the main task
+        SquareTransform task=new SquareTransform(data,0,data.length);
+         pool.invoke(task);
+
+        System.out.println("The first 10 element of the array after transformation: ");
+        for(int i=0;i<10;i++)
+            System.out.printf("%.4f ", data[i]);
     }
 
     /* scheduledThreadPool*/

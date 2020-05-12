@@ -33,9 +33,9 @@ public class SquareTransform extends RecursiveAction {
         if((end-start)<seqThreshold){
             //transform each element into its square root.
             for(int i=start;i<end;i++){
-                System.out.println("before transformation Data value of "+i+" is: "+data[i]);
+                // System.out.println("before transformation Data value of "+i+" is: "+data[i]);
                 data[i]= Math.sqrt(data[i]);
-                System.out.println("after transformation Data value of "+i+" is: "+data[i]);
+                // System.out.println("after transformation Data value of "+i+" is: "+data[i]);
             }
         }
         //otherwise, continue to break the data into small pieces.
