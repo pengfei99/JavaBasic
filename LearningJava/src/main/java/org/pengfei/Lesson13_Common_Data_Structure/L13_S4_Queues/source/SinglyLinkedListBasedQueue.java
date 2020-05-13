@@ -1,6 +1,7 @@
-package org.pengfei.Lesson13_Common_Data_Structure.L13_S4_Queues;
+package org.pengfei.Lesson13_Common_Data_Structure.L13_S4_Queues.source;
 
 import org.pengfei.Lesson13_Common_Data_Structure.L13_S2_Linked_lists.MySinglyLinkedList;
+import org.pengfei.Lesson13_Common_Data_Structure.L13_S4_Queues.source.Queue;
 
 public class SinglyLinkedListBasedQueue<E> implements Queue<E> {
 

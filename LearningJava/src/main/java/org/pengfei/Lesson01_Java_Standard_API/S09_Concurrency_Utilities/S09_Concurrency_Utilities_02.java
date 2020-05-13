@@ -423,7 +423,7 @@ public class S09_Concurrency_Utilities_02 {
      *
      * A drawback of synchronized collections is that their synchronization mechanism uses the collection object itself
       * as the lock object. That means when a thread is iterating over elements in a collection, all other collection’s
-      * methods block, causing other threads having to wait. This causes overhead and reduces performance.
+      * methods are blocked, causing other threads having to wait. This causes overhead and reduces performance.
      * */
 
      /** 9.6.2 Concurrent collections thread safety mechanisms
@@ -464,6 +464,18 @@ public class S09_Concurrency_Utilities_02 {
       *              BlockingQueue.
       *              Collections in this group also have weakly consistent iterators and do not throw
       *              ConcurrentModificationException.
+      * */
+
+     /** 9.6.3 BlockingQueue interface
+      * The Java BlockingQueue interface, java.util.concurrent.BlockingQueue, represents a queue which is thread safe
+      * to put elements into, and take elements out of from. In other words, multiple threads can be inserting and
+      * taking elements concurrently from a Java BlockingQueue, without any concurrency issues arising.
+      *
+      * I want to highlight this interface, because threadPoolExecutors use different implementation of this interface
+      * to store tasks. These implementations also impact the behavior of the the thread pool. So it's important to
+      * understand how they works.
+      *
+      * Find all details of BlockingQueue in Lesson13_Common_Data_Structure_S4_Queues_6_Blocking_Queue
       * */
 
     /************************************************* 9.7 Locks **********************************************/

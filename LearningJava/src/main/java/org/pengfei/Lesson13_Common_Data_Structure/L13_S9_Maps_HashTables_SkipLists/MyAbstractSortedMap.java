@@ -1,7 +1,7 @@
 package org.pengfei.Lesson13_Common_Data_Structure.L13_S9_Maps_HashTables_SkipLists;
 
 
-import org.pengfei.Lesson13_Common_Data_Structure.L13_S8_Priority_Queues.DefaultComparator;
+import org.pengfei.Lesson13_Common_Data_Structure.L13_S8_Priority_Queues.source.DefaultComparator;
 import java.util.Map.Entry;
 
 import java.util.Comparator;

@@ -1,7 +1,5 @@
 package org.pengfei.Lesson13_Common_Data_Structure.L13_S6_List;
 
-import org.pengfei.Lesson13_Common_Data_Structure.L13_S8_Priority_Queues.MyEntry;
-
 public interface PositionalList<E> extends Iterable{
     /**
      * Returns the number of elements in the list.

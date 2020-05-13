@@ -1,7 +1,5 @@
 package org.pengfei.Lesson00_Java_Basics.S04_Advance_Datatype_Operator.source;
 
-import org.pengfei.Lesson13_Common_Data_Structure.L13_S4_Queues.Queue;
-
 import java.util.Arrays;
 
 public class QueueExp {

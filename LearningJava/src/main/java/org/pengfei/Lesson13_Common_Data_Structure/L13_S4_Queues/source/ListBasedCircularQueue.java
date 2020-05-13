@@ -1,8 +1,9 @@
-package org.pengfei.Lesson13_Common_Data_Structure.L13_S4_Queues;
+package org.pengfei.Lesson13_Common_Data_Structure.L13_S4_Queues.source;
 
 import org.pengfei.Lesson13_Common_Data_Structure.L13_S2_Linked_lists.MyCircularLinkedList;
+import org.pengfei.Lesson13_Common_Data_Structure.L13_S4_Queues.source.CircularQueue;
 
-public class ListBasedCircularQueue<E> implements CircularQueue<E>{
+public class ListBasedCircularQueue<E> implements CircularQueue<E> {
 
     MyCircularLinkedList<E> data;
 
