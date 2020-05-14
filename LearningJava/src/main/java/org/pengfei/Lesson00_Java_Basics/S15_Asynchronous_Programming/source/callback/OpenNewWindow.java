@@ -1,4 +1,4 @@
-package org.pengfei.Lesson00_Java_Basics.S15_Asynchronous_Programming.source;
+package org.pengfei.Lesson00_Java_Basics.S15_Asynchronous_Programming.source.callback;
 
 public class OpenNewWindow implements MouseClickedListener {
 

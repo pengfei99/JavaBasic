@@ -6,10 +6,15 @@ public class S15_Asynchronous_Programming {
 
 public static void main(String[] args){
 
-    /******************************************** 15. Introduction *******************************************/
+    /******************************************** 15.0 Introduction *******************************************/
 
     /*
     * What is Asynchronous Programming?
+    *
+    * According to Wikipedia, Asynchronous programming is a means of parallel programming in which a unit of work
+    * runs separately from the main application thread and notifies the calling thread of its completion, failure
+    * or progress.
+    *
     * Asynchronous programming provides a non-blocking, event-driven programming model. This programming model
     * leverages the multiple cores in your system to provide parallelization by using multiple CPU cores to execute
     * the tasks, thus increasing the application's throughput. Note that throughput is a measure of the amount of
@@ -59,6 +64,24 @@ public static void main(String[] args){
     *    你应该在异步方法中处理异常. 你不应该为长时间的task做异步实现. 一个长时间运行的任务，如果异步执行的话, 可能会比同步执行耗费更长的时间，
     *    因为运行时要为异步执行的方法执行线程上下文的切换， 线程状态的存储等. 你也应该注意同步的异常和异步的异常有所不同。 同步异常暗示 每次程序
     *    执行到那个程序特殊状态时就会抛出异常；异步异常的跟踪则困难的多。所以同步和异步异常暗示同步或异步代码可能抛出异常.
+    *
+    * Difference between concurrency and parallelism
+    * Concurrency is essentially applicable when we talk about two tasks or more. When an application is capable of
+    * executing two tasks virtually at same time, we call it concurrent application. Though here tasks run looks
+    * like simultaneously, but essentially they may not. They take advantage of CPU time-slicing feature of operating
+    * system where each task run part of its task and then go to waiting state. When first task is in waiting state,
+    * CPU is assigned to second task to complete it’s part of task.
+    *
+    * Parallelism does not require two tasks to exist. It literally physically run parts of tasks OR multiple tasks,
+    * at the same time using multi-core infrastructure of CPU, by assigning one core to each task or sub-task.
+    * Parallelism requires hardware with multiple processing units, essentially. In single core CPU, you may get
+    * concurrency but NOT parallelism.
+    *
+    * For example, suppose we have a two core cpu, Application1 and Application2 both has two tasks(e.g. task1, task2).
+    * In Application1, task1 runs first, then task2 runs, they both run on the same core. In Application2, task1(core1)
+    * and task2(core2) runs at same time. We call Application1 runs concurrently, App2 runs parallel.
+    *
+    * Note, if you are not familiar with ThreadPool, please check Lesson1_Section09
     * */
 
     /************************* 15.1 Asynchronous and Synchronous Callbacks in Java **********************************/
@@ -102,7 +125,192 @@ public static void main(String[] args){
      * So the call back of listener does not block the mouse execution anymore.
      *
      * */
-   AsyncProgrammingExample.exp2();
+   // AsyncProgrammingExample.exp2();
+
+   /** 15.1.3 When To Use What
+    *
+    * Synchronous Callback : Any process having multiple tasks where the tasks must be executed in sequence and
+    *                       does not occupy much time should use synchronous Callbacks. For example, you’re in a
+    *                       movie queue for ticket you can’t get one until everyone in front of you gets one.
+    *
+    * Asynchronous Callback : When the tasks are not dependent on each other and may take some time for execution
+    *                        we should use Asynchronous callbacks. For example, when you order your food other
+    *                        people can also order their food in the restaurant. They don’t have to wait for your
+    *                        order to finish. If you’re downloading a song from internet, Getting an API response.
+    * */
+
+   /************************* 15.2 Asynchronous Programming with Future Interface **********************************/
+
+   /*
+   * Future is a interface in java.util.concurrent. A Future represents the result of an asynchronous computation.
+   * Methods are provided to check if the computation is complete, to wait for its completion, and to retrieve the
+   * result of the computation. The result can only be retrieved using method get() when the computation has
+   * completed, blocking if necessary until it is ready. Cancellation is performed by the cancel() method.
+   * Additional methods are provided to determine if the task completed normally or was cancelled. Once a
+   * computation has completed, the computation cannot be cancelled. If you would like to use a Future for the
+   * sake of cancellability but not provide a usable result, you can declare types of the form Future<?> and return
+   * null as a result of the underlying task.
+   *
+   * In asynchronous programming, main thread does not wait for any task to finished, rather it hand over the task
+   * to workers and move on. One way of doing asynchronous processing is using callback methods. Future is another
+   * way to write asynchronous code. By using Future you can write a method which does long computation but returns
+   * immediately. Those methods, instead of returning a result, return a Future object. You can later get the
+   * result by calling Future.get() method, which will return an object of type T, where T is what Future object is
+   * holding.
+   *
+   * Note returning a Future object is not blocking, but Future.get() method may block the main thread, if the
+   * asynchronous process does not finish.
+   **/
+
+   /** 15.2.1 FutureTask
+    *
+    * FutureTask is a cancellable asynchronous computation. This class provides a base implementation of Future,
+    * with methods to start and cancel a computation, query to see if the computation is complete, and retrieve the
+    * result of the computation. The result can only be retrieved when the computation has completed; the get methods
+    * will block if the computation has not yet completed. Once the computation has completed, the computation cannot
+    * be restarted or cancelled (unless the computation is invoked using runAndReset()).
+    *
+    * A FutureTask can be used to wrap a Callable or Runnable object. Because FutureTask implements Runnable, a
+    * FutureTask can be submitted to an Executor for execution.
+    *
+    * In AsyncProgrammingExample.exp3(); We implement a class AsyncSquareCalculator by using async programming. It uses
+    * a SingleThreadPool to run a callable and returns a Future. We can notice the return of Future does not block the
+    * main thread at all. But Future.get() does. And to avoid that, we can use Future.isDone() to check the status of
+    * Future.
+    *
+    * In AsyncProgrammingExample.exp4(); We showed how to cancel a task, and the behaviour of asynchronous task in multi
+    * thread pool.
+    *
+    *
+    * */
+
+  // AsyncProgrammingExample.exp3();
+  //  AsyncProgrammingExample.exp4();
+
+    /** 15.2.2 ForkJoinTask
+     *
+     * ForkJoinTask is an abstract class which implements Future and is capable of running a large number of tasks
+     * hosted by a small number of actual threads in ForkJoinPool.
+     *
+     * There are two abstract classes that implement ForkJoinTask: RecursiveTask which returns a value upon
+     * completion, and RecursiveAction which doesn't return anything.
+     *
+     * For ForkJoinTask example, please check Lesson01_Section09.
+     * */
+
+    /** 15.2.3 Future Limitations
+     *
+     * The features of Future are not enough to let you write concise concurrent code. For example, it’s difficult
+     * to express dependencies between results of a Future. In order to get result from future, we need to call get
+     * method which is blocking. It also has the following problems:
+     * 1. It cannot be manually completed : Let’s say that you’ve written a function to fetch the latest price of
+     *              an e-commerce product from a remote API. Since this API call is time-consuming, you’re running
+     *              it in a separate thread and returning a Future from your function. Now, let’s say that If the
+     *              remote API service is down, then you want to complete the Future manually by the last cached
+     *              price of the product. Can you do this with Future? No!
+     *
+     * 2. You cannot perform further action on a Future’s result without blocking: Future does not notify you of
+     *               its completion. It provides a get() method which blocks until the result is available. You don’t
+     *               have the ability to attach a callback function to the Future and have it get called automatically
+     *               when the Future’s result is available.
+     * 3. Multiple Futures cannot be chained together : Sometimes you need to execute a long-running computation
+     *               and when the computation is done, you need to send its result to another long-running
+     *               computation, and so on. You can not create such asynchronous workflow with Futures.
+     * 4. You can not combine multiple Futures together : Let’s say that you have 10 different Futures that you want
+     *                to run in parallel and then run some function after all of them completes. You can’t do this
+     *                as well with Future.
+     * 5. No Exception Handling : Future API does not have any exception handling construct.
+     *
+     * */
+
+    /************************* 15.3  CompletionStage and CompletableFuture from Java 8 ********************************/
+
+    /*
+    * To overcome the limitations of Future, since java8, CompletionStage interface and CompletableFuture class are
+    * introduced.
+    *
+    * CompletionStage represents(abstracts) a stage of a possibly async computation, that performs an action or computes a
+    * value when another CompletionStage completes. A stage completes upon termination of its computation, but this
+    * may in turn trigger other dependent stages.
+    *
+    * CompletionStage can abstract an asynchronous task and also you can pipe many asynchronous outcome in completion
+    * stage which lays the foundation of a reactive result processing which can have a valid use-case in virtually any
+    * area, from Gateways to Clients to Enterprise Apps to Cloud Solutions. Furthermore potentially, this reduces
+    * superfluous polling checks for the availability of result and/or blocking calls on futuristic results.
+    *
+    * CompletableFuture implements Future and CompletionStage. It provides abstraction for async tasks in event driven
+    * programming. It s designated for executing long running operations (http requests, database queries, file
+    * operations or complicated computations).
+    *
+    * CompletableFuture has 2 main benefits compare to FutureTask:
+    * - It can be explicitly completed by calling the complete() method without any synchronous wait. It allows
+    *   values of any type to be available in the future with default return values, even if the computation did
+    *   not complete, using default / intermediate results.
+    * - With tens of new methods, it also allows you to build a pipeline data process in a series of actions. You can
+    *   find a number of patterns for CompletableFutures such as creating a CompletableFuture from a task, or building
+    *   a CompletableFuture chain. The full list is available via Oracle’s CompletableFuture documentation.
+    * https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/CompletionStage.html
+    * https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/CompletableFuture.html
+    *
+    * CompletableFuture is at the same time a building block and a framework with about 50 different methods for
+    * composing, combining, executing asynchronous computation steps and handling errors. It has several main use
+    * cases:
+    * -
+    *
+     * */
+
+    /** 15.3.1 CompletableFuture: complete it manually using complete()
+     *
+     * You can use CompletableFuture.complete() method to manually complete a Future. All the clients waiting for
+     * this Future will get the specified result. And, Subsequent calls to completableFuture.complete() will be
+     * ignored.
+     *
+     * In AsyncProgrammingExample.exp5();, we have two threads waiting for value of a completeFuture, and one thread
+     * complete it manually with method complete. You can notice when we complete the future, two reading threads
+     * get notify and .get() returns the value just like old Future.
+     * */
+
+    // AsyncProgrammingExample.exp5();
+
+    /** 15.3.2 CompletableFuture: Running asynchronous computation using runAsync()
+     *
+     * CompletableFuture provide a static method runAsync(). It has two overload version:
+     * - CompletableFuture<Void> runAsync(Runnable runnable): It returns a new CompletableFuture that is
+     *              asynchronously completed by a task running in the ForkJoinPool.commonPool() after it runs the
+     *              given action.
+     * - CompletableFuture<Void> runAsync(Runnable runnable, Executor executor): It Returns a new CompletableFuture
+     *              that is asynchronously completed by a task running in the given executor after it runs the given
+     *              action.
+     *
+     * If you want to run some background task asynchronously and don’t want to return anything from the task,
+     * then you can use it.
+     *
+     * In AsyncProgrammingExample.exp6(); we use two CompletableFuture to print some text. As we don't specify the
+     * Executor, it uses the commonPool. As a result, if the main finishes first, the commonPool closes. The tasks
+     * of two CompletableFuture will never finish.
+     *
+     * In AsyncProgrammingExample.exp7(); we use a custom Executor to run the tasks.
+     * */
+
+      //AsyncProgrammingExample.exp6();
+   //  AsyncProgrammingExample.exp7();
+
+    /** 15.3.3 CompletableFuture: Run a task asynchronously and return the result using supplyAsync()
+     *
+     * static <U> CompletableFuture<U>	supplyAsync(Supplier<U> supplier): It returns a new CompletableFuture that
+     *                    is asynchronously completed by a task running in the ForkJoinPool.commonPool() with the
+     *                    value obtained by calling the given Supplier.
+     * static <U> CompletableFuture<U>	supplyAsync(Supplier<U> supplier, Executor executor): It returns a new
+     *                    CompletableFuture that is asynchronously completed by a task running in the given executor
+     *                    with the value obtained by calling the given Supplier.
+     *
+     * Supplier is a functional interface and can therefore be used as the assignment target for a lambda expression
+     * or method reference. You can view Supplier as a Runnable, but it returns a value after execution.
+     *
+     * In AsyncProgrammingExample.exp8(); we use two Supplier which are run by supplyAsync in the commonPool.
+     * */
+    AsyncProgrammingExample.exp8();
+
 }
 
 }
