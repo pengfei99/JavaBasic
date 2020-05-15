@@ -477,6 +477,24 @@ public static void main(String[] args){
 
     //AsyncProgrammingExample.exp18();
     AsyncProgrammingExample.exp19();
+
+    /************************* 15.4 Perform asynchronous operations with other packages********************************/
+
+    /*
+    * There are many options other than the CompletableFuture and CompletableStage of standard Java packages. For
+    * example:
+    * - Guava: It provides the ListenableFuture class to perform asynchronous operations.
+    * - EA Async: Electronic Arts brought the async-await feature from .NET to the Java ecosystem through the ea-async
+    *             library. The library allows writing asynchronous (non-blocking) code sequentially. Therefore, it
+    *             makes asynchronous programming easier and scales naturally.
+    * - Cactoos: Cactoos is a Java library based on object-oriented principles. It is an alternative to Google Guava
+    *            and Apache Commons that provides common objects for performing various operations. The library
+    *            provides an Async class for asynchronous operations.
+    * - Jcabi-Aspects: It provides the @Async annotation for asynchronous programming through AspectJ AOP aspects.
+    *
+    * 
+    * */
+
 }
 
 }
