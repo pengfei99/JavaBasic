@@ -309,8 +309,174 @@ public static void main(String[] args){
      *
      * In AsyncProgrammingExample.exp8(); we use two Supplier which are run by supplyAsync in the commonPool.
      * */
-    AsyncProgrammingExample.exp8();
+   // AsyncProgrammingExample.exp8();
 
+    /** 15.3.4 CompletableFuture: Transforming and acting on a CompletableFuture
+     *
+     * For building asynchronous systems we should be able to attach a callback to the CompletableFuture which
+     * should automatically get called when the Future completes.
+     *
+     * That way, we won’t need to wait for the result, and we can write the logic that needs to be executed after
+     * the completion of the Future inside our callback function.
+     *
+     * You can attach a callback to the CompletableFuture using thenApply(), thenAccept() and thenRun() methods
+     *
+     * - thenApply(): The thenApply() method can process and transform the result of a CompletableFuture when it
+     *            arrives. It takes a Function<T,R> as an argument. Function<T,R> is a simple functional interface
+     *            representing a function that accepts an argument of type T and produces a result of type R.
+     *            In AsyncProgrammingExample.exp9(), we first create a CompletableFuture which returns a String,
+     *            then we attached a callback function which takes the String returned by the first CompletableFuture
+     *            and build a new String with it.
+     *            We can also connect many thenApply() together to build a sequence of transformation.
+     *            In AsyncProgrammingExample.exp10(); we showed how to connect them together.
+     * - thenAccept(): The thenAccept() method can process and transform the result of a CompletableFuture when it
+     *            arrives. It takes a Consumer<T> and returns CompletableFuture<Void>. It does not return a result
+     *            which can be used again by another thenApply(). So it runs some piece of code after the
+     *            completion of the Future. It's often used as the last callback in the callback chain.
+     *            AsyncProgrammingExample.exp11(); shows an example
+     * - thenRun(): It takes a Runnable and returns CompletableFuture<Void>. So it does not retrieve the result from
+     *            previous CompletableFuture and return a result. It just runs the given task after previous task
+     *            finish.
+     *
+     * Async version of thenApply(), thenAccept(), thenRun() help you further parallelize your computations by
+     * executing the callback tasks in a separate thread. For example, in AsyncProgrammingExample.exp10();
+     * the task inside thenApply() is executed in the same thread where the supplyAsync() task is
+     * executed, or in the main thread if the supplyAsync() task completes immediately
+     * (try removing sleep() call to verify).
+     *
+     * For example:
+     * - <U> CompletableFuture<U> thenApplyAsync(Function<? super T,? extends U> fn, Executor executor): executor is
+     *                     optional, if executor is not present, it will be executed in a different thread which is
+     *                     obtained from the ForkJoinPool.commonPool()( default asynchronous execution facility).
+     * - CompletableFuture<Void> thenRunAsync(Runnable action, Executor executor): Returns a new CompletionStage
+     *                     that, when this stage completes normally, executes the given action using a different thread
+     *                     which is obtained from the supplied Executor.
+     *
+     * In AsyncProgrammingExample.exp13(); we run the second and third task by using thenRunAsync on a custom threadPool
+     */
+
+    /*thenApply*/
+    // AsyncProgrammingExample.exp9();
+   // AsyncProgrammingExample.exp10();
+    /*thenAccept*/
+    //AsyncProgrammingExample.exp11();
+    /*thenRun*/
+   // AsyncProgrammingExample.exp12();
+    /*thenRunAsync*/
+    //AsyncProgrammingExample.exp13();
+
+    /** 15.3.5 CompletableFuture: Combining two CompletableFutures together
+     *
+     * The thenApply(supplier) works well, when the call back function(i.e. supplier) returns a normal type. If it
+     * returns also a completableFuture. The final result will be a Future of Future. To get the result value, you need
+     * to call twice the get(). To avoid this, you can use the thenCompose() method.
+     *
+     * In AsyncProgrammingExample.exp14(); we use both thenApply and thenCompose() to demonstrate the difference.
+     *
+     * Note the return result of the first task is used as argument for the second task. We call them dependant future.
+     * Because the result of task2 depends on task1.
+     *
+     * */
+
+   // AsyncProgrammingExample.exp14();
+
+    /** 15.3.6 CompletableFuture: Combine two independent futures using thenCombine()
+     *
+     * Unlike the use case of thenApply() or thenCompose(). If I have two task which are not dependant, and we
+     * need the two returned future to calculate a new future. In this case, we can use thenCombine().
+     * public <U,V> CompletableFuture<V> thenCombine(CompletionStage<? extends U> other,
+     *               BiFunction<? super T,? super U,? extends V> fn): It returns a new CompletionStage that, when the
+     *               invoking and the "other" given stage (first argument) both complete normally, is executed with
+     *               the two results as arguments to the supplied function.
+     * We can consider the invoking CompletionStage as task1, the first argument as task2, and the supplied function
+     * as task3. If task1 and task2 finished, task3 takes the returned result of task1 and task2 as argument. Finally
+     * task3 returns the final result
+     *
+     * Check  AsyncProgrammingExample.exp15();
+     * */
+
+   // AsyncProgrammingExample.exp15();
+
+    /** 15.3.7 CompletableFuture Combining multiple CompletableFutures
+     *
+     * - static CompletableFuture<Void> allOf(CompletableFuture<?>... cfs): It returns a new CompletableFuture
+     *   that is completed when all of the given CompletableFutures complete. If any of the given CompletableFutures
+     *   complete exceptionally, then the returned CompletableFuture also does so, with a CompletionException
+     *   holding this exception as its cause. Otherwise, the results, if any, of the given CompletableFutures are
+     *   not reflected in the returned CompletableFuture, but may be obtained by inspecting them individually. If
+     *   no CompletableFutures are provided, returns a CompletableFuture completed with the value null.
+     *
+     * CompletableFuture.allOf() is used in scenarios when you have a List of independent futures that you want to run
+     * in parallel and do something after all of them are complete.
+     *
+     * Let’s say that you want to download the contents of 100 different web pages of a website. You can do this
+     * operation sequentially but this will take a lot of time. So, you have written a function which takes a web
+     * page link, and returns a CompletableFuture, i.e. It downloads the web page’s content asynchronously
+     *
+     * Note allOf() returns a Void, so it works more like a Phaser or countDownLatch, just makes sure all tasks in its
+     * arguments finishes. To get the result, we need to work on the returned result of each task in the argument.
+     *
+     * AsyncProgrammingExample.exp16(); shows an example of a list of tasks download contents from web. And we use
+     * .allOf() to wait all tasks to finish. Then we get the result of each tasks.
+     *
+     * - public static CompletableFuture<Object> anyOf(CompletableFuture<?>... cfs): It returns a new CompletableFuture
+     *            that is completed when any of the given CompletableFutures complete, with the same result. Otherwise,
+     *            if it completed exceptionally, the returned CompletableFuture also does so, with a
+     *            CompletionException holding this exception as its cause. If no CompletableFutures are provided,
+     *            returns an incomplete CompletableFuture.
+     *
+     * CompletableFuture.anyOf() as the name suggests, returns a new CompletableFuture which is completed when any of
+     * the given CompletableFutures complete, with the same result.
+     *
+     * In AsyncProgrammingExample.exp17(); we have three tasks which run async, we use anyOf() to get the fastest task.
+     *
+     * Note if these tasks returns different types, when you use .get(), you may not know the exact return type of the
+     * anyOf. Because anyOf() returns an Object type.
+     * */
+
+   // AsyncProgrammingExample.exp16();
+   // AsyncProgrammingExample.exp17();
+
+    /** 15.3.8 CompletableFuture Exception Handling
+     *
+     * We explored How to create CompletableFuture, transform them, and combine multiple CompletableFutures. Now
+     * let’s understand what to do when anything goes wrong. Let’s first understand how errors are propagated in
+     * a callback chain. Consider the following CompletableFuture callback chain
+     * CompletableFuture.supplyAsync(() -> {
+     * 	// Code which might throw an exception
+     * 	return "first task";
+     * }).thenApply(result -> {
+     * 	return "second task";
+     * }).thenApply(result -> {
+     * 	return "third task";
+     * }).thenAccept(result -> {
+     * 	// do something with the final result
+     * 	return "fourth task"
+     * });
+     * If an error occurs in the original supplyAsync() task(1st task), then none of the thenApply() callbacks
+     * will be called and future will be resolved with the exception occurred. If an error occurs in first thenApply()
+     * callback then 2nd and 3rd callbacks won’t be called and the future will be resolved with the exception
+     * occurred, and so on.
+     *
+     * Handle exceptions using exceptionally().
+     * The exceptionally() callback gives you a chance to recover from errors generated from the original Future.
+     * You can log the exception here and return a default value.
+     *
+     * In AsyncProgrammingExample.exp18(), we have 3 tasks. With different value of age, task1 and task2 can throw
+     * exceptions. Try to change the age with -1, 16, and 38. then see what happens.
+     * Try to remove the exceptionally() part and see what happens.
+     *
+     * Handle exceptions using handle().
+     * The API also provides a more generic method - handle() to recover from exceptions. It is called whether or
+     * not an exception occurs. As a result, it takes two argument, one is the normal returned result of previous tasks.
+     * second argument is the exception.
+     *
+     * In AsyncProgrammingExample.exp19(); we rewrite the AsyncProgrammingExample.exp18(); with handle() to manage the
+     * exception. The major difference is that handle() will always be executed with or without exception.
+     */
+
+    //AsyncProgrammingExample.exp18();
+    AsyncProgrammingExample.exp19();
 }
 
 }
