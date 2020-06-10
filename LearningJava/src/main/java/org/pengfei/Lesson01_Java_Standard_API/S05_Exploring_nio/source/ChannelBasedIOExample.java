@@ -175,4 +175,42 @@ public class ChannelBasedIOExample {
             e.printStackTrace();
         }
     }
+
+    public static void exp8(){
+        String ip="127.0.0.1";
+        int port=3333;
+        WebServer webServer=new WebServer(ip,port);
+        new Thread(webServer).start();
+
+        //client1 connect to the server
+        WebClient client1=new WebClient(ip,port);
+        client1.handleClientSession();
+
+        //client2 connect to the server
+        WebClient client2=new WebClient(ip,port);
+        client2.handleClientSession();
+
+        //client3 connect to the server
+        WebClient client3=new WebClient(ip,port);
+        client3.handleClientSession();
+
+        // close server
+        webServer.close();
+    }
+
+    public static void exp9(){
+        String ip="127.0.0.1";
+        int port=3333;
+        WebServerWithSelector server=new WebServerWithSelector(ip,port);
+        new Thread(server).start();
+
+        WebClientWithSelector client1=new WebClientWithSelector(ip,port);
+        client1.sendMessage();
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+    }
 }

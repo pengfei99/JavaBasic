@@ -140,6 +140,9 @@ public class S05_Exploring_nio {
      * - selectors: supports key-based, non-blocking, multiplexed I/O. In other words, selectors enable you to
      *             perform I/O through multiple channels. Selectors are supported by classes defined in the
      *             java.nio.channels package. Selectors are most applicable to socket-backed channels.
+     *             For more details of selector, please visit employes:pengfei.liu:java:all_io:nio_learning
+     *
+     *   check ChannelBasedIOExample.exp9(); for a collector example            
      * */
 
     /*************************************** 5.4 Enhancements added by NIO ******************************************/
@@ -331,7 +334,7 @@ public class S05_Exploring_nio {
 
     /** 5.5.1 Use NIO for channel based I/O
      *
-     * An important use of NIO is to access a file iva a channel and buffers.
+     * An important use of NIO is to access a file via a channel and buffers.
      *
      * A. Reading a File via a Channel
      * To read a File via a Channel, we need to follow the below steps:
@@ -486,6 +489,13 @@ public class S05_Exploring_nio {
      *    Check PathFilesOperationExample.exp5("/tmp");
      *    Note, we can also watch a directory for changes by using java.nio.file.WatchService.
      * */
+
+    /** 5.5.4 Use NIO for socket communication
+     *
+     *
+     */
+
+
     public static void main(String[] args){
         /** NIO for channel based I/O*/
         // read file via channel
@@ -529,7 +539,13 @@ public class S05_Exploring_nio {
       //  PathFilesOperationExample.exp4("/tmp");
 
         // show directory contents with walkFileTree
-        PathFilesOperationExample.exp5("/tmp");
+       // PathFilesOperationExample.exp5("/tmp");
+
+        /** NIO for server communication*/
+       // ChannelBasedIOExample.exp8();
+
+        /** NIO with selector */
+        ChannelBasedIOExample.exp9();
 
     }
 }
