@@ -69,7 +69,7 @@ object Lesson5_1_List_Operations {
   /*
 * In this example, the start_value is a data frame. The function rename the column name. The rename function lower
 * the letter case, then replace all space by "_". sourceDF.columns returns a list of column name of the data frame.
-* 
+*
 */
   def foldExp3()={
     Logger.getLogger("org").setLevel(Level.OFF)
