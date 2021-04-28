@@ -17,21 +17,21 @@
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
     <jmh.version>1.21</jmh.version>
-    <jackson.version> 2.10.5.1 </jackson.version>
+    <jackson.version> 2.12.3 </jackson.version>
   </properties>
 
   <dependencies>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.13.1</version>
+      <version>4.13.2</version>
       <scope>test</scope>
     </dependency>
 
     <dependency>
       <groupId>com.google.guava</groupId>
       <artifactId>guava</artifactId>
-      <version>28.0-jre</version>
+      <version>[30.0-jre,)</version>
     </dependency>
 
     <!-- Dependencies for java performance benchmark-->

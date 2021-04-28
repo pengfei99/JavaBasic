@@ -30,6 +30,12 @@ public class ThesaurusParser {
         term = mapper.readTree(new File(filePath));
     }
 
+    /* get related term url*/
+ /*   public static String relatedTermUrl(String baseUrl){
+        String url = "https://thesaurus.mom.fr/opentheso/api/76609/crt6ky3AVWFQp.json";
+
+    }*/
+
     /*Term names, not nullable*/
     public Map<String, String> getTermName() {
         String prefLabelRoot = "term";

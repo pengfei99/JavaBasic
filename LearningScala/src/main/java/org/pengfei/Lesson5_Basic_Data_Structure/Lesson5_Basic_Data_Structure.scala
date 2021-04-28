@@ -8,12 +8,12 @@ object Lesson5_Basic_Data_Structure {
 
     //StringOperation()
     //TupleOperation()
-    //ListOperations()
+    ListOperations()
     //ArrayOperations()
     //SetsOperations()
     //MapOperations()
     //VectorOperation()
-    SeqOperation()
+    //SeqOperation()
   }
 
   /************************************************************************************
@@ -123,7 +123,7 @@ val height = 1.9d*/
 
   def ListOperations(): Unit ={
 
-    /*******************************Creating List ************************************/
+    /******************************* 5.3.1 Creating List ************************************/
     /* String List */
     val fruit1: List[String] = List("apples","oranges","pears")
     val fruit2: List[String] = List("bananas","watermelons")
@@ -139,7 +139,7 @@ val height = 1.9d*/
     )
 
 
-    /******************************Basic operations on lists ************************/
+    /****************************** 5.3.2 Basic operations on lists ************************/
 
     /* Get the first element */
     val firstFruit=fruit1.head
@@ -150,7 +150,7 @@ val height = 1.9d*/
     /* check empty or not */
     println(fruit2.isEmpty)
 
-    /***************************Concatenating Lists ******************************/
+    /*************************** 5.3.3 Concatenating Lists ******************************/
       /* You can use either ::: operator or List.:::() method or List.concat() method to add two or more lists.*/
     val allFruits=fruit1:::fruit2
     val allFruits1=List.concat(fruit1,fruit2)
@@ -161,13 +161,13 @@ val height = 1.9d*/
     println(" All fruits value after add element: "+ allFruits1)
     println("add Element value: "+addElement)
 
-    /************************ fill list with same values ***********************/
+    /************************ 5.3.4 fill list with same values ***********************/
 
       /* fill 3 times apples */
     val apples = List.fill(3)("apples")
     println("apples value "+apples.toString())
 
-    /*********************** Tabulating a Function *****************************/
+    /*********************** 5.3.5 Tabulating a Function *****************************/
 
     val squareNums=List.tabulate(3)(n=>n*n)
     println("squareNums value: "+squareNums)
