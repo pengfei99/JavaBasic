@@ -734,9 +734,8 @@ public class S10_MultiThread {
     * To make a class immutable, you need to make:
     * - all its fields final
     * - the class declared as final
-    * - the this reference is not allowed to escape during construction
-    * - Any fields which refer to mutable data objects are
-    * - private
+    * - the "this" reference is not allowed to escape during construction
+    * - Any fields which refer to mutable data objects are private
     * - have no setter method
     * - they are never directly returned of otherwise exposed to a caller
     * - if they are changed internally in the class this change is not visible and has no effect outside of the class
