@@ -1,4 +1,4 @@
-#JAVA Basic review
+# JAVA Basic review
 
 This repo stores Java basic design pattern code, java 8,9 new feature tutorial code and some Leetcode solution code
 
