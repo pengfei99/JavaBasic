@@ -153,9 +153,9 @@ public class S00_Fundamentals {
         /****************************************** 0.5 Use variables *************************************/
 
         /*
-        * In class GalToLit, we illustrate how to create variables. As you can noticed, variables has different data
+        * In class GalToLit, we illustrate how to create variables. As you can notice, variables has different data
         * types, each data types correspond a special requirements. In our example, we use double, because we want the
-        * precision, but it's less faster than int.
+        * precision, but it's less fast than int.
         * */
 
         double gal1=GalToLit.getGalFromLit(10);
